@@ -1,16 +1,21 @@
 import React from "react";
-import "./App.css"
-import { Route, Routes } from "react-router-dom"; // BrowserRouter는 여기서 필요 없음
+import { Routes, Route } from "react-router-dom";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import Header from "./components/common/Header/Header";
 import Home from "./components/Home/Home";
-import Login from "./components/common/Login";
+// import Login from "./components/common/Login";
+import "./App.css"
 
+const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
 
 const App = () => {
     return (
-        <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-        </Routes>
+        <GoogleOAuthProvider clientId={clientId}>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                {/*<Route path="/login" element={<Login />} />*/}
+            </Routes>
+        </GoogleOAuthProvider>
     );
 };
 

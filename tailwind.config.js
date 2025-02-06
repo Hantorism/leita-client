@@ -1,8 +1,14 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 module.exports = {
-    content: ["./*.html"], // HTML 파일에서 Tailwind 클래스 적용
+    content: [
+        "./src/**/*.{js,jsx,ts,tsx}",
+    ],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                lexend: ['Lexend', 'sans-serif'],
+            },
+        },
     },
     plugins: [],
-};
+}
