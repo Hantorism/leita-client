@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import Login from "../login";
+import Login from "./login";
 
 const Header = () => {
     const [user, setUser] = useState(null);

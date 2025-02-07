@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import Header from "./components/common/Header/Header";
+import Header from "./components/common/Header";
 import Home from "./components/Home/Home";
 // import Login from "./components/common/Login";
 import "./App.css"
