@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from 'axios';
 import "./button.css"
 
 const Login = ({ user, setUser }) => {
+    const navigate = useNavigate();
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -19,6 +21,7 @@ const Login = ({ user, setUser }) => {
             const decodedToken = jwtDecode(tokenResponse.credential);
             setUser({ displayName: decodedToken.name, email: decodedToken.email });
             localStorage.setItem("user", JSON.stringify({ displayName: decodedToken.name, email: decodedToken.email }));
+            navigate("/");
         },
         onError: (error) => {
             console.error("Login failed: ", error);
