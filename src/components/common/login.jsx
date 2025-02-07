@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-// import "./button.css";
+import Cookies from "js-cookie";
+import axios from 'axios';
+import "./button.css"
 
 const Login = ({ user, setUser }) => {
     useEffect(() => {
@@ -22,6 +24,22 @@ const Login = ({ user, setUser }) => {
             console.error("Login failed: ", error);
         },
     });
+
+    // const signIn = useGoogleLogin({
+    //     onSuccess: (res) => {
+    //         axios.post('http://localhost:3000/auth/login', {
+    //             access_token: res.access_token,
+    //         })
+    //             .then(response => {
+    //                 Cookies.set('accessToken', response.data.token);
+    //                 console.log(response);
+    //             })
+    //             .catch(error => {
+    //                 console.log(error);
+    //             });
+    //     },
+    //     onError: (error) =>{ console.log(error);}
+    // });
 
     const signInWithGoogle = (credentialResponse) => {
         const decoded = jwtDecode(credentialResponse.credential);
@@ -53,7 +71,19 @@ const Login = ({ user, setUser }) => {
                     onSuccess={signInWithGoogle}
                     onError={(error) => console.log("Login Failed:", error)}
                     useOneTap
+                    render={(renderProps) => (
+                        <button
+                            className="googleLoginBox"
+                            onClick={renderProps.onClick}
+                            disabled={renderProps.disabled}
+                        >
+
+                            <span>Log in with Google</span>
+                        </button>
+                    )}
                 />
+
+                // <button onClick={() => login()}>Sign in with Google 🚀</button>
             )}
         </div>
     );

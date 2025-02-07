@@ -7,11 +7,11 @@ const Header = () => {
 
     return (
         <nav className="bg-white bg-opacity-30 p-3 md:p-4 rounded-full flex justify-between items-center mx-4 my-5 font-lexend">
-            <div className="text-white text-xl font-sans font-extrabold">
+            <div className="text-white text-xl font-sans pl-8 font-extrabold">
                 <Link to="/">LEITA</Link>
             </div>
 
-            <ul className="flex gap-6 list-none p-0 m-0 font-light">
+            <ul className="flex items-stretch  list-none p-0 m-0 font-light">
                 <li>
                     <NavLink to="/" className={({ isActive }) => isActive ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full" : "nav-link text-white px-6 py-3"}>
                         Home

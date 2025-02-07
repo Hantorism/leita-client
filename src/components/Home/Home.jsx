@@ -4,7 +4,7 @@ import { Footer } from "../common/Footer";
 
 const Home = () => {
     return (
-        <div className="flex flex-col items-start h-screen text-white pl-[7%] pt-[5%]">
+        <div className="flex flex-col items-start h-screen text-white pl-[10%] pt-[5%]">
             {/* Header */}
             <header className="w-full text-left">
                 <Header />
