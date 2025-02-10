@@ -10,6 +10,7 @@ const API_BASE_URL = "https://dev-server.leita.dev/api/auth"; // API 주소 설�
 
 const Login = ({ user, setUser }) => {
     const navigate = useNavigate();
+    const [userInfo, setUserInfo] = useState(null);
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -26,6 +27,9 @@ const Login = ({ user, setUser }) => {
                 const googleUser = await axios.get(`https://www.googleapis.com/oauth2/v3/userinfo`, {
                     headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
                 });
+
+                console.log("Google User Info:", googleUser.data);
+                setUserInfo(googleUser.data);
 
                 const userEmail = googleUser.data.email;
 
