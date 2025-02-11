@@ -1,107 +1,38 @@
-@font-face {
-    font-family: 'Lexend';
-    src: url('/public/fonts/Lexend-VariableFont_wght.ttf') format('truetype');
-    font-weight: 300;
-    font-style: normal;
+
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-
-/* 전체 컨테이너 스타일 */
-.homeContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    height: 100vh;
-    color: #FFFFFF;
-    text-align: left;
-    padding-left: 7%;
-    padding-top: 5%;
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s linear infinite;
 }
 
-/* 서브 컨테이너 */
-.subContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    width: 80%;
-    max-width: 600px;
-    padding: 20px;
+.floating-image {
+    position: absolute;
+    top: 20%;
+    right: 80%;
+    width: 100%;
+    height: auto;
+    animation: floatAnimation 15s ease-in-out infinite;
+    opacity: 0.7;
 }
 
-/* 설명 컨테이너 */
-.describeContainer {
-    margin-bottom: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    background: rgba(255, 255, 255, 0.08);
-    padding: 6px 12px;
-    border-radius: 60px;
-    width: fit-content;
-}
-
-/* 설명 이미지 */
-.describeContainer img {
-    width: 24px;
-    height: 24px;
-}
-
-/* 설명 텍스트 */
-.describeContainer a {
-    font-family: 'Lexend', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 100;
-    color: #E0E0E0; /* 밝은 회색으로 가독성 향상 */
-    line-height: 1.5;
-}
-
-/* 타이틀 */
-.title h1 {
-    font-size: 2.5rem;
-    font-weight: bold;
-    line-height: 1.3;
-    text-transform: uppercase;
-    color: #FFFFFF; /* 흰색으로 강조 */
-}
-
-/* 버튼 스타일 */
-#startButton {
-    font-family: 'Lexend', sans-serif;
-    margin-top: 40px;
-    padding: 12px 24px;
-    font-size: 1.2rem;
-    font-weight: lighter;
-    color: #1A1A1A; /* 어두운 배경 대비 버튼 내부 색상 변경 */
-    background-color: #CAFF33; /* 골드 색상으로 강조 */
-    border: none;
-    border-radius: 80px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-/* 버튼 호버 효과 */
-#startButton:hover {
-    background: linear-gradient(90deg, #CAFF33, #9D5CE9);
-    transform: scale(1.05);
-    color: white;
-    background-position: right center;
-    box-shadow: 0px 4px 15px rgba(202, 255, 51, 0.4);
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-    .title h1 {
-        font-size: 2rem;
+@keyframes floatAnimation {
+    0% {
+        transform: translateY(0px) rotate(0deg);
     }
-
-    .describeContainer a {
-        font-size: 1rem;
+    50% {
+        transform: translateY(-20px) rotate(90deg);
     }
-
-    button {
-        font-size: 1rem;
-        padding: 10px 20px;
+    100% {
+        transform: translateY(0px) rotate(0deg);
     }
+}
+
+h1 {
+    font-family: 'pan', sans-serif;
 }

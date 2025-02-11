@@ -1,5 +1,4 @@
-.sign-in-btn,
-.sign-out-btn {
+.googleLoginBox {
     background-color: #ededed;
     color: #303030;
     padding: 12px 25px;
@@ -10,11 +9,6 @@
     font-family: 'Lexend', sans-serif;
 }
 
-.sign-in-btn:hover {
+.googleLoginBox:hover {
     background: linear-gradient(90deg, #CAFF33, #9D5CE9);
-}
-
-.sign-out-btn:hover {
-    background: #303030;
-    color: #ededed;
 }

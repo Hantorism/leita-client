@@ -24,7 +24,14 @@ code {
   font-style: normal;
 }
 
-body {
-  font-family: 'Lexend', sans-serif;
-  font-weight: 100;
+@font-face {
+  font-family: 'pan';
+  src: url('/public/fonts/Panchang-Variable.ttf') format('truetype');
+
+  font-style: normal;
 }
+
+/*body {*/
+/*  font-family: 'Lexend', sans-serif;*/
+/*  font-weight: 100;*/
+/*}*/
