@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 FROM nginx AS runner
-COPY --from=builder /workspace/dist /usr/share/nginx/html
+COPY --from=builder /workspace/build /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/templates/default.conf.template
 CMD /docker-entrypoint.d/20-envsubst-on-templates.sh && \
     nginx -g 'daemon off;'
