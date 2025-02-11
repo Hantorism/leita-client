@@ -22,10 +22,10 @@ const Login = ({ user, setUser }) => {
         onSuccess: async (tokenResponse) => {
             try {
 
-                console.log("Google OAuth Token:", tokenResponse.access_token);
+                // console.log("Google OAuth Token:", tokenResponse.access_token);
 
                 const res = await axios.post(`${API_BASE_URL}/auth/oauth`, {
-                        // accessToken: tokenResponse.access_token,
+                        accessToken: tokenResponse.access_token,
                         // accessToken: response.credential,
                     }
                     ,
