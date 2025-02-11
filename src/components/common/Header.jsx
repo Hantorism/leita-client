@@ -11,7 +11,7 @@ const Header = () => {
                 <Link to="/">LEITA</Link>
             </div>
 
-            <ul className="flex items-stretch  list-none p-0 m-0 font-light">
+            <ul className="flex flex-wrap items-stretch  list-none p-0 m-0 font-light">
                 <li>
                     <NavLink to="/" className={({ isActive }) => isActive ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full" : "nav-link text-white px-6 py-3"}>
                         Home

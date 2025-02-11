@@ -20,7 +20,7 @@ const Home = () => {
                     </a>
                 </div>
                 <div className="text-left">
-                    <h1 className="text-[2.5rem] font-sans font-extrabold leading-[1.3] uppercase text-white">
+                    <h1   className=" text-[2.5rem] font-sans font-extrabold leading-[1.3] uppercase text-white">
                         START <br/>
                         YOUR CODING JOURNEY<br/>
                         WITH LEITA! 🏁
