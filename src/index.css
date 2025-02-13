@@ -23,6 +23,15 @@ code {
   font-weight: 100;
   font-style: normal;
 }
+@font-face {
+  font-family: 'nanum';
+  src: url('/public/fonts/NanumSquareNeo-aLt.ttf') format('truetype');
+
+  font-style: normal;
+}
+
+
+
 
 @font-face {
   font-family: 'pan';
