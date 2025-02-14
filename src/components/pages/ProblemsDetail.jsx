@@ -65,8 +65,11 @@ const ProblemDetail = () => {
     }
 
     return (
-        <div className="flex flex-col min-h-screen  bg-[#1A1A1A] text-white px-[10%] py-[5%]">
-            <div className="max-w-3xl mx-auto bg-[#2A2A2A] bg-opacity-90 p-6 rounded-lg shadow-lg max-h-[80vh] overflow-y-auto">
+        <div className="flex flex-col min-h-screen bg-[#1A1A1A] text-white px-[10%] py-[5%]">
+            <div
+                className="max-w-3xl mx-auto bg-[#2A2A2A] bg-opacity-90 p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto resize-x min-w-[300px] max-w-[90vw]"
+                style={{ resize: "horizontal", overflowX: "auto" }}
+            >
                 <h1 className="text-2xl font-bold text-[#CAFF33]">{problem.title}</h1>
 
                 <div className="mt-3">
