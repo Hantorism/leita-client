@@ -38,7 +38,7 @@ const Problems = () => {
                             problems.map((problem, index) => (
                                 <tr
                                     key={index}
-                                    onClick={() => window.open(`https://dev-server.leita.dev/api/problem/${problem.id}`, "_blank")}
+                                    onClick={() => window.open(`https://dev-server.leita.dev/api/problems/${problem.id}`, "_blank")}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
                                         index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}

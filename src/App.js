@@ -7,6 +7,7 @@ import Home from "./components/pages/Home";
 import "./App.css"
 import Problems from "./components/pages/Problems";
 import Study from "./components/pages/Study";
+import ProblemDetail from "./components/pages/ProblemsDetail";
 
 const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
 
@@ -17,6 +18,11 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/problems" element={<Problems />} />
                 <Route path="/study" element={<Study />} />
+                <Route path="/problems/:id" element={<ProblemDetail />} />
+
+
+
+
                 {/*<Route path="/login" element={<Login />} />*/}
             </Routes>
         </GoogleOAuthProvider>
