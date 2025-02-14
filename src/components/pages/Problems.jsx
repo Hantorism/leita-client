@@ -63,8 +63,8 @@ const Problems = () => {
                             problems.map((problem, index) => (
                                 <tr
                                     key={index}
-                                    className={`border-b bg-black border-gray-500 hover:bg-black hover:bg-opacity-50 hover:text-[#CAFF33] transition ${
-                                        index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A]" // 배경 색상 변경
+                                    className={`border-b bg-black border-gray-500 hover:bg-black  hover:text-[#CAFF33] transition ${
+                                        index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20" // 배경 색상 변경
                                     }`}
                                 >
 
