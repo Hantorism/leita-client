@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "../common/Header";
-import { Footer } from "../common/Footer";
+import  Footer  from "../common/Footer";
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -87,7 +87,7 @@ const Home = () => {
                 {/*    ))}*/}
                 {/*</div>*/}
             </div>
-            {/* <Footer /> */}
+             <Footer />
         </div>
     );
 };

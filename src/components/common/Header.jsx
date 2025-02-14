@@ -23,8 +23,8 @@ const Header = () => {
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink to="/about" className={({ isActive }) => isActive ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full" : "nav-link text-white px-6 py-3"}>
-                        About
+                    <NavLink to="/study" className={({ isActive }) => isActive ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full" : "nav-link text-white px-6 py-3"}>
+                        Study
                     </NavLink>
                 </li>
             </ul>
