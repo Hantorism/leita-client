@@ -28,7 +28,7 @@ const Problems = () => {
                     <table className="font-nanum w-full text-left border-collapse border border-gray-600">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
-                            <th className="p-3 border-b border-gray-500">#</th>
+                            <th className="p-3 border-b border-gray-500">ID</th>
                             <th className="p-3 border-b border-gray-500 font-semibold">제목</th>
                             <th className="p-3 border-b border-gray-500">정답률</th>
                         </tr>
@@ -38,12 +38,12 @@ const Problems = () => {
                             problems.map((problem, index) => (
                                 <tr
                                     key={index}
-                                    onClick={() => window.open(`https://dev-server.leita.dev/api/problems/${problem.id}`, "_blank")}
+                                    onClick={() => window.open(`http://localhost:3000/problems/${problem.problemId}`, "_blank")}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
                                         index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
                                 >
-                                    <td className="p-3">{index + 1}</td>
+                                    <td className="p-3">{problem.problemId}</td>
                                     <td className="p-3 font-bold">
                                         {problem.title || "제목 없음"}
                                         <div className="flex flex-wrap gap-2 mt-1">
