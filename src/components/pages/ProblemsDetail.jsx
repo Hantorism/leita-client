@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const ProblemDetail = () => {
     const { id } = useParams();
@@ -8,6 +10,8 @@ const ProblemDetail = () => {
     const [loading, setLoading] = useState(true);
     const [leftWidth, setLeftWidth] = useState(600);
     const isDragging = useRef(false);
+    const [code, setCode] = useState("// 여기에 코드를 작성하세요.\n");
+
 
     useEffect(() => {
         axios.get(`https://dev-server.leita.dev/api/problem/${id}`)
@@ -115,10 +119,33 @@ const ProblemDetail = () => {
             {/* 오른쪽 코드 작성 영역 */}
             <div className="flex-1 bg-[#1E1E1E] p-6 rounded-lg shadow-lg m-4">
                 <h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>
-                <textarea
-                    className="w-full h-[80vh] bg-black text-gray-300 p-4 rounded-lg border border-gray-600 mt-3 resize-none"
-                    placeholder="여기에 코드를 작성하세요..."
-                />
+
+                {/* 코드 입력 영역 */}
+                <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-600 overflow-hidden shadow-lg">
+                    <div className="flex items-center px-4 py-2 bg-[#1E1E1E]  ">
+                        {/*<div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>*/}
+                        {/*<div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>*/}
+                        {/*<div className="w-3 h-3 bg-green-500 rounded-full"></div>*/}
+                        <span className="ml-4 text-sm text-gray-300">solution.py</span>
+                    </div>
+
+
+                    <textarea
+                        className="w-full h-[60vh] p-4 text-gray-300 bg-transparent outline-none resize-none font-mono"
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        spellCheck={false}
+                    />
+
+                    {/* 코드 하이라이트 (실시간 반영) */}
+                    <SyntaxHighlighter language="python" style={oneDark} className="p-4 rounded-b-lg "
+                                       showLineNumbers={true}>
+                        {code}
+
+                    </SyntaxHighlighter>
+
+
+                </div>
             </div>
         </div>
     );
