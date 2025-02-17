@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import MonacoEditor from "@monaco-editor/react";
 
 const ProblemDetail = () => {
     const { id } = useParams();
@@ -10,7 +11,7 @@ const ProblemDetail = () => {
     const [loading, setLoading] = useState(true);
     const [leftWidth, setLeftWidth] = useState(600);
     const isDragging = useRef(false);
-    const [code, setCode] = useState("// 여기에 코드를 작성하세요.\n");
+    const [code, setCode] = useState("");
 
 
     useEffect(() => {
@@ -129,20 +130,16 @@ const ProblemDetail = () => {
                         <span className="ml-4 text-sm text-gray-300">solution.py</span>
                     </div>
 
-
-                    <textarea
-                        className="w-full h-[60vh] p-4 text-gray-300 bg-transparent outline-none resize-none font-mono"
+                    <MonacoEditor
+                        className="w-full h-[60vh]  text-gray-300 bg-transparent outline-none resize-none font-mono"
+                        height="300px"
+                        defaultLanguage="javascript"
+                        theme="vs-dark"
                         value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        spellCheck={false}
+                        onChange={(value) => setCode(value || "")}
                     />
 
-                    {/* 코드 하이라이트 (실시간 반영) */}
-                    <SyntaxHighlighter language="python" style={oneDark} className="p-4 rounded-b-lg "
-                                       showLineNumbers={true}>
-                        {code}
 
-                    </SyntaxHighlighter>
 
 
                 </div>
