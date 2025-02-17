@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import MonacoEditor from "@monaco-editor/react";
 
 const ProblemDetail = () => {
@@ -118,15 +116,13 @@ const ProblemDetail = () => {
             />
 
             {/* 오른쪽 코드 작성 영역 */}
-            <div className="flex-1 bg-[#1E1E1E] p-6 rounded-lg shadow-lg m-4">
+            <div className="flex-1 min-w-[300px] bg-[#1E1E1E] p-6 rounded-lg shadow-lg m-4">
+
                 <h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>
 
                 {/* 코드 입력 영역 */}
                 <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-600 overflow-hidden shadow-lg">
                     <div className="flex items-center px-4 py-2 bg-[#1E1E1E]  ">
-                        {/*<div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>*/}
-                        {/*<div className="w-3 h-3 bg-yellow-500 rounded-full mr-2"></div>*/}
-                        {/*<div className="w-3 h-3 bg-green-500 rounded-full"></div>*/}
                         <span className="ml-4 text-sm text-gray-300">solution.py</span>
                     </div>
 
@@ -138,8 +134,6 @@ const ProblemDetail = () => {
                         value={code}
                         onChange={(value) => setCode(value || "")}
                     />
-
-
 
 
                 </div>
