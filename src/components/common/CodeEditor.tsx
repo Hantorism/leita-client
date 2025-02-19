@@ -4,9 +4,10 @@ import MonacoEditor from "@monaco-editor/react";
 interface CodeEditorProps {
     code: string;
     setCode: (code: string) => void;
+    problemId: string; // Add problemId as a prop
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => {
     const [language, setLanguage] = useState("Python");
     const [isRunning, setIsRunning] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
@@ -14,20 +15,41 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(e.target.value);
     };
+    const token = localStorage.getItem("token");
 
-    const handleRunCode = () => {
+    const handleRunCode = async () => {
         setIsRunning(true);
 
         console.log("Executing code in", language);
-        console.log(code);
-        // API 호출
+        console.log("Problem ID:", problemId); // 확인: problemId가 잘 전달되는지
+        console.log("Code:", code);
+
+        try {
+            const response = await fetch(`https://dev-server.leita.dev/api/submit/${problemId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    code,
+                    language: language.toUpperCase(),
+                }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log("Code submitted successfully:", result);
+            } else {
+                console.error("Error executing code:", result);
+            }
+        } catch (error) {
+            console.error("Failed to submit code:", error);
+        }
+
         setIsRunning(false);
     };
-
-    // const toggleAutoComplete = () => {
-    //     setAutoComplete((prev) => !prev);
-    // };
-
 
     return (
         <div className="flex-1 min-w-[300px] min-h-[100px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4 flex flex-col">
@@ -57,13 +79,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
                     >
                         {isRunning ? "RUNNING" : "RUN"}
                     </button>
-
-                    {/*<button*/}
-                    {/*    onClick={toggleAutoComplete}*/}
-                    {/*    className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-white bg-[#FF6347] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#FF6347] hover:to-[#FF4500] hover:scale-[1.05] hover:text-white"*/}
-                    {/*>*/}
-                    {/*    {autoComplete ? "자동완성 비활성화" : "자동완성 활성화"}*/}
-                    {/*</button>*/}
                 </div>
             </div>
 

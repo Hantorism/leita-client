@@ -93,7 +93,7 @@ const ProblemDetail = () => {
                 <div className="mt-6">
                     <h2 className="text-xl font-semibold pb-2 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
-                        <div key={testCase.id} className="mt-3 p-3 bg-black rounded-lg">
+                        <div key={testCase.id || index} className="mt-3 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
                             <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.input}</pre>
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
@@ -112,10 +112,12 @@ const ProblemDetail = () => {
                 onMouseDown={startResizing}
             />
 
+
             {/* 코드 에디터 */}
             <div className="flex-1 flex flex-col min-w-[300px] overflow-hidden">
-                <CodeEditor code={code} setCode={setCode} />
+                <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} />
             </div>
+
         </div>
     );
 };
