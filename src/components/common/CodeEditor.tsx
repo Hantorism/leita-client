@@ -27,7 +27,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
         <div className="flex-1 min-w-[300px] min-h-[100px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4 flex flex-col">
             <div className="flex justify-between items-center">
                 <h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>
-                {/* 언어 선택 및 실행 버튼 영역 */}
+
                 <div className="flex items-center space-x-4">
                     <select
                         value={language}
@@ -55,6 +55,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
             </div>
 
             <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg flex-grow">
+
                 <MonacoEditor
                     width="100%"
                     height="100%"
@@ -62,6 +63,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
                     theme="vs-dark"
                     value={code}
                     onChange={(value) => setCode(value || "")}
+                    options={{
+                        fontSize: 16,
+                    }}
                 />
             </div>
         </div>

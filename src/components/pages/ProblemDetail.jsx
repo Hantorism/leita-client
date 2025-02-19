@@ -47,11 +47,11 @@ const ProblemDetail = () => {
     if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
 
     return (
-        <div className="flex h-screen bg-[#1A1A1A] text-white px-6 py-4">
+        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-nanum">
             {/* 문제 설명 영역 */}
             <div
                 className="bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
-                style={{ width: `${leftWidth}px`, height: "calc(100vh - 32px)" }} // 높이 고정
+                style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
                 <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId}</h2>
                 <h1 className="text-2xl font-bold text-[#CAFF33]">{problem.title}</h1>
@@ -70,28 +70,28 @@ const ProblemDetail = () => {
                 </div>
 
                 <div className="mt-6">
-                    <h2 className="text-xl font-semibold">문제 설명</h2>
+                    <h2 className="text-xl font-semibold pb-2 pt-3">문제 설명</h2>
                     <p className="mt-2 text-gray-300">{problem.description.problem}</p>
                 </div>
 
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold">입력</h3>
+                    <h3 className="text-lg font-semibold pb-2 pt-3">입력</h3>
                     <pre className="bg-black text-gray-300 p-3 rounded-md mt-1">{problem.description.input}</pre>
                 </div>
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold">출력</h3>
+                    <h3 className="text-lg font-semibold pb-2 pt-3">출력</h3>
                     <pre className="bg-black text-gray-300 p-3 rounded-md mt-1">{problem.description.output}</pre>
                 </div>
 
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold">제한 사항</h3>
+                    <h3 className="text-lg font-semibold pb-2 pt-3">제한 사항</h3>
                     <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? "정보 없음"}MB</p>
                     <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? "정보 없음"}초</p>
                 </div>
 
                 {/* 예제 케이스 */}
                 <div className="mt-6">
-                    <h2 className="text-xl font-semibold">예제 테스트 케이스</h2>
+                    <h2 className="text-xl font-semibold pb-2 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
                         <div key={testCase.id} className="mt-3 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
@@ -102,7 +102,7 @@ const ProblemDetail = () => {
                     ))}
                 </div>
 
-                <p className="text-sm text-gray-400 pt-3">출처: {problem.source}</p>
+                <p className="text-sm text-gray-400 pt-6">출처: {problem.source}</p>
                 <p className="text-sm text-gray-400">작성자: {problem.authorName}</p>
             </div>
 
