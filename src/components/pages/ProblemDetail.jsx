@@ -47,11 +47,11 @@ const ProblemDetail = () => {
     if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
 
     return (
-        <div className="flex min-h-screen bg-[#1A1A1A] text-white px-6 py-4">
+        <div className="flex h-screen bg-[#1A1A1A] text-white px-6 py-4">
             {/* 문제 설명 영역 */}
             <div
                 className="bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
-                style={{ width: `${leftWidth}px` }}
+                style={{ width: `${leftWidth}px`, height: "calc(100vh - 32px)" }} // 높이 고정
             >
                 <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId}</h2>
                 <h1 className="text-2xl font-bold text-[#CAFF33]">{problem.title}</h1>
@@ -108,12 +108,14 @@ const ProblemDetail = () => {
 
             {/* 리사이즈 핸들 */}
             <div
-                className="w-0.5 bg-gray-500 cursor-ew-resize rounded-full m-4"
+                className="w-1 bg-gray-500 cursor-ew-resize rounded-full m-4"
                 onMouseDown={startResizing}
             />
 
-
-            <CodeEditor code={code} setCode={setCode} />
+            {/* 코드 에디터 */}
+            <div className="flex-1 flex flex-col min-w-[300px] overflow-hidden">
+                <CodeEditor code={code} setCode={setCode} />
+            </div>
         </div>
     );
 };
