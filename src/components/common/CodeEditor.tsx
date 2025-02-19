@@ -7,9 +7,9 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
-    const [language, setLanguage] = useState("javascript"); // 기본 언어는 JavaScript
+    const [language, setLanguage] = useState("Python");
     const [isRunning, setIsRunning] = useState(false);
-    const [autoComplete, setAutoComplete] = useState(true); // 자동완성 상태 관리
+    const [autoComplete, setAutoComplete] = useState(true);
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(e.target.value);
@@ -28,6 +28,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
     //     setAutoComplete((prev) => !prev);
     // };
 
+
     return (
         <div className="flex-1 min-w-[300px] min-h-[100px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4 flex flex-col">
             <div className="flex justify-between items-center">
@@ -39,9 +40,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode }) => {
                         onChange={handleLanguageChange}
                         className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
                     >
+                        <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
                         <option value="java">Java</option>
-                        <option value="python">Python</option>
                         <option value="cpp">C</option>
                         <option value="cpp">C++</option>
                         <option value="go">Go</option>
