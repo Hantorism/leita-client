@@ -7,7 +7,7 @@ import Home from "./components/pages/Home";
 import "./App.css"
 import Problems from "./components/pages/Problems";
 import Study from "./components/pages/Study";
-import ProblemDetail from "./components/pages/ProblemsDetail";
+import ProblemDetail from "./components/pages/ProblemDetail";
 
 const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
 
