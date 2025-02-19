@@ -116,19 +116,21 @@ const ProblemDetail = () => {
             />
 
             {/* 오른쪽 코드 작성 영역 */}
-            <div className="flex-1 min-w-[300px] bg-[#1E1E1E] p-6 rounded-lg shadow-lg m-4">
+            <div className="flex-1 min-w-[300px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4">
 
                 <h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>
 
                 {/* 코드 입력 영역 */}
-                <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-600 overflow-hidden shadow-lg">
+                <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg h-[60vh]">
                     <div className="flex items-center px-4 py-2 bg-[#1E1E1E]  ">
-                        <span className="ml-4 text-sm text-gray-300">solution.py</span>
+
                     </div>
 
                     <MonacoEditor
-                        className="w-full h-[60vh]  text-gray-300 bg-transparent outline-none resize-none font-mono"
-                        height="300px"
+
+                        width="100%"
+                        height="100%"
+
                         defaultLanguage="javascript"
                         theme="vs-dark"
                         value={code}

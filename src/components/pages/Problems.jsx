@@ -9,7 +9,7 @@ const Problems = () => {
         const fetchProblems = async () => {
             try {
                 const res = await axios.get("https://dev-server.leita.dev/api/problem");
-                setProblems(res.data);
+                setProblems(res.data.content);
             } catch (error) {
                 console.error("Failed to fetch problems:", error);
             }
