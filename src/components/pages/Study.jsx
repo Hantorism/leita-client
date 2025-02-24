@@ -12,21 +12,21 @@ const Study = () => {
         const mockData = [
             {
                 title: "React Study Group",
-                description: "Learn React and its ecosystem.",
-                admins: [{ name: "John Doe" }, { name: "Jane Smith" }],
-                members: [{ name: "Alice" }, { name: "Bob" }, { name: "Charlie" }]
+                description: "리액트에 대해 배웁니다",
+                admins: [{ name: "장원영" }, { name: "장원형" }],
+                members: [{ name: "워뇽" }, { name: "이장" }, { name: "장원" }]
             },
             {
                 title: "Frontend Development",
-                description: "Discuss the latest trends in frontend technologies.",
-                admins: [{ name: "Tom Lee" }],
-                members: [{ name: "Sarah" }, { name: "David" }]
+                description: "프론트엔드 기술에 대해 논의합니다",
+                admins: [{ name: "태림" }],
+                members: [{ name: "태태" }, { name: "림림" }]
             },
             {
                 title: "AI/ML Group",
-                description: "Collaborate on machine learning and AI projects.",
-                admins: [{ name: "Mark Wong" }],
-                members: [{ name: "Linda" }, { name: "Ethan" }]
+                description: "머신러닝이란 ?",
+                admins: [{ name: "성연" }],
+                members: [{ name: "연연" }, { name: "연여니" }]
             }
         ];
 
@@ -69,14 +69,13 @@ const Study = () => {
 
             {/*<h1 className="text-3xl font-bold text-white mt-6 mb-4">스터디 그룹</h1>*/}
 
-            {/*{loading && <p className="text-white">Loading...</p>}*/}
-            {error && <p className="text-red-500">Error: {error}</p>}
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-20">
                 {studies.map((study, index) => (
                     <div
                         key={index}
-                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg   hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
+                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg  border-collapse border  border-gray-600 hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
                     >
                         <h2 className="text-xl font-semibold text-white hover:text-[#CAFF33] ">{study.title}</h2>
                         <p className="text-gray-400 mt-2">{study.description}</p>

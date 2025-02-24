@@ -54,7 +54,7 @@ const ProblemDetail = () => {
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
                 <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId}</h2>
-                <h1 className="text-2xl font-bold text-[#CAFF33]">{problem.title}</h1>
+                <h1 className="text-2xl font-extrabold text-[#CAFF33]">{problem.title}</h1>
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {problem.category?.map((cat, i) => (
