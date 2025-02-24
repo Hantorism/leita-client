@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
 
 interface CodeEditorProps {
@@ -11,6 +11,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
     const [language, setLanguage] = useState("Python");
     const [isRunning, setIsRunning] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
+    const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
+        line: 1,
+        column: 1,
+    });
+
+    const editorRef = useRef<any>(null); // Reference to Monaco Editor
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(e.target.value);
@@ -49,6 +55,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         }
 
         setIsRunning(false);
+    };
+
+
+    const handleEditorMount = (editor: any) => {
+        editorRef.current = editor;
+        editor.onDidChangeCursorPosition((e: any) => {
+            setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
+        });
     };
 
     return (
@@ -93,8 +107,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                     options={{
                         fontSize: 16,
                         suggestOnTriggerCharacters: autoComplete,
+                        lineNumbers: "on",
+                        renderLineHighlight: "all",
                     }}
+                    onMount={handleEditorMount}
                 />
+            </div>
+
+
+            <div className="mt-2 text-gray-300 text-sm">
+                Line: {cursorPosition.line}, Column: {cursorPosition.column}
             </div>
         </div>
     );
