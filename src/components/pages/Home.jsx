@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Header from "../common/Header";
 import  Footer  from "../common/Footer";
 import { useNavigate } from 'react-router-dom';
+import PopularProblems from "../common/PopularProblems.tsx";
 
 const Home = () => {
     // const [currentImage, setCurrentImage] = useState(0);
@@ -60,32 +61,15 @@ const Home = () => {
                     Let's solve problems!
                 </button>
 
-                {/*<img src={"/image/pageimage.png"} class="absolute top-[40%] right-[13%] w-[30%] h-auto pl-3"/>*/}
+                <div className="mt-20">
+
+                </div>
 
 
-                {/*<div className="relative w-full h-full">*/}
-                {/*    {images.map((image, index) => (*/}
-                {/*        <img*/}
-                {/*            key={index}*/}
-                {/*            src={image}*/}
-                {/*            alt={`home-image-${index}`}*/}
-                {/*            className={`floating-image absolute left-100 top-40 transition-all duration-1000 ease-in-out ${*/}
-                {/*                currentImage >= index ? 'opacity-100 z-10' : 'opacity-0 z-0'*/}
-                {/*            }`}*/}
-                {/*            style={{*/}
-                {/*                transform:*/}
-                {/*                    currentImage === index*/}
-                {/*                        ? (index === 2*/}
-                {/*                            ? "translate(-10px, -20px)  scale(1.3)" // 맨 위 이미지 왼쪽 위로 이동 + 10% 크게*/}
-                {/*                            : index === 1*/}
-                {/*                                ? "translate(-10px, -20px) " // 두 번째 이미지 약간 왼쪽 이동*/}
-                {/*                                : "translate(-10px, -20px) rotate(0)") // 첫 번째 이미지는 정중앙*/}
-                {/*                        : "translateY(30px)",*/}
-                {/*                transition: 'opacity 1s ease-in-out, transform 1s ease-in-out',*/}
-                {/*            }}*/}
-                {/*        />*/}
-                {/*    ))}*/}
-                {/*</div>*/}
+
+            </div>
+            <div className=" p-5 w-full text-left">
+                <PopularProblems />
             </div>
              <Footer />
         </div>
