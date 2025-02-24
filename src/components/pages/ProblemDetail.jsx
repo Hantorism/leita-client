@@ -47,7 +47,7 @@ const ProblemDetail = () => {
     if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
 
     return (
-        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-nanum">
+        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-nanum font-black">
             {/* 문제 설명 영역 */}
             <div
                 className="bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
