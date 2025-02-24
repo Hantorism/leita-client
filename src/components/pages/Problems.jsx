@@ -4,6 +4,8 @@ import axios from "axios";
 
 const Problems = () => {
     const [problems, setProblems] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const problemsPerPage = 20;
 
     useEffect(() => {
         const fetchProblems = async () => {
@@ -17,8 +19,18 @@ const Problems = () => {
         fetchProblems();
     }, []);
 
+
+    const indexOfLastProblem = currentPage * problemsPerPage;
+    const indexOfFirstProblem = indexOfLastProblem - problemsPerPage;
+    const currentProblems = problems.slice(indexOfFirstProblem, indexOfLastProblem);
+
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
     return (
-        <div className="flex flex-col items-start h-screen text-gray-900 pl-[10%] pr-[10%] pt-[5%] bg-[#1A1A1A]">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pl-[10%] pr-[10%] pt-[5%] bg-[#1A1A1A]">
             <header className="w-full text-left">
                 <Header />
             </header>
@@ -34,8 +46,8 @@ const Problems = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {problems.length > 0 ? (
-                            problems.map((problem, index) => (
+                        {currentProblems.length > 0 ? (
+                            currentProblems.map((problem, index) => (
                                 <tr
                                     key={index}
                                     onClick={() => window.open(`http://localhost:3000/problems/${problem.problemId}`, "_blank")}
@@ -69,6 +81,21 @@ const Problems = () => {
                         )}
                         </tbody>
                     </table>
+                </div>
+
+
+                <div className="flex justify-center mt-4">
+                    {Array.from({ length: Math.ceil(problems.length / problemsPerPage) }, (_, i) => (
+                        <button
+                            key={i + 1}
+                            onClick={() => handlePageChange(i + 1)}
+                            className={`px-3 py-1 mx-1 rounded-full transition ${
+                                currentPage === i + 1 ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                            }`}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>
