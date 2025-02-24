@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
+import Footer from "../common/Footer";
 
 const Study = () => {
     const [studies, setStudies] = useState([]);
@@ -61,8 +62,8 @@ const Study = () => {
     // }, []);
 
     return (
-        <div className="flex flex-col items-start h-screen text-gray-900 pl-[10%] pr-[10%] pt-[5%] bg-[#1A1A1A] font-lexend">
-            <header className="w-full text-left">
+        <div className="min-h-screen flex flex-col items-start h-screen text-gray-900  pt-[5%] bg-[#1A1A1A] font-lexend">
+            <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
 
@@ -71,11 +72,11 @@ const Study = () => {
 
 
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-20 pl-[5%] pr-[5%]">
+            <div className=" flex-grow grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-20 pl-[15%] pr-[15%]">
                 {studies.map((study, index) => (
                     <div
                         key={index}
-                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg  border-collapse border  border-gray-600 hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
+                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg   border-collapse border  border-gray-600 hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
                     >
                         <h2 className="text-xl font-semibold text-white hover:text-[#CAFF33] ">{study.title}</h2>
                         <p className="text-gray-400 mt-2">{study.description}</p>
@@ -88,6 +89,9 @@ const Study = () => {
                     </div>
                 ))}
             </div>
+            <footer className="w-full text-left mt-20">
+                <Footer />
+            </footer>
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import axios from "axios";
+import Footer from "../common/Footer";
 
 const Problems = () => {
     const [problems, setProblems] = useState([]);
@@ -30,8 +31,8 @@ const Problems = () => {
     };
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900 pl-[10%] pr-[10%] pt-[5%] bg-[#1A1A1A]">
-            <header className="w-full text-left">
+        <div className="flex flex-col items-start min-h-screen text-gray-900  pt-[5%] bg-[#1A1A1A]">
+            <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
 
@@ -98,6 +99,9 @@ const Problems = () => {
                     ))}
                 </div>
             </div>
+            <footer className="w-full text-left mt-20">
+                <Footer />
+            </footer>
         </div>
     );
 };

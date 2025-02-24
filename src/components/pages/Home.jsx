@@ -34,13 +34,13 @@ const Home = () => {
     };
 
     return (
-        <div className="flex flex-col items-start h-screen text-white pl-[10%] pr-[10%] pt-[5%]">
+        <div className="flex flex-col items-start h-screen text-white  pt-[5%]">
             {/* Header */}
-            <header className="w-full text-left">
+            <header className="w-full text-left pl-[10%] pr-[10%]">
                 <Header />
             </header>
 
-            <div className="flex flex-col items-start justify-center w-[80%] max-w-[600px] p-5 pl-[6%] pt-[8%]">
+            <div className="flex flex-col items-start justify-center w-[90%] max-w-[700px] p-5 pl-[13%] pt-[8%]">
                 <div className="inline-flex items-center gap-1 bg-white bg-opacity-10 px-3 py-2 rounded-[60px] w-fit mb-5">
                     <img src="/image/Icon.svg" className="w-[24px] h-[24px]" />
                     <a className="font-lexend text-sm font-light text-[#E0E0E0] leading-[1.5]">
@@ -68,10 +68,12 @@ const Home = () => {
 
 
             </div>
-            <div className=" m-5 p-3 pt-3 w-full text-left">
+            <div className="  pl-[10%]  pr-[10%] p-10 pt-3 w-full text-left">
                 <PopularProblems />
             </div>
-             <Footer />
+            <footer className="w-full text-left">
+                <Footer />
+            </footer>
         </div>
     );
 };
