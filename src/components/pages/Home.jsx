@@ -68,7 +68,7 @@ const Home = () => {
 
 
             </div>
-            <div className=" p-5 w-full text-left">
+            <div className=" m-5 p-3 pt-3 w-full text-left">
                 <PopularProblems />
             </div>
              <Footer />

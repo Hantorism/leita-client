@@ -71,7 +71,7 @@ const Study = () => {
 
 
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full mt-20 pl-[5%] pr-[5%]">
                 {studies.map((study, index) => (
                     <div
                         key={index}
