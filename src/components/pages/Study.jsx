@@ -76,9 +76,13 @@ const Study = () => {
                 {studies.map((study, index) => (
                     <div
                         key={index}
-                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg   border-collapse border  border-gray-600 hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
+                        className="bg-white bg-opacity-10 p-5 rounded-xl shadow-lg border border-gray-600
+                   hover:bg-black hover:bg-opacity-70 hover:cursor-pointer"
+                        onClick={() => window.open(`/study/${index}`, "_blank")} // 🆕 새 창에서 StudyDetail 열기
                     >
-                        <h2 className="text-xl font-semibold text-white hover:text-[#CAFF33] ">{study.title}</h2>
+                        <h2 className="text-xl font-semibold text-white hover:text-[#CAFF33]">
+                            {study.title}
+                        </h2>
                         <p className="text-gray-400 mt-2">{study.description}</p>
                         <p className="text-gray-500 mt-2">
                             <strong>Admins:</strong> {study.admins.map((a) => a.name).join(", ")}
@@ -88,6 +92,7 @@ const Study = () => {
                         </p>
                     </div>
                 ))}
+
             </div>
             <footer className="w-full text-left mt-20">
                 <Footer />

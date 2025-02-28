@@ -8,6 +8,7 @@ import "./App.css"
 import Problems from "./components/pages/Problems";
 import Study from "./components/pages/Study";
 import ProblemDetail from "./components/pages/ProblemDetail";
+import StudyDetail from "./components/pages/StudyDetail.tsx";
 
 const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
 
@@ -19,6 +20,7 @@ const App = () => {
                 <Route path="/problems" element={<Problems />} />
                 <Route path="/study" element={<Study />} />
                 <Route path="/problems/:id" element={<ProblemDetail />} />
+                <Route path="/study/:id" element={<StudyDetail />} />
 
 
 
