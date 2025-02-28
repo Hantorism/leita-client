@@ -23,6 +23,12 @@ const ProblemDetail = () => {
             });
     }, [id]);
 
+    useEffect(() => {
+        if (problem) {
+            document.title = `${problem.title} - Leita`;
+        }
+    }, [problem]);
+
     const startResizing = (e) => {
         e.preventDefault();
         isDragging.current = true;
