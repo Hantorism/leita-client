@@ -144,7 +144,7 @@ const ProblemDetail = () => {
 
             {/* 리사이즈 핸들 */}
             <div
-                className="w-1 bg-gray-500 cursor-ew-resize rounded-full m-0.1"
+                className="w-1 bg-gray-700 cursor-ew-resize rounded-full m-0"
                 onMouseDown={startResizing}
             />
 
