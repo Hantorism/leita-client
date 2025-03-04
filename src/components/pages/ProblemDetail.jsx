@@ -73,11 +73,12 @@ const ProblemDetail = () => {
         <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretend ">
             {/* 문제 설명 영역 */}
             <div
-                className="bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
+                className=" scrollbar-hide bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4 scrollbar-hide"
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
                 <h2 className="text-2xl font-bold  text-gray-200"># {problem.problemId}</h2>
-                <h1 className="text-3xl font-bold   text-[#CAFF33]">{problem.title}</h1>
+                <h1 className="text-2xl font-bold   text-[#CAFF33]">{problem.title}</h1>
+
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {problem.category?.map((cat, i) => (
@@ -91,18 +92,19 @@ const ProblemDetail = () => {
                     <span className="text-gray-400">정답률:</span> {problem.solved?.rate}%
                     <span className="ml-4 text-gray-400">풀이 제출 수:</span> {problem.solved?.count}
                 </div>
+                <hr className="border-t border-gray-500 mt-2" />
 
                 <div className="mt-6">
-                    <h2 className="text-xl font-semibold pb-2 pt-3">문제 설명</h2>
+                    <h2 className="text-xl font-semibold pb-2 pt-1">문제 설명</h2>
                     <p className="mt-2 text-gray-300">{problem.description.problem}</p>
                 </div>
 
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold pb-2 pt-3">입력</h3>
+                    <h3 className="text-lg font-semibold pb-1 pt-2">입력</h3>
                     <pre className=" text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.input}</pre>
                 </div>
                 <div className="mt-4">
-                    <h3 className="text-lg font-semibold pb-2 pt-3">출력</h3>
+                    <h3 className="text-lg font-semibold pb-1 pt-2">출력</h3>
                     <pre className=" text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.output}</pre>
                 </div>
 
@@ -114,9 +116,9 @@ const ProblemDetail = () => {
 
                 {/* 예제 케이스 */}
                 <div className="mt-6">
-                    <h2 className="text-xl font-semibold pb-2 pt-3">예제 테스트 케이스</h2>
+                    <h2 className="text-xl font-semibold pb-1 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
-                        <div key={testCase.id || index} className="mt-3 p-3 bg-black rounded-lg">
+                        <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
                             <div className="relative">
                                 <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{testCase.input}</pre>

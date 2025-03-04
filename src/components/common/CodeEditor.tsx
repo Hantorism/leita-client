@@ -27,11 +27,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         setIsRunning(true);
 
         console.log("Executing code in", language);
-        console.log("Problem ID:", problemId); // 확인: problemId가 잘 전달되는지
+        console.log("Problem ID:", problemId);
         console.log("Code:", code);
 
         try {
-            const response = await fetch(`https://dev-server.leita.dev/api/submit/${problemId}`, {
+            const response = await fetch(`https://dev-server.leita.dev/api/submit/run/${problemId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -40,6 +40,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                 body: JSON.stringify({
                     code,
                     language: language.toUpperCase(),
+                    testCases: [
+                        {
+                            input: "example input",  // 필요 시 변경
+                            output: "expected output" // 필요 시 변경
+                        }
+                    ]
                 }),
             });
 
@@ -56,6 +62,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
 
         setIsRunning(false);
     };
+
 
 
     const handleEditorMount = (editor: any) => {
@@ -88,14 +95,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
 
                     <button
                         onClick={handleRunCode}
-                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
+                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-md transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
                         disabled={isRunning}
                     >
                         {isRunning ? "RUNNING" : "RUN"}
                     </button>
                     <button
                         onClick={handleRunCode}
-                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-[#1A1A1A] bg-[#9D5CE9] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#9D5CE9] hover:to-[#CAFF33] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
+                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-white bg-[#3E3E3E] rounded-md transition-all duration-300 ease-in-out hover:bg-gradient-to-r  hover:scale-[1.05] hover:text-[#CAFF33] hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
                         disabled={isRunning}
                     >
                         Submit
