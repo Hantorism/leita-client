@@ -110,6 +110,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
     };
 
     return (
+
         <div className="flex-1 min-w-[300px] min-h-[100px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4 flex flex-col">
             <div className="flex justify-between items-center">
                 {/*<h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>*/}
