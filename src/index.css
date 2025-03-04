@@ -30,6 +30,20 @@ code {
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Pretend';
+  src: url('/public/fonts/PretendardVariable.ttf') format('truetype');
+
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'D2Coding';
+  src: url('/public/fonts/D2Coding-Ver1.3-20171129.ttf') format('truetype');
+
+  font-style: normal;
+}
+
 
 
 

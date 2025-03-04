@@ -13,18 +13,28 @@ interface Problem {
 const PopularProblems = () => {
     const [problems, setProblems] = useState<Problem[]>([]);
     const navigate = useNavigate();
-
     useEffect(() => {
-        fetch("https://dev-server.leita.dev/api/problem")
-            .then((res) => res.json())
-            .then((data) => {
-                // 문제들을 solved.count 기준으로 내림차순 정렬
-                const sortedProblems = data.content.sort((a: Problem, b: Problem) => b.solved.count - a.solved.count);
-                // 상위 6개 문제만 추출
-                setProblems(sortedProblems.slice(0, 5));
-            })
-            .catch((err) => console.error("Failed to fetch problems", err));
-    }, []);
+    const fetchProblems = async () => {
+        try {
+            const response = await fetch("https://dev-server.leita.dev/api/problem");
+            const data = await response.json();
+
+            if (!data?.data?.content) {
+                throw new Error("Invalid response format");
+            }
+
+            const sortedProblems = [...data.data.content]
+                .sort((a: Problem, b: Problem) => b.solved.count - a.solved.count)
+                .slice(0, 6);
+
+            setProblems(sortedProblems);
+        } catch (error) {
+            console.error("Failed to fetch problems:", error);
+        }
+    };
+
+    fetchProblems();
+}, []);
 
     return (
         <div className="mt-20 w-full mb-20 border-collapse bg-white bg-opacity-10 rounded-xl shadow-lg   p-4">

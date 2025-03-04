@@ -10,17 +10,27 @@ const ProblemDetail = () => {
     const [leftWidth, setLeftWidth] = useState(600);
     const isDragging = useRef(false);
     const [code, setCode] = useState("");
+    const [copiedId, setCopiedId] = useState(null);
 
     useEffect(() => {
-        axios.get(`https://dev-server.leita.dev/api/problem/${id}`)
-            .then((res) => {
-                setProblem(res.data);
-                setLoading(false);
-            })
-            .catch((error) => {
+        const fetchProblem = async () => {
+            try {
+                const res = await axios.get(`https://dev-server.leita.dev/api/problem/${id}`);
+                const data = res.data?.data;
+
+                if (!data) {
+                    throw new Error("Invalid response format");
+                }
+
+                setProblem(data);
+            } catch (error) {
                 console.error("Failed to fetch problem:", error);
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchProblem();
     }, [id]);
 
     useEffect(() => {
@@ -49,18 +59,25 @@ const ProblemDetail = () => {
         document.removeEventListener("mouseup", stopResizing);
     };
 
+    const handleCopy = (input, id) => {
+        navigator.clipboard.writeText(input).then(() => {
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        });
+    };
+
     if (loading) return <div className="text-white text-center mt-10">문제를 불러오는 중...</div>;
     if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
 
     return (
-        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-nanum font-black">
+        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretend ">
             {/* 문제 설명 영역 */}
             <div
                 className="bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
-                <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId}</h2>
-                <h1 className="text-2xl font-extrabold text-[#CAFF33]">{problem.title}</h1>
+                <h2 className="text-2xl font-bold  text-gray-200"># {problem.problemId}</h2>
+                <h1 className="text-3xl font-bold   text-[#CAFF33]">{problem.title}</h1>
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {problem.category?.map((cat, i) => (
@@ -82,17 +99,17 @@ const ProblemDetail = () => {
 
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold pb-2 pt-3">입력</h3>
-                    <pre className="bg-black text-gray-300 p-3 rounded-md mt-1">{problem.description.input}</pre>
+                    <pre className=" text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.input}</pre>
                 </div>
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold pb-2 pt-3">출력</h3>
-                    <pre className="bg-black text-gray-300 p-3 rounded-md mt-1">{problem.description.output}</pre>
+                    <pre className=" text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.output}</pre>
                 </div>
 
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold pb-2 pt-3">제한 사항</h3>
-                    <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? "정보 없음"}MB</p>
-                    <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? "정보 없음"}초</p>
+                    <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? "정보 없음"}KB</p>
+                    <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? "정보 없음"}MS</p>
                 </div>
 
                 {/* 예제 케이스 */}
@@ -100,11 +117,22 @@ const ProblemDetail = () => {
                     <h2 className="text-xl font-semibold pb-2 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
                         <div key={testCase.id || index} className="mt-3 p-3 bg-black rounded-lg">
-                            <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
-                            <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.input}</pre>
+                            <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
+                            <div className="relative">
+                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{testCase.input}</pre>
+                                <button
+                                    onClick={() => handleCopy(testCase.input, testCase.id || index)}
+                                    className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
+                                >
+                                    {copiedId === (testCase.id || index) ? "복사완료!" : "복사하기"}
+                                </button>
+                            </div>
+
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-                            <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.output}</pre>
+                            <pre className=" font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.output}</pre>
                         </div>
+
+
                     ))}
                 </div>
 

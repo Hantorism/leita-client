@@ -12,11 +12,19 @@ const Problems = () => {
         const fetchProblems = async () => {
             try {
                 const res = await axios.get("https://dev-server.leita.dev/api/problem");
-                setProblems(res.data.content);
+                const content = res.data?.data?.content ?? [];
+
+                if (!Array.isArray(content)) {
+                    throw new Error("Invalid response format");
+                }
+
+                setProblems(content);
             } catch (error) {
                 console.error("Failed to fetch problems:", error);
+                setProblems([]);
             }
         };
+
         fetchProblems();
     }, []);
 
@@ -31,18 +39,18 @@ const Problems = () => {
     };
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900  pt-[5%] bg-[#1A1A1A]">
+        <div className=" flex flex-col items-start min-h-screen text-gray-900  pt-[5%] bg-[#1A1A1A]">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
 
-            <div className="max-w-4xl mx-auto w-full pt-9">
+            <div className="flex-grow max-w-4xl mx-auto w-full pt-9">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
-                    <table className="font-nanum w-full text-left border-collapse border border-gray-600">
+                    <table className="font-Pretend w-full text-left border-collapse border border-gray-600">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
                             <th className="p-3 border-b border-gray-500">ID</th>
-                            <th className="p-3 border-b border-gray-500 font-semibold">제목</th>
+                            <th className="p-3 border-b border-gray-500 ">제목</th>
                             <th className="p-3 border-b border-gray-500">정답률</th>
                         </tr>
                         </thead>
@@ -57,7 +65,7 @@ const Problems = () => {
                                     }`}
                                 >
                                     <td className="p-3">{problem.problemId}</td>
-                                    <td className="p-3 font-bold">
+                                    <td className="p-3 ">
                                         {problem.title || "제목 없음"}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
