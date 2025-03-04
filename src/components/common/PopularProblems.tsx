@@ -25,7 +25,7 @@ const PopularProblems = () => {
 
             const sortedProblems = [...data.data.content]
                 .sort((a: Problem, b: Problem) => b.solved.count - a.solved.count)
-                .slice(0, 6);
+                .slice(0, 5);
 
             setProblems(sortedProblems);
         } catch (error) {

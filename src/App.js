@@ -10,6 +10,7 @@ import Study from "./components/pages/Study";
 import ProblemDetail from "./components/pages/ProblemDetail";
 import StudyDetail from "./components/pages/StudyDetail.tsx";
 
+
 const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
 
 const App = () => {

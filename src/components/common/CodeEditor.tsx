@@ -118,7 +118,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                     <select
                         value={language}
                         onChange={handleLanguageChange}
-                        className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
+                        className="bg-[#3E3E3E]  text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
                     >
                         <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
