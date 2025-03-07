@@ -28,7 +28,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         console.log("Submitting code for", problemId);
 
         try {
-            const response = await fetch(`https://dev-server.leita.dev/api/submit/judge/${problemId}`, {
+            const response = await fetch(`https://dev-server.leita.dev/api/judge/submit/${problemId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -68,7 +68,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         console.log("Code:", code);
 
         try {
-            const response = await fetch(`https://dev-server.leita.dev/api/submit/run/${problemId}`, {
+            const response = await fetch(`https://dev-server.leita.dev/api/judge/run/${problemId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
