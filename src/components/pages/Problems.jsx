@@ -59,7 +59,12 @@ const Problems = () => {
                             currentProblems.map((problem, index) => (
                                 <tr
                                     key={index}
-                                    onClick={() => window.open(`http://localhost:3000/problems/${problem.problemId}`, "_blank")}
+                                    onClick={() => {
+                                        const token = localStorage.getItem("accessToken");
+                                        console.log("🔍 Token before opening problem:", token);
+                                        const problemUrl = `http://localhost:3000/problems/${problem.problemId}?token=${token}`;
+                                        window.open(problemUrl, "_blank");
+                                    }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
                                         index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}

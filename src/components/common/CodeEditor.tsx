@@ -26,17 +26,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         setIsRunning(true);
 
         console.log("Submitting code for", problemId);
-
+        const token = localStorage.getItem("token");
+        if (!token) {
+            console.error("🚨 No token found. Please log in first.");
+            alert("로그인이 필요합니다.");
+            return;
+        }
         try {
+
             const response = await fetch(`https://dev-server.leita.dev/api/judge/submit/${problemId}`, {
                 method: "POST",
-                // headers: {
-                //     "Content-Type": "application/json",
-                //     "Authorization": `Bearer ${token}`,
-                // },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify({
                     code,
-                    language: language.toUpperCase()
+                    language: language.toUpperCase(),
+
                 }),
             });
 
@@ -68,6 +75,27 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
         console.log("Code:", code);
 
         try {
+            const problemResponse = await fetch(`https://dev-server.leita.dev/api/problem/${problemId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            if (!problemResponse.ok) {
+                throw new Error("문제 정보를 가져오는 데 실패했습니다.");
+            }
+
+            const problemData = await problemResponse.json();
+            const testCases = problemData?.data?.testCases || [];
+
+            if (testCases.length === 0) {
+                alert("테스트 케이스가 없습니다. 문제를 확인하세요.");
+                setIsRunning(false);
+                return;
+            }
+
             const response = await fetch(`https://dev-server.leita.dev/api/judge/run/${problemId}`, {
                 method: "POST",
                 headers: {
@@ -77,12 +105,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                 body: JSON.stringify({
                     code,
                     language: language.toUpperCase(),
-                    testCases: [
-                        {
-                            input: "example input",  // 필요 시 변경
-                            output: "expected output" // 필요 시 변경
-                        }
-                    ]
+                    testCases
                 }),
             });
 

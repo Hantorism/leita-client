@@ -11,6 +11,8 @@ const Login = ({ user, setUser }) => {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(null);
 
+
+
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -21,42 +23,49 @@ const Login = ({ user, setUser }) => {
     const signInWithGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
+                // console.log(" Google OAuth Token:", tokenResponse.access_token);
 
-                // console.log("Google OAuth Token:", tokenResponse.access_token);
 
                 const res = await axios.post(`${API_BASE_URL}/auth/oauth`, {
-                        accessToken: tokenResponse.access_token,
-                        // accessToken: response.credential,
+                    accessToken: tokenResponse.access_token,
+                }, {
+                    headers: {
+                        "Content-Type": "application/json",
                     }
-                    ,
-                    {
-                        headers: {
-                            "Content-Type": "application/json"
-                            // withCredentials: true,
-                            //
-                            // "Authorization": `Bearer ${tokenResponse.access_token}`
-                        }
-                    }
-                );
+                });
 
-                //
-                // Cookies.set("accessToken", res.data.accessToken, { expires: 1 }); // 1일 유지
-                // Cookies.set("refreshToken", res.data.refreshToken, { expires: 7 }); // 7일 유지
+                console.log(" Google Login Response:", res.data);
+
+
+                const accessToken = res.data.data.accessToken;
+                console.log(" Google Login Response Data:", res.data);
+                if (!accessToken) {
+
+                    return;
+                }
+
+
+                localStorage.setItem("token", res.data.accessToken);
+                Cookies.set("accessToken", accessToken, { expires: 1 });
+
+
 
 
                 const userRes = await axios.get(`${API_BASE_URL}/auth/info`, {
-                    headers: { Authorization: `Bearer ${res.data.accessToken}` },
+                    headers: { Authorization: `Bearer ${accessToken}` },
                 });
+
+                console.log(" User Info Response:", userRes.data);
 
                 setUser(userRes.data);
                 localStorage.setItem("user", JSON.stringify(userRes.data));
                 navigate("/");
             } catch (error) {
-                console.error("Google login failed:", error);
+                console.error(" Google login failed:", error);
             }
         },
         onError: (error) => {
-            console.error("Google login error:", error);
+            console.error(" Google login error:", error);
         },
     });
 
@@ -64,6 +73,7 @@ const Login = ({ user, setUser }) => {
         googleLogout();
         setUser(null);
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         Cookies.remove("accessToken");
         Cookies.remove("refreshToken");
     };
@@ -82,8 +92,10 @@ const Login = ({ user, setUser }) => {
                 </div>
             ) : (
                 <div className="login-form">
-                    <button  className="bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
-                             onClick={() => signInWithGoogle()}>
+                    <button
+                        className="bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
+                        onClick={signInWithGoogle}
+                    >
                         Sign in with Google
                     </button>
                 </div>
