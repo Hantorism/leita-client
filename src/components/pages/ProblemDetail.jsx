@@ -22,7 +22,7 @@ const ProblemDetail = () => {
 
         if (token) {
             localStorage.setItem("accessToken", token);
-            console.log("✅ Token restored in localStorage:", token);
+            // console.log("✅ Token restored in localStorage:", token);
         }
     }, [location.search]);
 

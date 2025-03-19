@@ -45,7 +45,7 @@ const Login = ({ user, setUser }) => {
                 }
 
 
-                localStorage.setItem("token", res.data.accessToken);
+                localStorage.setItem("token", accessToken);
                 Cookies.set("accessToken", accessToken, { expires: 1 });
 
 
@@ -82,7 +82,7 @@ const Login = ({ user, setUser }) => {
         <div className="login-container">
             {user ? (
                 <div className="flex items-center gap-3">
-                    <span className="text-white text-sm">Hello, {user.name} 👋</span>
+                    <span className="text-white text-sm">Hello, {user.data.name} 👋</span>
                     <button
                         className="bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
                         onClick={logout}

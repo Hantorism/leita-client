@@ -58,15 +58,21 @@ const Problems = () => {
                         {currentProblems.length > 0 ? (
                             currentProblems.map((problem, index) => (
                                 <tr
-                                    key={index}
+                                    key={problem.problemId}
                                     onClick={() => {
-                                        const token = localStorage.getItem("accessToken");
-                                        console.log("🔍 Token before opening problem:", token);
-                                        const problemUrl = `http://localhost:3000/problems/${problem.problemId}?token=${token}`;
-                                        window.open(problemUrl, "_blank");
+                                        const problemUrl = `http://localhost:3000/problems/${problem.problemId}`;
+                                        const newWindow = window.open(problemUrl, "_blank");
+
+
+                                        newWindow?.addEventListener("load", () => {
+                                            const token = localStorage.getItem("accessToken");
+                                            if (token) {
+                                                newWindow?.postMessage({accessToken: token}, "http://localhost:3000");
+                                            }
+                                        });
                                     }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
-                                        index % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
+                                        problem.problemId % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
                                 >
                                     <td className="p-3">{problem.problemId}</td>
@@ -99,7 +105,7 @@ const Problems = () => {
 
 
                 <div className="flex justify-center mt-4">
-                    {Array.from({ length: Math.ceil(problems.length / problemsPerPage) }, (_, i) => (
+                    {Array.from({length: Math.ceil(problems.length / problemsPerPage)}, (_, i) => (
                         <button
                             key={i + 1}
                             onClick={() => handlePageChange(i + 1)}
