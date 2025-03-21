@@ -90,8 +90,8 @@ const ProblemDetail = () => {
                 className="scrollbar-hide bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
-                <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId}</h2>
-                <h1 className="text-2xl font-bold text-[#CAFF33]">{problem.title}</h1>
+                <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId} {problem.title}</h2>
+                {/*<h1 className="text-2xl font-bold text-[#CAFF33]"></h1>*/}
 
                 <div className="mt-3 flex flex-wrap gap-2">
                     {problem.category?.map((cat, i) => (
@@ -121,11 +121,7 @@ const ProblemDetail = () => {
                     <pre className="text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.output}</pre>
                 </div>
 
-                <div className="mt-4">
-                    <h3 className="text-lg font-normal pb-2 pt-3">제한 사항</h3>
-                    <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? "정보 없음"}KB</p>
-                    <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? "정보 없음"}MS</p>
-                </div>
+
 
                 {/* 예제 케이스 */}
                 <div className="mt-6">
@@ -147,6 +143,12 @@ const ProblemDetail = () => {
                             <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.output}</pre>
                         </div>
                     ))}
+                </div>
+
+                <div className="mt-4">
+                    <h3 className="text-lg font-normal pb-2 pt-3">제한 사항</h3>
+                    <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? "정보 없음"}KB</p>
+                    <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? "정보 없음"}MS</p>
                 </div>
 
                 <p className="text-sm text-gray-400 pt-6">출처: {problem.source}</p>
