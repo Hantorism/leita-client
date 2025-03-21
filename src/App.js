@@ -9,9 +9,15 @@ import Problems from "./components/pages/Problems";
 import Study from "./components/pages/Study";
 import ProblemDetail from "./components/pages/ProblemDetail";
 import StudyDetail from "./components/pages/StudyDetail.tsx";
+import TermsPrivacyPage from "./components/pages/term";
+import TermsOfService from "./components/pages/term";
+import PrivacyPolicy from "./components/pages/Privacy";
+
 
 
 const clientId = process.env.REACT_APP_GOOGLE_AUTH_CLIENT_ID;
+
+
 
 const App = () => {
     return (
@@ -22,6 +28,10 @@ const App = () => {
                 <Route path="/study" element={<Study />} />
                 <Route path="/problems/:id" element={<ProblemDetail />} />
                 <Route path="/study/:id" element={<StudyDetail />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+
+
 
 
 

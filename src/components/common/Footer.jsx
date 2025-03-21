@@ -15,17 +15,17 @@ const Footer = () => {
                     </div>
 
                     {/* 가운데 링크 */}
-                    {/*<div className="flex flex-col md:flex-row gap-4">*/}
+                    <div className="flex flex-col md:flex-row gap-4">
                     {/*    <a href="/about" className="text-sm text-gray-400 hover:text-white">*/}
                     {/*        About Us*/}
                     {/*    </a>*/}
-                    {/*    <a href="/contact" className="text-sm text-gray-400 hover:text-white">*/}
-                    {/*        Contact*/}
-                    {/*    </a>*/}
-                    {/*    <a href="/privacy" className="text-sm text-gray-400 hover:text-white">*/}
-                    {/*        Privacy Policy*/}
-                    {/*    </a>*/}
-                    {/*</div>*/}
+                        <a href="/terms" className="text-sm text-gray-400 hover:text-white">
+                           이용약관
+                        </a>
+                        <a href="/privacy" className="text-sm text-gray-400 hover:text-white">
+                           개인정보 처리방침
+                        </a>
+                    </div>
 
                     {/* 오른쪽 */}
                     <div className="mt-4 md:mt-0">
