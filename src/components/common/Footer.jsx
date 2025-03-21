@@ -1,4 +1,6 @@
 import React from "react";
+import {Link} from "react-router-dom";
+import logo from "../../assets/Logo.png";
 
 const Footer = () => {
     return (
@@ -8,7 +10,9 @@ const Footer = () => {
 
                     {/* 왼쪽 */}
                     <div className="mb-4 md:mb-0">
-                        <h3 className="text-xl font-semibold">Leita</h3>
+                        <Link to="/">
+                            <img src={logo}  alt="LEITA Logo" className="h-8" />
+                        </Link>
                         <p className="text-sm text-gray-400 mt-2">
                             아주대 코딩 연습 플랫폼
                         </p>

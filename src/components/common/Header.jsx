@@ -3,6 +3,8 @@ import { Link, NavLink } from "react-router-dom";
 import Login from "./login";
 import { FiMenu, FiX } from "react-icons/fi";
 
+import logo from "../../assets/Logo.png";
+
 const Header = () => {
     const [user, setUser] = useState(null);
     const [menuOpen, setMenuOpen] = useState(false);
@@ -11,9 +13,9 @@ const Header = () => {
         <header className="font-lexend">
 
             <nav className="bg-white bg-opacity-30 p-3 md:p-4 rounded-full flex justify-between items-center mx-4 my-5 hidden md:flex">
-                <div className="text-white text-xl font-sans pl-8 font-extrabold">
-                    <Link to="/">LEITA</Link>
-                </div>
+                <Link to="/">
+                    <img src={logo}  alt="LEITA Logo" className="h-8" />
+                </Link>
 
                 <ul className="flex flex-wrap items-stretch list-none p-0 m-0 font-light">
                     <li>
@@ -57,7 +59,9 @@ const Header = () => {
 
             <div className="flex md:hidden justify-between items-center bg-white bg-opacity-30 p-3 rounded-full mx-4 my-5">
                 <div className="text-white text-xl font-sans font-extrabold">
-                    <Link to="/">LEITA</Link>
+                    <Link to="/">
+                        <img src={logo}  alt="LEITA Logo" className="h-6" />
+                    </Link>
                 </div>
 
 
