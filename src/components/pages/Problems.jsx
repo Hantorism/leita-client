@@ -44,7 +44,7 @@ const Problems = () => {
                 <Header />
             </header>
 
-            <div className="flex-grow max-w-3xl mx-auto w-full pt-9">
+            <div className="flex-grow max-w-3xl mx-auto w-full pt-9  md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
                     <table className="font-Pretend w-full text-left border-collapse border border-gray-600">
                         <thead>

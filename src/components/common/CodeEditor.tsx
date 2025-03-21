@@ -10,7 +10,8 @@ interface CodeEditorProps {
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases }) => {
     const [language, setLanguage] = useState("Python");
-    const [isRunning, setIsRunning] = useState(false);
+    const [isRunningCode, setIsRunningCode] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
     const [result, setResult] = useState<string | null>(null);
     const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
@@ -18,24 +19,53 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         column: 1,
     });
     const [selectedTestCase, setSelectedTestCase] = useState(0);
+    const [outputHeight, setOutputHeight] = useState(200);
+    const token = localStorage.getItem("token");
 
-    const observer = new ResizeObserver(() => {});
-    observer.observe(document.body);
-    observer.disconnect();
+    const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setLanguage(event.target.value);
+    };
+    // const handleEditorMount = (editor: any) => {
+    //     editorRef.current = editor;
+    //     editor.onDidChangeCursorPosition((e: any) => {
+    //         setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
+    //     });
+    // };
+
+// const outputHeightRef = useRef(outputHeight); // outputHeight를 useRef로 관리
+//
+//     const startResizing = (e: React.MouseEvent) => {
+//         e.preventDefault();
+//         const startY = e.clientY;
+//         const startHeight = outputHeight;
+//
+//         const onMouseMove = (e: MouseEvent) => {
+//             const newHeight = Math.max(100, startHeight + (e.clientY - startY));
+//             setOutputHeight(newHeight);
+//         };
+//
+//         const onMouseUp = () => {
+//             window.removeEventListener("mousemove", onMouseMove);
+//             window.removeEventListener("mouseup", onMouseUp);
+//         };
+//
+//         window.addEventListener("mousemove", onMouseMove);
+//         window.addEventListener("mouseup", onMouseUp);
+//     };
+
+    // const observer = new ResizeObserver(() => {});
+    // observer.observe(document.body);
+    // observer.disconnect();
 
     const editorRef = useRef<any>(null); // Reference to Monaco Editor
 
-    const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setLanguage(e.target.value);
-    };
-    const token = localStorage.getItem("token");
     const handleSubmitCode = async () => {
-        setIsRunning(true);
+        setIsSubmitting(true);
         setResult(null);
 
         if (!token) {
             alert("로그인이 필요합니다.");
-            setIsRunning(false);
+            setIsSubmitting(false);
             return;
         }
 
@@ -71,12 +101,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             setResult("서버 요청 중 오류 발생");
         }
 
-        setIsRunning(false);
+        setIsSubmitting(false);
     };
 
     const handleRunCode = async () => {
-        setIsRunning(true);
+        setIsRunningCode(true);
         setResult(null);
+        const token = localStorage.getItem("token");
 
         try {
             const problemResponse = await fetch(`https://dev-server.leita.dev/api/problem/${problemId}`, {
@@ -96,7 +127,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
             if (testCases.length === 0) {
                 setResult({ message: "테스트 케이스가 없습니다.", isSubmit: false });
-                setIsRunning(false);
+                setIsRunningCode(false);
                 return;
             }
 
@@ -136,8 +167,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             });
         }
 
-        setIsRunning(false);
+        setIsRunningCode(false);
     };
+
 
 
     const handleEditorMount = (editor: any) => {
@@ -170,26 +202,82 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     </select>
 
                     <button
+                        type="button"
                         onClick={handleRunCode}
-                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-md transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:scale-[1.05] hover:bg-gray-200 hover:text-gray-900 hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
-                        disabled={isRunning}
+                        className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-gray-200 hover:text-gray-900 hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isRunningCode}
                     >
-                        {isRunning ? "RUNNING" : "RUN"}
+                        {isRunningCode ? (
+                            <>
+                                <svg
+                                    className="size-5 animate-spin text-gray-800"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    ></path>
+                                </svg>
+                                RUNNING
+                            </>
+                        ) : (
+                            "RUN"
+                        )}
                     </button>
+
                     <button
+                        type="button"
                         onClick={handleSubmitCode}
-                        className="font-lexend px-[15px] py-[5px] text-[0.9rem] font-light text-white bg-[#3E3E3E] rounded-md transition-all duration-300 ease-in-out hover:bg-gradient-to-r  hover:scale-[1.05] hover:text-[#CAFF33] hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
-                        disabled={isRunning}
+                        className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-white bg-[#3E3E3E] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:text-[#CAFF33] hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isSubmitting}
                     >
-                        Submit
+                        {isSubmitting ? (
+                            <>
+                                <svg
+                                    className="size-5 animate-spin text-white"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                    ></path>
+                                </svg>
+                                Submitting
+                            </>
+                        ) : (
+                            "Submit"
+                        )}
                     </button>
+
                 </div>
             </div>
 
             <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg flex-grow">
                 <MonacoEditor
                     width="100%"
-                    height="100%"
+                    height="calc(90vh - 300px)"
                     language={language}
                     theme="vs-dark"
                     value={code}
@@ -205,13 +293,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             </div>
 
 
+
             <div className="mt-2 text-gray-300 text-sm">
                 Line: {cursorPosition.line}, Column: {cursorPosition.column}
             </div>
 
+            {/*/!* 리사이즈 핸들 *!/*/}
+            {/*<div*/}
+            {/*    className="w-full h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize flex items-center justify-center transition-all"*/}
+            {/*    onMouseDown={startResizing}*/}
+            {/*>*/}
+            {/*    <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>*/}
+            {/*</div>*/}
 
-            <div className="mt-4 p-3 bg-[#1A1A1A] text-white rounded-md">
-                <h3 className="text-lg">테스트 케이스</h3>
+
+
+            <div className="mt-4 p-3 bg-[#1A1A1A] text-white rounded-md max-h-[400px] overflow-y-auto scrollbar-hide">
+                {/*<h3 className="text-lg">테스트 케이스</h3>*/}
 
                 {/* 테스트 케이스 선택 버튼 */}
                 <div className="flex gap-2 mt-2">
@@ -238,8 +336,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     {/*</span>*/}
                     {/*</p>*/}
 
-                    <div className="mt-3">
-                        <h4 className="text-xs text-gray-400 mt-1">입력 {selectedTestCase + 1}</h4>
+                    <div className="mt-1">
+                        <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
                         <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                         {testCases[selectedTestCase].input}
                     </pre>
