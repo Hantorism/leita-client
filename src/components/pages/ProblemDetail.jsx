@@ -154,11 +154,18 @@ const ProblemDetail = () => {
             </div>
 
             {/* 리사이즈 핸들 */}
-            <div className="w-1 bg-gray-700 cursor-ew-resize rounded-full m-0" onMouseDown={startResizing} />
+            <div
+                className="w-[8px] min-h-[60px] bg-gray-400 hover:bg-gray-200 cursor-ew-resize rounded-md mx-[-4px] flex items-center justify-center self-center z-50 transition-all duration-150 ease-in-out"
+                onMouseDown={startResizing}
+            >
+                {/* 점 3개 추가 (드래그 가능 강조) */}
+                <div className="w-[3px] h-[20px] bg-gray-600 rounded-full"></div>
+            </div>
 
             {/* 코드 에디터 */}
             <div className="flex-1 flex flex-col min-w-[300px] overflow-hidden">
-                <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} />
+                <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} testCases={problem.testCases} />
+
             </div>
         </div>
     );

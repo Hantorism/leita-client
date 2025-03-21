@@ -4,17 +4,24 @@ import MonacoEditor from "@monaco-editor/react";
 interface CodeEditorProps {
     code: string;
     setCode: (code: string) => void;
-    problemId: string; // Add problemId as a prop
+    problemId: string;
+    testCases: { input: string; output: string }[];
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases }) => {
     const [language, setLanguage] = useState("Python");
     const [isRunning, setIsRunning] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
+    const [result, setResult] = useState<string | null>(null);
     const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
         line: 1,
         column: 1,
     });
+    const [selectedTestCase, setSelectedTestCase] = useState(0);
+
+    const observer = new ResizeObserver(() => {});
+    observer.observe(document.body);
+    observer.disconnect();
 
     const editorRef = useRef<any>(null); // Reference to Monaco Editor
 
@@ -24,16 +31,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
     const token = localStorage.getItem("token");
     const handleSubmitCode = async () => {
         setIsRunning(true);
+        setResult(null);
 
-        console.log("Submitting code for", problemId);
-        const token = localStorage.getItem("token");
         if (!token) {
-            console.error("🚨 No token found. Please log in first.");
             alert("로그인이 필요합니다.");
+            setIsRunning(false);
             return;
         }
-        try {
 
+        try {
             const response = await fetch(`https://dev-server.leita.dev/api/judge/submit/${problemId}`, {
                 method: "POST",
                 headers: {
@@ -43,36 +49,34 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                 body: JSON.stringify({
                     code,
                     language: language.toUpperCase(),
-
                 }),
             });
 
-            const result = await response.json();
+            const resultData = await response.json();
 
             if (response.ok) {
-                console.log("Code submitted successfully:", result);
-                if (result.data?.isSubmit) {
-                    alert("제출이 완료되었습니다!");
-                }
+                setResult({
+                    message: resultData.message || "✅ 제출 성공!",
+                    isSubmit: true
+                });
             } else {
-                console.error("Submission failed:", result);
-                alert(result.message || "제출에 실패했습니다.");
+                setResult({
+                    error: `❌ 제출 실패: ${resultData.message}`,
+                    message: resultData.message,
+                    isSubmit: true
+                });
             }
+
         } catch (error) {
-            console.error("Failed to submit code:", error);
-            alert("서버 요청 중 오류가 발생했습니다.");
+            setResult("서버 요청 중 오류 발생");
         }
 
         setIsRunning(false);
     };
 
-
     const handleRunCode = async () => {
         setIsRunning(true);
-
-        console.log("Executing code in", language);
-        console.log("Problem ID:", problemId);
-        console.log("Code:", code);
+        setResult(null);
 
         try {
             const problemResponse = await fetch(`https://dev-server.leita.dev/api/problem/${problemId}`, {
@@ -91,7 +95,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
             const testCases = problemData?.data?.testCases || [];
 
             if (testCases.length === 0) {
-                alert("테스트 케이스가 없습니다. 문제를 확인하세요.");
+                setResult({ message: "테스트 케이스가 없습니다.", isSubmit: false });
                 setIsRunning(false);
                 return;
             }
@@ -105,24 +109,35 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
                 body: JSON.stringify({
                     code,
                     language: language.toUpperCase(),
-                    testCases
+                    testCases,
                 }),
             });
 
-            const result = await response.json();
+            const resultData = await response.json();
 
             if (response.ok) {
-                console.log("Code submitted successfully:", result);
+                setResult({
+                    testCases: resultData.testCases || [],
+                    message: resultData.message || "🛠 실행 완료!",
+                    isSubmit: false
+                });
             } else {
-                console.error("Error executing code:", result);
+                setResult({
+                    error: `❌ 실행 실패: ${resultData.message}`,
+                    message: resultData.message || "실행 중 오류 발생",
+                    isSubmit: false
+                });
             }
+
         } catch (error) {
-            console.error("Failed to submit code:", error);
+            setResult({
+                message: "서버 요청 중 오류 발생",
+                isSubmit: false
+            });
         }
 
         setIsRunning(false);
     };
-
 
 
     const handleEditorMount = (editor: any) => {
@@ -193,6 +208,74 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId }) => 
             <div className="mt-2 text-gray-300 text-sm">
                 Line: {cursorPosition.line}, Column: {cursorPosition.column}
             </div>
+
+
+            <div className="mt-4 p-3 bg-[#1A1A1A] text-white rounded-md">
+                <h3 className="text-lg">테스트 케이스</h3>
+
+                {/* 테스트 케이스 선택 버튼 */}
+                <div className="flex gap-2 mt-2">
+                    {testCases.map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setSelectedTestCase(index)}
+                            className={`px-2 py-1 text-xs rounded ${
+                                selectedTestCase === index
+                                    ? "bg-gray-700 text-white"
+                                    : "bg-gray-600 hover:bg-gray-500 text-gray-300"
+                            }`}
+                        >
+                            TestCase {index + 1}
+                        </button>
+                    ))}
+                </div>
+
+                {/* 선택된 테스트 케이스만 표시 */}
+                <div className="mt-3 p-2 rounded bg-black">
+                    {/*<p>*/}
+                    {/*<span className="bg-gray-700 hover:bg-gray-600 p-1 text-xs rounded">*/}
+                    {/*    TestCase {selectedTestCase + 1}*/}
+                    {/*</span>*/}
+                    {/*</p>*/}
+
+                    <div className="mt-3">
+                        <h4 className="text-xs text-gray-400 mt-1">입력 {selectedTestCase + 1}</h4>
+                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                        {testCases[selectedTestCase].input}
+                    </pre>
+                    </div>
+
+                    <div className="mt-1 mb-3">
+                        <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                        {testCases[selectedTestCase].output}
+                    </pre>
+                    </div>
+
+                    {result?.testCases?.[selectedTestCase] && (
+                        <>
+                            <p>
+                                <span className="text-red-400 font-D2Coding">실제 출력:</span>{" "}
+                                {result.testCases[selectedTestCase].actualOutput}
+                            </p>
+                            <p>
+                            <span className="font-semibold">
+                                {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output
+                                    ? "✅ 통과"
+                                    : "❌ 실패"}
+                            </span>
+                            </p>
+                        </>
+                    )}
+
+                    {result?.message && (
+                        <p className="mt-2 text-white">
+                            {result.isSubmit ? `🚀  ${result.message}` : `🛠  ${result.message || "실행 완료!"}`}
+                        </p>
+                    )}
+                </div>
+            </div>
+
         </div>
     );
 };

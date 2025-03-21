@@ -37,3 +37,35 @@ body, html {
 .App-link {
   @apply text-[#61dafb];  /* 링크 색상 #61dafb 설정 */
 }
+/* 스크롤바 너비 설정 */
+.scrollbar-hide::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* 스크롤바 트랙 (배경) */
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: #2A2A2A;
+  border-radius: 4px;
+}
+
+/* 스크롤바 핸들 (움직이는 부분) */
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+/* 스크롤바 핸들에 hover 효과 */
+.scrollbar-hide::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+.resizer {
+  width: 8px;
+  background: #555;
+  cursor: ew-resize;
+  transition: background 0.2s ease-in-out;
+  border-radius: 4px;
+}
+
+.resizer:hover {
+  background: #888;
+}
