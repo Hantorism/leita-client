@@ -10,6 +10,7 @@ const API_BASE_URL = "https://dev-server.leita.dev/api"; // API 주소 설정
 const Login = ({ user, setUser }) => {
     const navigate = useNavigate();
     const [userInfo, setUserInfo] = useState(null);
+    const [logoutTimer, setLogoutTimer] = useState(null);
 
 
 
@@ -18,7 +19,19 @@ const Login = ({ user, setUser }) => {
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
+        if (localStorage.getItem("token")) {
+            startLogoutTimer();
+        }
     }, []);
+
+    const startLogoutTimer = () => {
+        // 15시간(54000초) 후 로그아웃
+        const timer = setTimeout(() => {
+            logout();
+        }, 54000 * 1000);
+        setLogoutTimer(timer);
+    };
+
 
     const signInWithGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
