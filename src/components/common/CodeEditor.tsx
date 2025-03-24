@@ -363,12 +363,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         {testCases[selectedTestCase].output}
                     </pre>
                     </div>
-
+                    {result?.message && result.isSubmit && (
+                        <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>
+                    )}
                     {result?.testCases?.[selectedTestCase] && (
                         <>
-                            <p>
-                                <span className="text-gray-400 ">결과 :</span>{" "}
-                                {result.testCases[selectedTestCase].actualOutput}
+                            <p className="font-D2Coding text-gray-200">
+                                <span className="font-D2Coding text-gray-200">결과 :</span>{" "}
+                                {result.testCases[selectedTestCase].actualOutput} !
                             </p>
                             <p>
                             {/*<span className="font-semibold">*/}
@@ -380,11 +382,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         </>
                     )}
 
-                    {/*{result?.message && (*/}
-                    {/*    <p className="mt-2 text-white">*/}
-                    {/*        {result.isSubmit ? `🚀  ${result.message}` : `🛠  ${result.message || "실행 완료!"}`}*/}
-                    {/*    </p>*/}
-                    {/*)}*/}
+
                 </div>
             </div>
 
