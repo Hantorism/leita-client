@@ -57,7 +57,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     // observer.observe(document.body);
     // observer.disconnect();
 
-    const editorRef = useRef<any>(null); // Reference to Monaco Editor
+    const editorRef = useRef<any>(null);
+    const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
+
 
     const handleSubmitCode = async () => {
         setIsSubmitting(true);
@@ -77,7 +79,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    code,
+                    code: encodeBase64(code),
                     language: language.toUpperCase(),
                 }),
             });
@@ -87,22 +89,25 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             if (response.ok) {
                 setResult({
                     message: resultData.message || "✅ 제출 성공!",
-                    isSubmit: true
+                    isSubmit: resultData.data?.isSubmit ?? true
                 });
             } else {
                 setResult({
-                    error: `❌ 제출 실패: ${resultData.message}`,
-                    message: resultData.message,
-                    isSubmit: true
+                    message: `❌ 제출 실패: ${resultData.message}`,
+                    isSubmit: false
                 });
             }
-
         } catch (error) {
-            setResult("서버 요청 중 오류 발생");
+            console.error("서버 요청 오류:", error);
+            setResult({
+                message: "🚨 서버 요청 중 오류 발생",
+                isSubmit: false
+            });
         }
 
         setIsSubmitting(false);
     };
+
 
     const handleRunCode = async () => {
         setIsRunningCode(true);
@@ -138,18 +143,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    code,
+                    code: encodeBase64(code),
                     language: language.toUpperCase(),
-                    testCases,
+                    testCases: testCases.map(({ input, output }) => ({
+                        input: encodeBase64(input),
+                        output: encodeBase64(output),
+                    })),
                 }),
             });
 
             const resultData = await response.json();
 
+
             if (response.ok) {
                 setResult({
-                    testCases: resultData.testCases || [],
                     message: resultData.message || "🛠 실행 완료!",
+                    testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
+                        actualOutput: testResult.result,
+                        error: testResult.error || null,
+                        isPassed: testResult.result === testCases[index].output
+                    })),
                     isSubmit: false
                 });
             } else {
@@ -159,6 +172,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     isSubmit: false
                 });
             }
+
 
         } catch (error) {
             setResult({
@@ -353,24 +367,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     {result?.testCases?.[selectedTestCase] && (
                         <>
                             <p>
-                                <span className="text-red-400 font-D2Coding">실제 출력:</span>{" "}
+                                <span className="text-gray-400 ">결과 :</span>{" "}
                                 {result.testCases[selectedTestCase].actualOutput}
                             </p>
                             <p>
-                            <span className="font-semibold">
-                                {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output
-                                    ? "✅ 통과"
-                                    : "❌ 실패"}
-                            </span>
+                            {/*<span className="font-semibold">*/}
+                            {/*    {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output*/}
+                            {/*        ? "✅ 통과"*/}
+                            {/*        : "❌ 실패"}*/}
+                            {/*</span>*/}
                             </p>
                         </>
                     )}
 
-                    {result?.message && (
-                        <p className="mt-2 text-white">
-                            {result.isSubmit ? `🚀  ${result.message}` : `🛠  ${result.message || "실행 완료!"}`}
-                        </p>
-                    )}
+                    {/*{result?.message && (*/}
+                    {/*    <p className="mt-2 text-white">*/}
+                    {/*        {result.isSubmit ? `🚀  ${result.message}` : `🛠  ${result.message || "실행 완료!"}`}*/}
+                    {/*    </p>*/}
+                    {/*)}*/}
                 </div>
             </div>
 
