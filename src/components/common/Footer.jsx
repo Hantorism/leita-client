@@ -23,10 +23,10 @@ const Footer = () => {
                     {/*    <a href="/about" className="text-sm text-gray-400 hover:text-white">*/}
                     {/*        About Us*/}
                     {/*    </a>*/}
-                        <a href="/terms" className="text-sm text-gray-400 hover:text-white">
+                        <a href="https://leita.gitbook.io/leita/terms" className="text-sm text-gray-400 hover:text-white">
                            이용약관
                         </a>
-                        <a href="/privacy" className="text-sm text-gray-400 hover:text-white">
+                        <a href="https://leita.gitbook.io/leita/privacy" className="text-sm text-gray-400 hover:text-white">
                            개인정보 처리방침
                         </a>
                     </div>
