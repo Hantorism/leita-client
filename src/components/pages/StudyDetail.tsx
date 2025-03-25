@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 const StudyDetail = () => {
     const { id } = useParams();
     const [study, setStudy] = useState(null);
@@ -10,7 +12,7 @@ const StudyDetail = () => {
     useEffect(() => {
 
         /*
-        axios.get(`https://dev-server.leita.dev/api/study/${id}`)
+        axios.get(`${API_BASE_URL}/study/${id}`)
             .then((res) => {
                 setStudy(res.data);
                 document.title = `${res.data.title} | Leita`;

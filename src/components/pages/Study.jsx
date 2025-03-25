@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 const Study = () => {
     const [studies, setStudies] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ const Study = () => {
     useEffect(() => {
         const fetchStudies = async () => {
             try {
-                const response = await fetch("https://dev-server.leita.dev/api/study");
+                const response = await fetch(`${API_BASE_URL}/study`);
                 if (!response.ok) throw new Error(`Failed to fetch study groups: ${response.status}`);
 
                 const data = await response.json();

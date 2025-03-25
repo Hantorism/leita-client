@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import "./button.css";
 
-const API_BASE_URL = "https://dev-server.leita.dev/api"; // API 주소 설정
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
 const Login = ({ user, setUser }) => {
     const navigate = useNavigate();

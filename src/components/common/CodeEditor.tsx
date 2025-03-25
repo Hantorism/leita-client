@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 interface CodeEditorProps {
     code: string;
     setCode: (code: string) => void;
@@ -72,7 +74,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         }
 
         try {
-            const response = await fetch(`https://dev-server.leita.dev/api/judge/submit/${problemId}`, {
+            const response = await fetch(`${API_BASE_URL}/judge/submit/${problemId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -115,7 +117,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         const token = localStorage.getItem("token");
 
         try {
-            const problemResponse = await fetch(`https://dev-server.leita.dev/api/problem/${problemId}`, {
+            const problemResponse = await fetch(`${API_BASE_URL}/problem/${problemId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -136,7 +138,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 return;
             }
 
-            const response = await fetch(`https://dev-server.leita.dev/api/judge/run/${problemId}`, {
+            const response = await fetch(`${API_BASE_URL}/judge/run/${problemId}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

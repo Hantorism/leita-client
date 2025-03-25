@@ -3,6 +3,8 @@ import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 const Problems = () => {
     const [problems, setProblems] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -11,7 +13,7 @@ const Problems = () => {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await axios.get("https://dev-server.leita.dev/api/problem");
+                const res = await axios.get(`${API_BASE_URL}/problem`);
                 const content = res.data?.data?.content ?? [];
 
                 if (!Array.isArray(content)) {

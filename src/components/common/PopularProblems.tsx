@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 interface Problem {
     problemId: number;
     title: string;
@@ -16,7 +18,7 @@ const PopularProblems = () => {
     useEffect(() => {
     const fetchProblems = async () => {
         try {
-            const response = await fetch("https://dev-server.leita.dev/api/problem");
+            const response = await fetch(`${API_BASE_URL}/problem`);
             const data = await response.json();
 
             if (!data?.data?.content) {

@@ -3,6 +3,8 @@ import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import CodeEditor from "../common/CodeEditor.tsx";
 
+const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
 const ProblemDetail = () => {
     const { id } = useParams();
     const location = useLocation();
@@ -29,7 +31,7 @@ const ProblemDetail = () => {
     useEffect(() => {
         const fetchProblem = async () => {
             try {
-                const res = await axios.get(`https://dev-server.leita.dev/api/problem/${id}`);
+                const res = await axios.get(`${API_BASE_URL}/problem/${id}`);
                 const data = res.data?.data;
 
                 if (!data) {
