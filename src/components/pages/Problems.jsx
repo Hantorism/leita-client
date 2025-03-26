@@ -62,7 +62,7 @@ const Problems = () => {
                                 <tr
                                     key={problem.problemId}
                                     onClick={() => {
-                                        const problemUrl = `${window.location.host}/problems/${problem.problemId}`;
+                                        const problemUrl = `problems/${problem.problemId}`;
                                         const newWindow = window.open(problemUrl, "_blank");
 
 
