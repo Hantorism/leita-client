@@ -62,14 +62,14 @@ const Problems = () => {
                                 <tr
                                     key={problem.problemId}
                                     onClick={() => {
-                                        const problemUrl = `http://localhost:3000/problems/${problem.problemId}`;
+                                        const problemUrl = `${window.location.host}/problems/${problem.problemId}`;
                                         const newWindow = window.open(problemUrl, "_blank");
 
 
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({accessToken: token}, "http://localhost:3000");
+                                                newWindow?.postMessage({accessToken: token}, `${window.location.host}`);
                                             }
                                         });
                                     }}

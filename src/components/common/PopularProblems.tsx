@@ -45,7 +45,7 @@ const PopularProblems = () => {
                 {problems.map((problem) => (
                     <div
                         key={problem.problemId}
-                        onClick={() => window.open(`http://localhost:3000/problems/${problem.problemId}`, "_blank")}
+                        onClick={() => window.open(`${window.location.host}/problems/${problem.problemId}`, "_blank")}
                         className="cursor-pointer w-full h-40 bg-white bg-opacity-10 p-4 rounded-xl transition-transform duration-200 hover:scale-105 hover:bg-opacity-20"
                     >
                         <h3 className="text-lg font-semibold text-white">{problem.title}</h3>
