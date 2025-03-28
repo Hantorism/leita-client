@@ -91,24 +91,31 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             if (response.ok) {
                 setResult({
                     message: resultData.message || "✅ 제출 성공!",
-                    isSubmit: resultData.data?.isSubmit ?? true
+                    isSubmit: true,
+                    result: resultData.data?.result || "",
+                    error: resultData.data?.error || null
                 });
             } else {
                 setResult({
                     message: `❌ 제출 실패: ${resultData.message}`,
-                    isSubmit: false
+                    isSubmit: false,
+                    result: "",
+                    error: resultData.data?.error || "알 수 없는 오류 발생"
                 });
             }
         } catch (error) {
             console.error("서버 요청 오류:", error);
             setResult({
                 message: "🚨 서버 요청 중 오류 발생",
-                isSubmit: false
+                isSubmit: false,
+                result: "",
+                error: "서버 오류"
             });
         }
 
         setIsSubmitting(false);
     };
+
 
 
     const handleRunCode = async () => {
@@ -368,6 +375,24 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     {result?.message && result.isSubmit && (
                         <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>
                     )}
+                    {result?.result && (
+                        <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
+                            <h4 className="text-xs text-gray-400">🔹 결과</h4>
+                            <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
+                {result.result}
+            </pre>
+                        </div>
+                    )}
+
+
+                    {result?.error && (
+                        <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                            <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
+                            <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                {result.error}
+            </pre>
+                        </div>
+                    )}
                     {result?.testCases?.[selectedTestCase] && (
                         <>
                             <p className="font-D2Coding text-gray-200">
@@ -375,11 +400,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 {result.testCases[selectedTestCase].actualOutput} !
                             </p>
                             <p>
-                            {/*<span className="font-semibold">*/}
-                            {/*    {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output*/}
-                            {/*        ? "✅ 통과"*/}
-                            {/*        : "❌ 실패"}*/}
-                            {/*</span>*/}
+                                {/*<span className="font-semibold">*/}
+                                {/*    {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output*/}
+                                {/*        ? "✅ 통과"*/}
+                                {/*        : "❌ 실패"}*/}
+                                {/*</span>*/}
                             </p>
                         </>
                     )}
