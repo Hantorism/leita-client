@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import logo from "../../assets/Logo.png";
-
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 const Footer = () => {
     return (
         <footer className="bg-white bg-opacity-10 text-white py-8 font-lexend mt-auto text-center">
@@ -23,11 +23,11 @@ const Footer = () => {
                     {/*    <a href="/about" className="text-sm text-gray-400 hover:text-white">*/}
                     {/*        About Us*/}
                     {/*    </a>*/}
-                        <a href="https://leita.gitbook.io/leita/terms" className="text-sm text-gray-400 hover:text-white">
-                           이용약관
+                        <a href="/terms" className="text-sm text-gray-400 hover:text-white">
+                            이용약관
                         </a>
-                        <a href="https://leita.gitbook.io/leita/privacy" className="text-sm text-gray-400 hover:text-white">
-                           개인정보 처리방침
+                        <a href="/privacy" className="text-sm text-gray-400 hover:text-white">
+                            개인정보 처리방침
                         </a>
                     </div>
 
