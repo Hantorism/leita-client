@@ -12,6 +12,7 @@ import StudyDetail from "./components/pages/StudyDetail.tsx";
 import TermsPrivacyPage from "./components/pages/term";
 import TermsOfService from "./components/pages/term";
 import PrivacyPolicy from "./components/pages/Privacy";
+import JudgePage from "./components/common/Judge.tsx";
 
 
 
@@ -30,6 +31,7 @@ const App = () => {
                 <Route path="/study/:id" element={<StudyDetail />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/judge" element={<JudgePage />} />
 
 
 

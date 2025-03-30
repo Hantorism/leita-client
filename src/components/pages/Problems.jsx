@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
+import JudgeButton from "../common/JudgeButton.tsx";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -45,6 +46,7 @@ const Problems = () => {
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
+            <JudgeButton></JudgeButton>
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9  md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
