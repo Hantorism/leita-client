@@ -46,7 +46,9 @@ const Problems = () => {
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
+            <div  className="pl-[10%] pr-[10%]">
             <JudgeButton></JudgeButton>
+            </div>
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9  md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
