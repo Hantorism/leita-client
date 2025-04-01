@@ -357,8 +357,21 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         >
                             TestCase {index + 1}
                         </button>
+
+
                     ))}
+
+                    <button
+                        onClick={() =>
+                            setCustomTestCases([...customTestCases, { input: "", output: "" }])
+                        }
+                        className="px-2 py-1 text-xs rounded bg-green-600 hover:bg-green-500 text-white"
+                    >
+                        +
+                    </button>
                 </div>
+
+
 
                 {/* 선택된 테스트 케이스만 표시 */}
                 <div className="mt-3 p-2 rounded bg-black">
@@ -386,7 +399,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     )}
                     {result?.result && (
                         <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                            <h4 className="text-xs text-gray-400">🔹 결과</h4>
+                            <h4 className="text-xs text-gray-400"> 결과</h4>
                             <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
                 {result.result}
             </pre>
