@@ -1,7 +1,10 @@
 import React, { useState, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+
+
 
 interface CodeEditorProps {
     code: string;
@@ -62,7 +65,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const editorRef = useRef<any>(null);
     const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
 
-
+    const navigate = useNavigate();
     const handleSubmitCode = async () => {
         setIsSubmitting(true);
         setResult(null);
@@ -95,6 +98,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     result: resultData.data?.result || "",
                     error: resultData.data?.error || null
                 });
+
+
+                const userConfirmed = window.confirm("🏁제출이 완료되었습니다! 내가 푼 문제 페이지로 이동할까요?");
+                if (userConfirmed) {
+                    navigate("/judge");
+                }
             } else {
                 setResult({
                     message: `❌ 제출 실패: ${resultData.message}`,

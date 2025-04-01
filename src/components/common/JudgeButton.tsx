@@ -6,9 +6,9 @@ export default function JudgeButton() {
     return (
         <button
             onClick={() => navigate("/judge")}
-            className=" bg-[#2A2A2A] bg-opacity-50 text-gray-300 hover:text-[#CAFF33] px-6 py-2 rounded-full font-lexend"
+            className=" bg-[#2A2A2A] hover:bg-opacity-0  text-gray-300 border-collapse border border-gray-800 hover:text-[#CAFF33] px-6 py-1 rounded-full font-lexend"
         >
-            내가 푼 문제 보기
+            🏁 solved.
         </button>
     );
 }
