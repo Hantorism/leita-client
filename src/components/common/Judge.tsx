@@ -149,18 +149,33 @@ export default function JudgePage() {
 
 
             {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-4 my-6">
-                    <button onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="px-4 py-2 bg-gray-700 rounded-lg disabled:opacity-50">
+                <div className=" w-full flex justify-center items-center gap-4 my-6">
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                        className={`px-4 py-2 rounded-full transition ${
+                            currentPage === 1 ? "bg-gray-700 text-white opacity-50 cursor-not-allowed" : "bg-gray-700 text-white hover:bg-gray-600"
+                        }`}
+                    >
                         이전
                     </button>
 
-                    <span className="text-gray-300">{currentPage} / {totalPages}</span>
+                    <span className="px-3 py-1  text-white rounded-full">
+            {currentPage} / {totalPages}
+        </span>
 
-                    <button onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="px-4 py-2 bg-gray-700 rounded-lg disabled:opacity-50">
+                    <button
+                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={currentPage === totalPages}
+                        className={`px-4 py-2 rounded-full transition ${
+                            currentPage === totalPages ? "bg-gray-700 text-white opacity-50 cursor-not-allowed" : "bg-gray-700 text-white hover:bg-gray-600"
+                        }`}
+                    >
                         다음
                     </button>
                 </div>
             )}
+
             <footer className="w-full text-left mt-20">
                 <Footer />
             </footer>
