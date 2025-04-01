@@ -434,7 +434,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 //     testResult.isPassed ? "bg-green-800" : "bg-red-800"
                                 // }`}
                             >
-                                <h4 className=" mt-2 text-xs text-gray-300 font-D2Coding">Testcase {index + 1} result</h4>
+                                <h4 className=" mt-2 text-xs text-gray-300 font-D2Coding"> result</h4>
                                 <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                                 {testResult.actualOutput}
                             </pre>
