@@ -19,6 +19,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
     const [result, setResult] = useState<string | null>(null);
+    const [customTestCases, setCustomTestCases] = useState<{ input: string; output: string }[]>([]);
+
     const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
         line: 1,
         column: 1,
@@ -77,6 +79,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         }
 
         try {
+            const userInputTestCase = customTestCases.length > 0 ? customTestCases[customTestCases.length - 1] : null;
+
+            if (userInputTestCase) {
+                testCases.push({
+                    input: userInputTestCase.input,
+                    output: userInputTestCase.output, // expectedOutput → output 수정
+                });
+            }
             const response = await fetch(`${API_BASE_URL}/judge/submit/${problemId}`, {
                 method: "POST",
                 headers: {
@@ -330,22 +340,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 Line: {cursorPosition.line}, Column: {cursorPosition.column}
             </div>
 
-            {/*/!* 리사이즈 핸들 *!/*/}
-            {/*<div*/}
-            {/*    className="w-full h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize flex items-center justify-center transition-all"*/}
-            {/*    onMouseDown={startResizing}*/}
-            {/*>*/}
-            {/*    <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>*/}
-            {/*</div>*/}
+
 
 
 
             <div className="mt-4 p-3 bg-[#1A1A1A] text-white rounded-md max-h-[400px] overflow-y-auto scrollbar-hide">
                 {/*<h3 className="text-lg">테스트 케이스</h3>*/}
 
+
                 {/* 테스트 케이스 선택 버튼 */}
                 <div className="flex gap-2 mt-2">
-                    {testCases.map((_, index) => (
+                    {[...testCases, ...customTestCases].map((_, index) => (
                         <button
                             key={index}
                             onClick={() => setSelectedTestCase(index)}
@@ -355,48 +360,73 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                     : "bg-gray-600 hover:bg-gray-500 text-gray-300"
                             }`}
                         >
-                            TestCase {index + 1}
+                            {index < testCases.length ? `TestCase ${index + 1}` : `My TestCase ${index - testCases.length + 1}`}
                         </button>
-
-
                     ))}
 
+                    {/* + 버튼 (사용자 정의 테스트 케이스 추가) */}
                     <button
                         onClick={() =>
                             setCustomTestCases([...customTestCases, { input: "", output: "" }])
                         }
-                        className="px-2 py-1 text-xs rounded bg-green-600 hover:bg-green-500 text-white"
+                        className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-900 text-white"
                     >
                         +
                     </button>
                 </div>
 
 
-
-                {/* 선택된 테스트 케이스만 표시 */}
+                {/* 선택된 테스트 케이스 표시 */}
                 <div className="mt-3 p-2 rounded bg-black">
-                    {/*<p>*/}
-                    {/*<span className="bg-gray-700 hover:bg-gray-600 p-1 text-xs rounded">*/}
-                    {/*    TestCase {selectedTestCase + 1}*/}
-                    {/*</span>*/}
-                    {/*</p>*/}
-
                     <div className="mt-1">
                         <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
-                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                        {testCases[selectedTestCase].input}
-                    </pre>
+
+                        {selectedTestCase < testCases.length ? (
+                            // ✅ 기본 테스트 케이스: 기존처럼 출력
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                {testCases[selectedTestCase].input}
+            </pre>
+                        ) : (
+                            // ✅ My TestCase: 직접 입력 가능하도록 변경
+                            <textarea
+                                className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full h-12 resize-y"
+                                value={customTestCases[selectedTestCase - testCases.length].input}
+                                onChange={(e) => {
+                                    const updatedCases = [...customTestCases];
+                                    updatedCases[selectedTestCase - testCases.length].input = e.target.value;
+                                    setCustomTestCases(updatedCases);
+                                }}
+                            />
+                        )}
                     </div>
 
                     <div className="mt-1 mb-3">
                         <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
-                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                        {testCases[selectedTestCase].output}
-                    </pre>
+
+                        {selectedTestCase < testCases.length ? (
+
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                {testCases[selectedTestCase].output}
+            </pre>
+                        ) : (
+
+                            <textarea
+                                className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full h-12 resize-y"
+                                value={customTestCases[selectedTestCase - testCases.length].output}
+                                onChange={(e) => {
+                                    const updatedCases = [...customTestCases];
+                                    updatedCases[selectedTestCase - testCases.length].output = e.target.value;
+                                    setCustomTestCases(updatedCases);
+                                }}
+                            />
+                        )}
                     </div>
+
+                    {/* 실행 결과 표시 */}
                     {result?.message && result.isSubmit && (
-                        <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>
+                        <p className="mt-2 font-D2Coding text-gray-200">🚀 {result.message} !</p>
                     )}
+
                     {result?.result && (
                         <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
                             <h4 className="text-xs text-gray-400"> 결과</h4>
@@ -405,34 +435,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             </pre>
                         </div>
                     )}
-
-
-                    {result?.error && (
-                        <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                            <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
-                            <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-                {result.error}
-            </pre>
-                        </div>
-                    )}
-                    {result?.testCases?.[selectedTestCase] && (
-                        <>
-                            <p className="font-D2Coding text-gray-200">
-                                <span className="font-D2Coding text-gray-200">결과 :</span>{" "}
-                                {result.testCases[selectedTestCase].actualOutput} !
-                            </p>
-                            <p>
-                                {/*<span className="font-semibold">*/}
-                                {/*    {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output*/}
-                                {/*        ? "✅ 통과"*/}
-                                {/*        : "❌ 실패"}*/}
-                                {/*</span>*/}
-                            </p>
-                        </>
-                    )}
-
-
                 </div>
+
             </div>
 
         </div>
