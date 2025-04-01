@@ -423,18 +423,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     </div>
 
                     {/* 실행 결과 표시 */}
-                    {result?.message && result.isSubmit && (
+                    {result?.message && (
                         <p className="mt-2 font-D2Coding text-gray-200">🚀 {result.message} !</p>
                     )}
-
-                    {result?.result && (
-                        <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                            <h4 className="text-xs text-gray-400"> 결과</h4>
-                            <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                {result.result}
-            </pre>
-                        </div>
-                    )}
+                    {result?.testCases &&
+                        result.testCases.map((testResult, index) => (
+                            <div
+                                // key={index}
+                                // className={`mt-2 p-2 rounded-md ${
+                                //     testResult.isPassed ? "bg-green-800" : "bg-red-800"
+                                // }`}
+                            >
+                                <h4 className=" mt-2 text-xs text-gray-300 font-D2Coding">Testcase {index + 1} result</h4>
+                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                {testResult.actualOutput}
+                            </pre>
+                                {testResult.error && (
+                                    <p className="text-red-400 text-xs mt-1">❌ 오류: {testResult.error}</p>
+                                )}
+                            </div>
+                        ))}
                 </div>
 
             </div>
