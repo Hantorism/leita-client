@@ -12,7 +12,7 @@ const Problems = () => {
 
     const problemsPerPage = 10;
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
@@ -20,14 +20,15 @@ const Problems = () => {
             try {
                 const res = await axios.get(`${API_BASE_URL}/problem`, {
                     params: {
-                        page: currentPage,  // ✅ 현재 페이지 번호 전달
-                        size: problemsPerPage,  // ✅ 한 페이지당 문제 개수 전달
+                        page: currentPage ,
+                        size: problemsPerPage,
                     },
                 });
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
                 setProblems(content);
                 setTotalPages(total);
+                console.log("Fetched problems:", content);
 
                 if (!Array.isArray(content)) {
                     throw new Error("Invalid response format");
@@ -55,16 +56,32 @@ const Problems = () => {
                 console.error("Failed to fetch judged problems:", error);
             }
         };
+        console.log("Fetching problems with params:", { page: currentPage, size: problemsPerPage });
+
 
         fetchProblems();
         fetchJudgedProblems();
-    }, []);
+    },  [ currentPage]);
 
 
-    const indexOfLastProblem = currentPage * problemsPerPage;
-    const indexOfFirstProblem = indexOfLastProblem - problemsPerPage;
-    const currentProblems = problems.slice(indexOfFirstProblem, indexOfLastProblem);
 
+
+    const [currentProblems, setCurrentProblems] = useState([]);
+
+    useEffect(() => {
+
+
+        const indexOfLastProblem = (currentPage + 1) * problemsPerPage;
+        const indexOfFirstProblem = indexOfLastProblem - problemsPerPage;
+
+        // console.log("Slicing from", indexOfFirstProblem, "to", indexOfLastProblem);
+        setCurrentProblems(problems.slice(indexOfFirstProblem, indexOfLastProblem));
+    }, [problems, currentPage]);
+
+    useEffect(() => {
+
+        setCurrentProblems(problems); // 그대로 저장
+    }, [problems]);
 
 
     const handlePageChange = (page) => {
