@@ -20,7 +20,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [autoComplete, setAutoComplete] = useState(true);
     const [result, setResult] = useState<string | null>(null);
     const [customTestCases, setCustomTestCases] = useState<{ input: string; output: string }[]>([]);
-
+    const [inputError, setInputError] = useState(false);
+    const [outputError, setOutputError] = useState(false);
     const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
         line: 1,
         column: 1,
@@ -28,6 +29,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [selectedTestCase, setSelectedTestCase] = useState(0);
     const [outputHeight, setOutputHeight] = useState(200);
     const token = localStorage.getItem("token");
+    const [testResults, setTestResults] = useState([]);
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(event.target.value);
@@ -136,7 +138,81 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     };
 
 
-
+    //
+    // const handleRunCode = async () => {
+    //     setIsRunningCode(true);
+    //     setResult(null);
+    //     const token = localStorage.getItem("token");
+    //
+    //     try {
+    //         const problemResponse = await fetch(`${API_BASE_URL}/problem/${problemId}`, {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`,
+    //             },
+    //         });
+    //
+    //         if (!problemResponse.ok) {
+    //             throw new Error("문제 정보를 가져오는 데 실패했습니다.");
+    //         }
+    //
+    //         const problemData = await problemResponse.json();
+    //         const testCases = problemData?.data?.testCases || [];
+    //
+    //         if (testCases.length === 0) {
+    //             setResult({ message: "테스트 케이스가 없습니다.", isSubmit: false });
+    //             setIsRunningCode(false);
+    //             return;
+    //         }
+    //
+    //         const response = await fetch(`${API_BASE_URL}/judge/run/${problemId}`, {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify({
+    //                 code: encodeBase64(code),
+    //                 language: language.toUpperCase(),
+    //                 testCases: testCases.map(({ input, output }) => ({
+    //                     input: encodeBase64(input),
+    //                     output: encodeBase64(output),
+    //                 })),
+    //             }),
+    //         });
+    //
+    //         const resultData = await response.json();
+    //
+    //
+    //         if (response.ok) {
+    //             setResult({
+    //                 message: resultData.message || "🛠 실행 완료!",
+    //                 testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
+    //                     actualOutput: testResult.result,
+    //                     error: testResult.error || null,
+    //                     isPassed: testResult.result === testCases[index].output
+    //                 })),
+    //                 isSubmit: false
+    //             });
+    //         } else {
+    //             setResult({
+    //                 error: `❌ 실행 실패: ${resultData.message}`,
+    //                 message: resultData.message || "실행 중 오류 발생",
+    //                 isSubmit: false
+    //             });
+    //         }
+    //
+    //
+    //     } catch (error) {
+    //         setResult({
+    //             message: "서버 요청 중 오류 발생",
+    //             isSubmit: false
+    //         });
+    //     }
+    //
+    //     setIsRunningCode(false);
+    // };
     const handleRunCode = async () => {
         setIsRunningCode(true);
         setResult(null);
@@ -156,9 +232,28 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             }
 
             const problemData = await problemResponse.json();
-            const testCases = problemData?.data?.testCases || [];
+            let testCases = problemData?.data?.testCases || [];
 
-            if (testCases.length === 0) {
+            // console.log(" 기존 테스트 케이스:", testCases);
+
+            // 사용자 지정 테스트 케이스 추가
+            const myTestCase = {
+                input: encodeBase64("my test input"),
+                output: encodeBase64("my test output")
+            };
+
+            // 기존 테스트 케이스 + myTestCase 추가
+            const updatedTestCases = [
+                ...testCases.map(({ input, output }) => ({
+                    input: encodeBase64(input),
+                    output: encodeBase64(output),
+                })),
+                myTestCase // 여기 추가됨
+            ];
+
+            console.log("✅ 최종 테스트 케이스:", updatedTestCases);
+
+            if (updatedTestCases.length === 0) {
                 setResult({ message: "테스트 케이스가 없습니다.", isSubmit: false });
                 setIsRunningCode(false);
                 return;
@@ -173,15 +268,17 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 body: JSON.stringify({
                     code: encodeBase64(code),
                     language: language.toUpperCase(),
-                    testCases: testCases.map(({ input, output }) => ({
-                        input: encodeBase64(input),
-                        output: encodeBase64(output),
-                    })),
+                    testCases: updatedTestCases,
                 }),
             });
 
-            const resultData = await response.json();
+            // console.log(" 요청 데이터:", {
+            //     code: encodeBase64(code),
+            //     language: language.toUpperCase(),
+            //     testCases: updatedTestCases,
+            // });
 
+            const resultData = await response.json();
 
             if (response.ok) {
                 setResult({
@@ -189,7 +286,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
                         actualOutput: testResult.result,
                         error: testResult.error || null,
-                        isPassed: testResult.result === testCases[index].output
+                        isPassed: testResult.result === updatedTestCases[index].output
                     })),
                     isSubmit: false
                 });
@@ -201,8 +298,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 });
             }
 
-
         } catch (error) {
+            console.error("⚠️ 실행 중 오류 발생:", error);
             setResult({
                 message: "서버 요청 중 오류 발생",
                 isSubmit: false
@@ -211,7 +308,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
         setIsRunningCode(false);
     };
-
 
 
     const handleEditorMount = (editor: any) => {
@@ -393,8 +489,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 value={customTestCases[selectedTestCase - testCases.length].input}
                                 onChange={(e) => {
                                     const updatedCases = [...customTestCases];
-                                    updatedCases[selectedTestCase - testCases.length].input = e.target.value;
+                                    const newValue = e.target.value;
+
+                                    updatedCases[selectedTestCase - testCases.length].input = newValue;
                                     setCustomTestCases(updatedCases);
+
+
+                                    setInputError(newValue.trim() === "");
                                 }}
                             />
                         )}
@@ -415,34 +516,56 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 value={customTestCases[selectedTestCase - testCases.length].output}
                                 onChange={(e) => {
                                     const updatedCases = [...customTestCases];
-                                    updatedCases[selectedTestCase - testCases.length].output = e.target.value;
+                                    const newValue = e.target.value;
+
+                                    updatedCases[selectedTestCase - testCases.length].output = newValue;
                                     setCustomTestCases(updatedCases);
+
+
+                                    setOutputError(newValue.trim() === "");
                                 }}
                             />
                         )}
                     </div>
 
                     {/* 실행 결과 표시 */}
+                    {result?.testCases[selectedTestCase] && (
+                        <div
+                            className="mt-2 rounded-md text-white "
+
+                        >
+                            <h4 className="text-xs  mb-2 font-semibold text-gray-300 font-D2Coding">결과 {selectedTestCase + 1}</h4>
+                            {/*<p className="text-xs font-semibold text-gray-300 font-D2Coding"></p>*/}
+                            <pre className="font-D2Coding border-collapse border border-gray-600 bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                {result.testCases[selectedTestCase].actualOutput}
+                            </pre>
+
+                            {result.testCases[selectedTestCase].error && (
+                                <p className="text-yellow-300">⚠️ {result.testCases[selectedTestCase].error}</p>
+                            )}
+                        </div>
+                    )}
+
                     {result?.message && (
                         <p className="mt-2 font-D2Coding text-gray-200">🚀 {result.message} !</p>
                     )}
-                    {result?.testCases &&
-                        result.testCases.map((testResult, index) => (
-                            <div
-                                // key={index}
-                                // className={`mt-2 p-2 rounded-md ${
-                                //     testResult.isPassed ? "bg-green-800" : "bg-red-800"
-                                // }`}
-                            >
-                                <h4 className=" mt-2 text-xs text-gray-300 font-D2Coding"> result</h4>
-                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                                {testResult.actualOutput}
-                            </pre>
-                                {testResult.error && (
-                                    <p className="text-red-400 text-xs mt-1">❌ 오류: {testResult.error}</p>
-                                )}
-                            </div>
-                        ))}
+                    {/*{result?.testCases &&*/}
+                    {/*    result.testCases.map((testResult, index) => (*/}
+                    {/*        <div*/}
+                    {/*            // key={index}*/}
+                    {/*            // className={`mt-2 p-2 rounded-md ${*/}
+                    {/*            //     testResult.isPassed ? "bg-green-800" : "bg-red-800"*/}
+                    {/*            // }`}*/}
+                    {/*        >*/}
+                    {/*            <h4 className=" mt-2 text-xs text-gray-300 font-D2Coding"> result</h4>*/}
+                    {/*            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+                    {/*            {testResult.actualOutput}*/}
+                    {/*        </pre>*/}
+                    {/*            {testResult.error && (*/}
+                    {/*                <p className="text-red-400 text-xs mt-1">❌ 오류: {testResult.error}</p>*/}
+                    {/*            )}*/}
+                    {/*        </div>*/}
+                    {/*    ))}*/}
                 </div>
 
             </div>
