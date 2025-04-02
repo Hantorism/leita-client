@@ -40,7 +40,7 @@ const Home = () => {
                 <Header />
             </header>
 
-            <div className="flex flex-col items-start justify-center w-[90%] max-w-[700px] p-5 pl-[13%] pt-[8%]">
+            <div className="flex flex-col items-start justify-center w-[90%] max-w-[900px] p-5 pl-[13%] pt-[8%]">
                 <div className="inline-flex items-center gap-1 bg-white bg-opacity-10 px-3 py-2 rounded-[60px] w-fit mb-5">
                     <img src="/image/Icon.svg" className="w-[24px] h-[24px]" />
                     <a className="font-lexend text-sm font-light text-[#E0E0E0] leading-[1.5]">
