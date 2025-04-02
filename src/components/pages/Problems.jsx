@@ -8,6 +8,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
 const Problems = () => {
     const [problems, setProblems] = useState([]);
+    const [judgedProblems, setJudgedProblems] = useState([]); // 사용자가 푼 문제 상태 저장
     const [currentPage, setCurrentPage] = useState(1);
     const problemsPerPage = 20;
 
@@ -28,7 +29,23 @@ const Problems = () => {
             }
         };
 
+        const fetchJudgedProblems = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get(`${API_BASE_URL}/judge`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+                const judgedData = res.data?.data ?? [];
+                setJudgedProblems(judgedData.filter((judge) => judge.result === "CORRECT"));
+            } catch (error) {
+                console.error("Failed to fetch judged problems:", error);
+            }
+        };
+
         fetchProblems();
+        fetchJudgedProblems();
     }, []);
 
 
@@ -41,22 +58,26 @@ const Problems = () => {
         setCurrentPage(pageNumber);
     };
 
+    const isProblemSolved = (problemId) => {
+        return judgedProblems.some((judge) => judge.problemId === problemId);
+    };
+
     return (
-        <div className=" flex flex-col items-start min-h-screen text-gray-900  pt-[5%] bg-[#1A1A1A]">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A]">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
-            <div  className="pl-[70%] pr-[15%]">
-            <JudgeButton></JudgeButton>
+            <div className="pl-[70%] pr-[15%]">
+                <JudgeButton />
             </div>
 
-            <div className="flex-grow max-w-3xl mx-auto w-full pt-9  md:text-sm pl-5 pr-5">
+            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
                     <table className="font-Pretend w-full text-left border-collapse border border-gray-600">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
                             <th className="p-3 border-b border-gray-500">ID</th>
-                            <th className="p-3 border-b border-gray-500 ">제목</th>
+                            <th className="p-3 border-b border-gray-500">제목</th>
                             <th className="p-3 border-b border-gray-500">정답률</th>
                         </tr>
                         </thead>
@@ -69,11 +90,10 @@ const Problems = () => {
                                         const problemUrl = `problems/${problem.problemId}`;
                                         const newWindow = window.open(problemUrl, "_blank");
 
-
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({accessToken: token}, `${window.location.host}`);
+                                                newWindow?.postMessage({ accessToken: token }, `${window.location.host}`);
                                             }
                                         });
                                     }}
@@ -82,8 +102,11 @@ const Problems = () => {
                                     }`}
                                 >
                                     <td className="p-3">{problem.problemId}</td>
-                                    <td className="p-3 ">
+                                    <td className="p-3">
                                         {problem.title || "제목 없음"}
+                                        {isProblemSolved(problem.problemId) && (
+                                            <span className="ml-2 text-xs ">🏁 </span>
+                                        )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
                                                 <span
@@ -109,9 +132,8 @@ const Problems = () => {
                     </table>
                 </div>
 
-
                 <div className="flex justify-center mt-4">
-                    {Array.from({length: Math.ceil(problems.length / problemsPerPage)}, (_, i) => (
+                    {Array.from({ length: Math.ceil(problems.length / problemsPerPage) }, (_, i) => (
                         <button
                             key={i + 1}
                             onClick={() => handlePageChange(i + 1)}
@@ -124,6 +146,7 @@ const Problems = () => {
                     ))}
                 </div>
             </div>
+
             <footer className="w-full text-left mt-20">
                 <Footer />
             </footer>

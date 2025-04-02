@@ -1,10 +1,9 @@
 import React, { useState, useRef } from "react";
 import MonacoEditor from "@monaco-editor/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
-
-
 
 interface CodeEditorProps {
     code: string;
@@ -26,6 +25,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [selectedTestCase, setSelectedTestCase] = useState(0);
     const [outputHeight, setOutputHeight] = useState(200);
     const token = localStorage.getItem("token");
+    const navigate = useNavigate();
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(event.target.value);
@@ -65,7 +65,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const editorRef = useRef<any>(null);
     const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
 
-    const navigate = useNavigate();
+
     const handleSubmitCode = async () => {
         setIsSubmitting(true);
         setResult(null);
@@ -105,6 +105,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     navigate("/judge");
                 }
             } else {
+
                 setResult({
                     message: `❌ 제출 실패: ${resultData.message}`,
                     isSubmit: false,
@@ -357,21 +358,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         >
                             TestCase {index + 1}
                         </button>
-
-
                     ))}
-
-                    <button
-                        onClick={() =>
-                            setCustomTestCases([...customTestCases, { input: "", output: "" }])
-                        }
-                        className="px-2 py-1 text-xs rounded bg-green-600 hover:bg-green-500 text-white"
-                    >
-                        +
-                    </button>
                 </div>
-
-
 
                 {/* 선택된 테스트 케이스만 표시 */}
                 <div className="mt-3 p-2 rounded bg-black">
@@ -394,9 +382,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         {testCases[selectedTestCase].output}
                     </pre>
                     </div>
-                    {result?.message && result.isSubmit && (
-                        <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>
-                    )}
+                    {/*{result?.message && result.isSubmit && (*/}
+                    {/*    <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>*/}
+                    {/*)}*/}
                     {result?.result && (
                         <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
                             <h4 className="text-xs text-gray-400"> 결과</h4>

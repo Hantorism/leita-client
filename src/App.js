@@ -32,12 +32,6 @@ const App = () => {
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/judge" element={<JudgePage />} />
-
-
-
-
-
-
                 {/*<Route path="/login" element={<Login />} />*/}
             </Routes>
         </GoogleOAuthProvider>
