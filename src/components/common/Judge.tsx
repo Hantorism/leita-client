@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
+import { useNavigate } from "react-router-dom";
 
 interface JudgeResponse {
     message: string;
@@ -35,6 +36,7 @@ export default function JudgePage() {
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState<string>("ALL");
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchJudges() {
@@ -48,6 +50,12 @@ export default function JudgePage() {
                     },
                 });
 
+                if (response.status === 401) {
+                    localStorage.removeItem("token"); // 만료된 토큰 제거
+                    navigate("/");
+                    return;
+                }
+
                 if (!response.ok) {
                     throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
                 }
@@ -57,6 +65,8 @@ export default function JudgePage() {
                 setJudges(result.data ?? []);
             } catch (err) {
                 setError("데이터를 불러오는 중 오류가 발생했습니다.");
+                window.alert("로그인이 필요합니다.");
+                navigate("/");
                 setAllJudges([]);
                 setJudges([]);
             } finally {

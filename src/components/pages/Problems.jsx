@@ -67,7 +67,7 @@ const Problems = () => {
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
-            <div className="pl-[70%] pr-[15%]">
+            <div className="pl-[63%] pr-[15%]">
                 <JudgeButton />
             </div>
 
