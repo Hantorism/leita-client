@@ -3,6 +3,8 @@ import Header from "../common/Header";
 import Footer from "../common/Footer";
 import { useNavigate } from "react-router-dom";
 
+import ProblemsButton from "./ProblemsButton.tsx";
+
 interface JudgeResponse {
     message: string;
     data: JudgeData[];
@@ -30,8 +32,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL;
 const ITEMS_PER_PAGE = 15;
 
 export default function JudgePage() {
-    const [allJudges, setAllJudges] = useState<JudgeData[]>([]); // 원본 데이터 유지
-    const [judges, setJudges] = useState<JudgeData[]>([]); // 필터링된 데이터
+    const [allJudges, setAllJudges] = useState<JudgeData[]>([]);
+    const [judges, setJudges] = useState<JudgeData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +53,8 @@ export default function JudgePage() {
                 });
 
                 if (response.status === 401) {
-                    localStorage.removeItem("token"); // 만료된 토큰 제거
+                    localStorage.removeItem("token");
+                    window.alert("로그인이 필요합니다.");
                     navigate("/");
                     return;
                 }
@@ -64,7 +67,6 @@ export default function JudgePage() {
                 setAllJudges(result.data ?? []);
                 setJudges(result.data ?? []);
             } catch (err) {
-                setError("데이터를 불러오는 중 오류가 발생했습니다.");
                 window.alert("로그인이 필요합니다.");
                 navigate("/");
                 setAllJudges([]);
@@ -77,10 +79,9 @@ export default function JudgePage() {
         fetchJudges();
     }, []);
 
-    // 필터 적용 (filter가 바뀔 때마다 실행)
+    // 필터 변경 시 데이터 업데이트
     useEffect(() => {
-        setCurrentPage(1); // 필터 변경 시 페이지 초기화
-
+        setCurrentPage(1);
         if (filter === "ALL") {
             setJudges(allJudges);
         } else if (filter === "CORRECT") {
@@ -103,17 +104,20 @@ export default function JudgePage() {
     return (
         <div className="flex flex-col items-start min-h-screen text-gray-200 pt-[5%] bg-[#1A1A1A] font-lexend">
             <header className="pl-[10%] pr-[10%] w-full text-left">
-                <Header />
+                <Header/>
             </header>
+            <div className="pl-[63%] pr-[15%]">
+                <ProblemsButton/>
+            </div>
 
-            <div className="flex-grow max-w-5xl mx-auto w-full pt-9 md:text-sm px-5">
+            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
                 {/* 필터 버튼 */}
                 <div className="flex flex-wrap gap-2 mb-3 justify-center">
                     {[
-                        { key: "ALL", label: "ALL" },
-                        { key: "CORRECT", label: "CORRECT" },
-                        { key: "WRONG", label: "WRONG" },
-                    ].map(({ key, label }) => (
+                        {key: "ALL", label: "ALL"},
+                        {key: "CORRECT", label: "CORRECT"},
+                        {key: "WRONG", label: "WRONG"},
+                    ].map(({key, label}) => (
                         <button
                             key={key}
                             onClick={() => setFilter(key)}
@@ -126,37 +130,47 @@ export default function JudgePage() {
                     ))}
                 </div>
 
-                {judges.length === 0 ? (
-                    <p className="text-gray-500 text-center">해당 필터에 맞는 문제가 없습니다.</p>
-                ) : (
-                    <div className="grid grid-cols-3 gap-6">
-                        {paginatedJudges.map((judge, index) => (
-                            <div
-                                key={`${judge.problemId}-${index}`}
-                                className="border bg-[#2A2A2A] bg-opacity-90 p-4 rounded-lg shadow-md border-gray-600"
-                            >
-                                <p>
-                                    <span className="font-semibold">Problem ID :</span> {judge.problemId}
-                                    <span className={`ml-2 font-bold ${(judge.result)}`}>
-                                        {judge.result ?? "-"}
-                                    </span>
-                                </p>
-                                <p>
-                                    <span className="">Memory :</span> {judge.used.memory} KB
-                                </p>
-                                <p>
-                                    <span className="">Time :</span> {judge.used.time} ms
-                                </p>
-                                <p>
-                                    <span className="">Language :</span> {judge.used.language}
-                                </p>
-                                <p>
-                                    <span className="">Code Size :</span> {judge.sizeOfCode} bytes
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                {/* 판정 결과 테이블 */}
+                <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
+                    <table className="font-Pretend w-full text-left border-collapse border border-gray-600">
+                        <thead>
+                        <tr className="bg-[#2A2A2A] text-white">
+                            <th className="p-3 border-b border-gray-500">문제 ID</th>
+                            {/*<th className="p-3 border-b border-gray-500">제목</th>*/}
+                            {/*<th className="p-3 border-b border-gray-500">유저</th>*/}
+                            <th className="p-3 border-b border-gray-500">결과</th>
+                            <th className="p-3 border-b border-gray-500">메모리(KB)</th>
+                            <th className="p-3 border-b border-gray-500">시간(ms)</th>
+                            <th className="p-3 border-b border-gray-500">언어</th>
+                            <th className="p-3 border-b border-gray-500">코드 크기(bytes)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {paginatedJudges.length === 0 ? (
+                            <tr>
+                                <td colSpan={8} className="p-3 text-center text-gray-500">
+                                    해당 필터에 맞는 문제가 없습니다.
+                                </td>
+                            </tr>
+                        ) : (
+                            paginatedJudges.map((judge, index) => (
+                                <tr key={`${judge.problemId}-${index}`} className="hover:bg-gray-700">
+                                    <td className="p-3 border-b border-gray-500">{judge.problemId}</td>
+                                    {/*<td className="p-3 border-b border-gray-500">{judge.problemTitle || "-"}</td>*/}
+                                    {/*<td className="p-3 border-b border-gray-500">{judge.user.name}</td>*/}
+                                    <td className={`p-3 border-b border-gray-500 font-bold ${judge.result}`}>
+                                        {judge.result}
+                                    </td>
+                                    <td className="p-3 border-b border-gray-500">{judge.used.memory}</td>
+                                    <td className="p-3 border-b border-gray-500">{judge.used.time}</td>
+                                    <td className="p-3 border-b border-gray-500">{judge.used.language}</td>
+                                    <td className="p-3 border-b border-gray-500">{judge.sizeOfCode}</td>
+                                </tr>
+                            ))
+                        )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {totalPages > 1 && (
@@ -188,7 +202,7 @@ export default function JudgePage() {
             )}
 
             <footer className="w-full text-left mt-20">
-                <Footer />
+                <Footer/>
             </footer>
         </div>
     );
