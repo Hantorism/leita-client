@@ -63,7 +63,30 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     // observer.disconnect();
 
     const editorRef = useRef<any>(null);
-    const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
+   // const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
+    const encodeBase64 = (str: string): string => {
+        // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
+        const encoder = new TextEncoder();
+        const uint8Array = encoder.encode(str);
+
+        // Uint8Array를 base64로 변환
+        const base64String = btoa(String.fromCharCode(...uint8Array));
+        return base64String;
+    };
+
+    const decodeBase64 = (base64: string): string => {
+        // base64를 디코딩하여 Uint8Array로 변환
+        const decodedString = atob(base64);
+        const uint8Array = new Uint8Array(decodedString.length);
+
+        for (let i = 0; i < decodedString.length; i++) {
+            uint8Array[i] = decodedString.charCodeAt(i);
+        }
+
+        // Uint8Array를 문자열로 변환
+        const decoder = new TextDecoder();
+        return decoder.decode(uint8Array);
+    };
 
 
     const handleSubmitCode = async () => {
