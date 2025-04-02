@@ -9,15 +9,25 @@ const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 const Problems = () => {
     const [problems, setProblems] = useState([]);
     const [judgedProblems, setJudgedProblems] = useState([]); // 사용자가 푼 문제 상태 저장
-    const [currentPage, setCurrentPage] = useState(1);
+
     const problemsPerPage = 10;
-    const [totalPages, setTotalPages] = useState(0);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await axios.get(`${API_BASE_URL}/problem`);
+                const res = await axios.get(`${API_BASE_URL}/problem`, {
+                    params: {
+                        page: currentPage,  // ✅ 현재 페이지 번호 전달
+                        size: problemsPerPage,  // ✅ 한 페이지당 문제 개수 전달
+                    },
+                });
                 const content = res.data?.data?.content ?? [];
+                const total = res.data?.data?.totalPages ?? 1;
+                setProblems(content);
+                setTotalPages(total);
 
                 if (!Array.isArray(content)) {
                     throw new Error("Invalid response format");
@@ -29,6 +39,7 @@ const Problems = () => {
                 setProblems([]);
             }
         };
+
 
         const fetchJudgedProblems = async () => {
             try {
@@ -60,6 +71,32 @@ const Problems = () => {
         if (page >= 0 && page < totalPages) {
             setCurrentPage(page);
         }
+    };
+    const renderPagination = () => {
+        const pageNumbers = [];
+        const maxPageButtons = 5;
+        let startPage = Math.max(0, currentPage - 2);
+        let endPage = Math.min(totalPages - 1, startPage + maxPageButtons - 1);
+
+        if (endPage - startPage < maxPageButtons - 1) {
+            startPage = Math.max(0, endPage - maxPageButtons + 1);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbers.push(
+                <button
+                    key={i}
+                    onClick={() => handlePageChange(i)}
+                    className={`px-3 py-1 mx-1 rounded-full transition ${
+                        currentPage === i ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                    }`}
+                >
+                    {i + 1}
+                </button>
+            );
+        }
+
+        return pageNumbers;
     };
 
     const isProblemSolved = (problemId) => {
@@ -97,7 +134,7 @@ const Problems = () => {
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({ accessToken: token }, `${window.location.host}`);
+                                                newWindow?.postMessage({accessToken: token}, `${window.location.host}`);
                                             }
                                         });
                                     }}
@@ -135,9 +172,11 @@ const Problems = () => {
                         </tbody>
                     </table>
                 </div>
-
+                {/*<div className="flex justify-center mt-4">*/}
+                {/*    {renderPagination()}*/}
+                {/*</div>*/}
                 <div className="flex justify-center mt-4">
-                    {Array.from({ length: totalPages }, (_, i) => (
+                    {Array.from({length: totalPages}, (_, i) => (
                         <button
                             key={i}
                             onClick={() => handlePageChange(i)}
@@ -145,7 +184,7 @@ const Problems = () => {
                                 currentPage === i ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
                             }`}
                         >
-                            {i + 1}
+                            {i+1 }
                         </button>
                     ))}
 
