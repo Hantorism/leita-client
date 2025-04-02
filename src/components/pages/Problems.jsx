@@ -10,7 +10,8 @@ const Problems = () => {
     const [problems, setProblems] = useState([]);
     const [judgedProblems, setJudgedProblems] = useState([]); // 사용자가 푼 문제 상태 저장
     const [currentPage, setCurrentPage] = useState(1);
-    const problemsPerPage = 20;
+    const problemsPerPage = 10;
+    const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
         const fetchProblems = async () => {
@@ -54,8 +55,11 @@ const Problems = () => {
     const currentProblems = problems.slice(indexOfFirstProblem, indexOfLastProblem);
 
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
+
+    const handlePageChange = (page) => {
+        if (page >= 0 && page < totalPages) {
+            setCurrentPage(page);
+        }
     };
 
     const isProblemSolved = (problemId) => {
@@ -133,17 +137,18 @@ const Problems = () => {
                 </div>
 
                 <div className="flex justify-center mt-4">
-                    {Array.from({ length: Math.ceil(problems.length / problemsPerPage) }, (_, i) => (
+                    {Array.from({ length: totalPages }, (_, i) => (
                         <button
-                            key={i + 1}
-                            onClick={() => handlePageChange(i + 1)}
+                            key={i}
+                            onClick={() => handlePageChange(i)}
                             className={`px-3 py-1 mx-1 rounded-full transition ${
-                                currentPage === i + 1 ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                                currentPage === i ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
                             }`}
                         >
                             {i + 1}
                         </button>
                     ))}
+
                 </div>
             </div>
 

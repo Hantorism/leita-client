@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
 import { useNavigate } from "react-router-dom";
-
 import ProblemsButton from "./ProblemsButton.tsx";
 
 interface JudgeResponse {

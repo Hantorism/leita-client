@@ -26,6 +26,27 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [outputHeight, setOutputHeight] = useState(200);
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
+    const decodeText = (text) => {
+        try {
+            if (!text) return ""; // 빈 값 방지
+
+            // 1. URL-Encoded인지 확인
+            const urlDecoded = decodeURIComponent(text);
+            if (urlDecoded !== text) return urlDecoded;
+
+            // 2. Base64 인코딩된 경우
+            const base64Decoded = atob(text);
+            if (base64Decoded) return base64Decoded;
+
+            // 3. JSON 문자열인 경우
+            const jsonParsed = JSON.parse(text);
+            if (typeof jsonParsed === "string") return jsonParsed;
+
+            return text; // 디코딩 불가능하면 원본 반환
+        } catch (error) {
+            return text; // 에러 발생 시 원본 반환
+        }
+    };
 
     const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setLanguage(event.target.value);
@@ -395,14 +416,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     <div className="mt-1">
                         <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
                         <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                        {testCases[selectedTestCase].input}
+                         {decodeText(testCases[selectedTestCase].input)}
                     </pre>
                     </div>
 
                     <div className="mt-1 mb-3">
                         <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                         <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                        {testCases[selectedTestCase].output}
+                         {decodeText(testCases[selectedTestCase].output)}
                     </pre>
                     </div>
                     {/*{result?.message && result.isSubmit && (*/}
