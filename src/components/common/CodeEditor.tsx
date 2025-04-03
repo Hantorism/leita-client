@@ -52,43 +52,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
          setLanguage(newLanguage);  // 언어 변경
     };
 
-    // const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    //     setLanguage(event.target.value);
-    // };
-    // const handleEditorMount = (editor: any) => {
-    //     editorRef.current = editor;
-    //     editor.onDidChangeCursorPosition((e: any) => {
-    //         setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
-    //     });
-    // };
 
-// const outputHeightRef = useRef(outputHeight); // outputHeight를 useRef로 관리
-//
-//     const startResizing = (e: React.MouseEvent) => {
-//         e.preventDefault();
-//         const startY = e.clientY;
-//         const startHeight = outputHeight;
-//
-//         const onMouseMove = (e: MouseEvent) => {
-//             const newHeight = Math.max(100, startHeight + (e.clientY - startY));
-//             setOutputHeight(newHeight);
-//         };
-//
-//         const onMouseUp = () => {
-//             window.removeEventListener("mousemove", onMouseMove);
-//             window.removeEventListener("mouseup", onMouseUp);
-//         };
-//
-//         window.addEventListener("mousemove", onMouseMove);
-//         window.addEventListener("mouseup", onMouseUp);
-//     };
 
-    // const observer = new ResizeObserver(() => {});
-    // observer.observe(document.body);
-    // observer.disconnect();
-
-    //const editorRef = useRef<any>(null);
-   // const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
     const encodeBase64 = (str: string): string => {
         // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
         const encoder = new TextEncoder();
@@ -170,7 +135,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         } catch (error) {
             console.error("서버 요청 오류:", error);
             setResult({
-                message: "🚨 서버 요청 중 오류 발생",
+                message: " 서버 요청 중 오류 발생",
                 isSubmit: false,
                 result: "",
                 error: "서버 오류"
@@ -265,73 +230,67 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     };
 
 
-    //
-    // const handleEditorMount = (editor: any) => {
-    //     editorRef.current = editor;
-    //     editor.onDidChangeCursorPosition((e: any) => {
-    //         setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
-    //     });
-    // };
+
     const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
     const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
     const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
     const startY = useRef(0); // 마우스의 시작 Y 좌표 추적
 
-    // 리사이즈 시작
-    const startResizing = (e) => {
-        e.preventDefault();
-        // 시작 지점 기록
-        // const startY = e.clientY;
-        startY.current = e.clientY; // 마우스 클릭 위치 기록
-        setIsResizing(true);
-
-        const onMouseMove = (moveEvent) => {
-            const newHeight = editorHeight + (moveEvent.clientY - startY); // editorHeight는 처음 높이
-            setEditorHeight(newHeight);
-        };
-
-        const onMouseUp = () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-    };
-
-
-    // 리사이즈 중
-    const handleMouseMove = (e) => {
-        if (isResizing && editorRef.current) {
-            const deltaY = e.clientY - startY.current; // Y축 이동 거리 계산
-            const newHeight = editorHeight + deltaY; // 새로운 높이 계산
-            if (newHeight > 100 && newHeight < window.innerHeight - 200) { // 최소/최대 높이 제한
-                setEditorHeight(newHeight);
-                startY.current = e.clientY; // 이전 Y 좌표 업데이트
-            }
-        }
-    };
-
-    // 리사이즈 종료
-    const stopResizing = () => {
-        setIsResizing(false); // 리사이즈 상태 종료
-    };
-
-    // 마우스 이벤트 처리
-    useEffect(() => {
-        if (isResizing) {
-            document.addEventListener("mousemove", handleMouseMove);
-            document.addEventListener("mouseup", stopResizing);
-        } else {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", stopResizing);
-        }
-
-        return () => {
-            document.removeEventListener("mousemove", handleMouseMove);
-            document.removeEventListener("mouseup", stopResizing);
-        };
-    }, [isResizing]);
+    // // 리사이즈 시작
+    // const startResizing = (e) => {
+    //     e.preventDefault();
+    //     // 시작 지점 기록
+    //     // const startY = e.clientY;
+    //     startY.current = e.clientY; // 마우스 클릭 위치 기록
+    //     setIsResizing(true);
+    //
+    //     const onMouseMove = (moveEvent) => {
+    //         const newHeight = editorHeight + (moveEvent.clientY - startY); // editorHeight는 처음 높이
+    //         setEditorHeight(newHeight);
+    //     };
+    //
+    //     const onMouseUp = () => {
+    //         window.removeEventListener('mousemove', onMouseMove);
+    //         window.removeEventListener('mouseup', onMouseUp);
+    //     };
+    //
+    //     window.addEventListener('mousemove', onMouseMove);
+    //     window.addEventListener('mouseup', onMouseUp);
+    // };
+    //
+    //
+    // // 리사이즈 중
+    // const handleMouseMove = (e) => {
+    //     if (isResizing && editorRef.current) {
+    //         const deltaY = e.clientY - startY.current; // Y축 이동 거리 계산
+    //         const newHeight = editorHeight + deltaY; // 새로운 높이 계산
+    //         if (newHeight > 100 && newHeight < window.innerHeight - 200) { // 최소/최대 높이 제한
+    //             setEditorHeight(newHeight);
+    //             startY.current = e.clientY; // 이전 Y 좌표 업데이트
+    //         }
+    //     }
+    // };
+    //
+    // // 리사이즈 종료
+    // const stopResizing = () => {
+    //     setIsResizing(false); // 리사이즈 상태 종료
+    // };
+    //
+    // // 마우스 이벤트 처리
+    // useEffect(() => {
+    //     if (isResizing) {
+    //         document.addEventListener("mousemove", handleMouseMove);
+    //         document.addEventListener("mouseup", stopResizing);
+    //     } else {
+    //         document.removeEventListener("mousemove", handleMouseMove);
+    //         document.removeEventListener("mouseup", stopResizing);
+    //     }
+    //
+    //     return () => {
+    //         document.removeEventListener("mousemove", handleMouseMove);
+    //         document.removeEventListener("mouseup", stopResizing);
+    //     };
+    // }, [isResizing]);
 
     // MonacoEditor가 마운트 될 때 실행
     const handleEditorMount = (editor, monaco) => {
@@ -536,21 +495,21 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
                         {/*run 결과 */}
 
-                        {result?.testCases?.[selectedTestCase] && (
+                        {result?.testCases?.[0] && (
                             <>
                                 <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
                                     <h4 className="text-xs text-gray-400"> 결과</h4>
                                     <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                                    {result.testCases[selectedTestCase].actualOutput} !</pre>
+                                    {result.testCases[0].actualOutput} </pre>
                                 </div>
                             </>
                         )}
-                        {result?.testCases?.[selectedTestCase] && (
+                        {result?.testCases?.[0] && (
                             <>
                                 <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
                                     <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
                                     <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-                                    {result.testCases[selectedTestCase].error} </pre>
+                                    {result.testCases[0].error} </pre>
                                 </div>
                             </>
                         )}
