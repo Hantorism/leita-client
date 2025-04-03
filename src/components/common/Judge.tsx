@@ -105,13 +105,9 @@ export default function JudgePage() {
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header/>
             </header>
-            <div className="pl-[63%] pr-[15%]">
-                <ProblemsButton/>
-            </div>
+            <div className="flex w-full mt-6 items-center justify-center gap-4">
 
-            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
-                {/* 필터 버튼 */}
-                <div className="flex flex-wrap gap-2 mb-3 justify-center">
+                <div className="flex flex-wrap gap-2 w-[35%]  justify-center">
                     {[
                         {key: "ALL", label: "ALL"},
                         {key: "CORRECT", label: "CORRECT"},
@@ -128,6 +124,12 @@ export default function JudgePage() {
                         </button>
                     ))}
                 </div>
+                <ProblemsButton/>
+            </div>
+
+            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
+                {/* 필터 버튼 */}
+
 
                 {/* 판정 결과 테이블 */}
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">

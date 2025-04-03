@@ -9,7 +9,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 const Problems = () => {
     const [problems, setProblems] = useState([]);
     const [judgedProblems, setJudgedProblems] = useState([]); // 사용자가 푼 문제 상태 저장
-
+    const [searchQuery, setSearchQuery] = useState("");
     const problemsPerPage = 10;
 
     const [currentPage, setCurrentPage] = useState(0);
@@ -119,29 +119,46 @@ const Problems = () => {
     const isProblemSolved = (problemId) => {
         return judgedProblems.some((judge) => judge.problemId === problemId);
     };
+    const filteredProblems = problems.filter((problem) => {
+        return (
+            problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) || // 제목 검색
+            problem.problemId.toString().includes(searchQuery) // ID 검색
+        );
+    });
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A]">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
-            <div className="pl-[63%] pr-[15%]">
+
+            <div className="flex w-full mt-6 items-center justify-center gap-4">
+                <input
+                    type="text"
+                    placeholder=" Search by Title or ID"
+                    className="w-[35%] p-2 border border-gray-500 rounded-full bg-[#2A2A2A] text-white text-center"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                />
+
+                {/* JudgeButton */}
                 <JudgeButton />
             </div>
 
+
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
-                    <table className="font-Pretend w-full text-left border-collapse border border-gray-600">
+                    <table className=" w-full text-left border-collapse border border-gray-600">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
                             <th className="p-3 border-b border-gray-500">ID</th>
-                            <th className="p-3 border-b border-gray-500">제목</th>
-                            <th className="p-3 border-b border-gray-500">정답률</th>
+                            <th className="p-3 border-b border-gray-500">Title</th>
+                            <th className="p-3 border-b border-gray-500">Correct rate</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {currentProblems.length > 0 ? (
-                            currentProblems.map((problem, index) => (
+                        {filteredProblems.length > 0 ? (
+                            filteredProblems.map((problem) => (
                                 <tr
                                     key={problem.problemId}
                                     onClick={() => {
@@ -160,7 +177,7 @@ const Problems = () => {
                                     }`}
                                 >
                                     <td className="p-3">{problem.problemId}</td>
-                                    <td className="p-3">
+                                    <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
                                             <span className="ml-2 text-xs ">🏁 </span>
