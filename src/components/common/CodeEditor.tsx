@@ -14,7 +14,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases }) => {
-    const [language, setLanguage] = useState("Python");
+    const [language, setLanguage] = useState("undefined");
     const [isRunningCode, setIsRunningCode] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
@@ -115,14 +115,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
     const handleSubmitCode = async () => {
-        setIsSubmitting(true);
-        setResult(null);
+
+
+        if (language === "undefined") {
+            alert("🚨 언어를 선택해주세요!");
+            return;
+        }
 
         if (!token) {
             alert("로그인이 필요합니다.");
             setIsSubmitting(false);
             return;
         }
+        setIsSubmitting(true);
+        setResult(null);
 
         try {
             const response = await fetch(`${API_BASE_URL}/judge/submit/${problemId}`, {
@@ -177,10 +183,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
     const handleRunCode = async () => {
-        setIsRunningCode(true);
+
+
+
+        if (language === "undefined") {
+            alert("🚨언어를 선택해주세요!");
+            return;
+        }
+        setIsRunningCode(true); // 언어 선택 후 실행됨
         setResult(null);
         const token = localStorage.getItem("token");
-
         try {
             const problemResponse = await fetch(`${API_BASE_URL}/problem/${problemId}`, {
                 method: "GET",
@@ -193,6 +205,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             if (!problemResponse.ok) {
                 throw new Error("문제 정보를 가져오는 데 실패했습니다.");
             }
+
 
             const problemData = await problemResponse.json();
             const testCases = problemData?.data?.testCases || [];
