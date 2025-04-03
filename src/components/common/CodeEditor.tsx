@@ -532,12 +532,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             </div>
                         )}
 
+
+
+                        {/*run 결과 */}
+
                         {result?.testCases?.[selectedTestCase] && (
                             <>
-                                <p className="font-D2Coding text-gray-200">
-                                    <span className="font-D2Coding text-gray-200">결과 :</span>{" "}
-                                    {result.testCases[selectedTestCase].actualOutput} !
-                                </p>
+                                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
+                                    <h4 className="text-xs text-gray-400"> 결과</h4>
+                                    <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
+                                    {result.testCases[selectedTestCase].actualOutput} !</pre>
+                                </div>
+                            </>
+                        )}
+                        {result?.testCases?.[selectedTestCase] && (
+                            <>
+                                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                                    <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
+                                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                                    {result.testCases[selectedTestCase].error} </pre>
+                                </div>
                             </>
                         )}
                     </div>
