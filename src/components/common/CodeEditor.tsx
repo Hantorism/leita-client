@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { useNavigate } from 'react-router-dom';
 
+import CustomDropdown from "./CustomDropdown";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -47,10 +48,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             return text; // 에러 발생 시 원본 반환
         }
     };
-
-    const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        setLanguage(event.target.value);
+    const handleLanguageChange = (newLanguage) => {
+         setLanguage(newLanguage);  // 언어 변경
     };
+
+    // const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    //     setLanguage(event.target.value);
+    // };
     // const handleEditorMount = (editor: any) => {
     //     editorRef.current = editor;
     //     editor.onDidChangeCursorPosition((e: any) => {
@@ -333,20 +337,27 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
             <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
-                    <select
-                        value={language}
-                        onChange={handleLanguageChange}
-                        className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
-                    >
-                        <option value="python">Python</option>
-                        <option value="javascript">JavaScript</option>
-                        <option value="java">Java</option>
-                        <option value="cpp">C</option>
-                        <option value="cpp">C++</option>
-                        <option value="go">Go</option>
-                        <option value="kotlin">Kotlin</option>
-                        <option value="swift">Swift</option>
-                    </select>
+                    {/*<select*/}
+                    {/*    value={language}*/}
+                    {/*    onChange={handleLanguageChange}*/}
+                    {/*    // className="custom-select"*/}
+                    {/*    className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"*/}
+                    {/*>*/}
+                    {/*    <option value="python">Python</option>*/}
+                    {/*    <option value="javascript">JavaScript</option>*/}
+                    {/*    <option value="java">Java</option>*/}
+                    {/*    <option value="cpp">C</option>*/}
+                    {/*    <option value="cpp">C++</option>*/}
+                    {/*    <option value="go">Go</option>*/}
+                    {/*    <option value="kotlin">Kotlin</option>*/}
+                    {/*    <option value="swift">Swift</option>*/}
+                    {/*</select>*/}
+                    <CustomDropdown language={language} handleLanguageChange={handleLanguageChange} />
+
+                    {/*<div className="mt-4">*/}
+                    {/*    <p>Selected Language: {language}</p>*/}
+                    {/*</div>*/}
+
 
                     <button
                         type="button"
