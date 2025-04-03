@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
 import { useNavigate } from 'react-router-dom';
 
@@ -83,7 +83,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     // observer.observe(document.body);
     // observer.disconnect();
 
-    const editorRef = useRef<any>(null);
+    //const editorRef = useRef<any>(null);
    // const encodeBase64 = (str: string) => btoa(unescape(encodeURIComponent(str)));
     const encodeBase64 = (str: string): string => {
         // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
@@ -248,25 +248,95 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     };
 
 
+    //
+    // const handleEditorMount = (editor: any) => {
+    //     editorRef.current = editor;
+    //     editor.onDidChangeCursorPosition((e: any) => {
+    //         setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
+    //     });
+    // };
+    const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
+    const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
+    const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
+    const startY = useRef(0); // 마우스의 시작 Y 좌표 추적
 
-    const handleEditorMount = (editor: any) => {
-        editorRef.current = editor;
-        editor.onDidChangeCursorPosition((e: any) => {
-            setCursorPosition({ line: e.position.lineNumber, column: e.position.column });
-        });
+    // 리사이즈 시작
+    const startResizing = (e) => {
+        e.preventDefault();
+        // 시작 지점 기록
+        // const startY = e.clientY;
+        startY.current = e.clientY; // 마우스 클릭 위치 기록
+        setIsResizing(true);
+
+        const onMouseMove = (moveEvent) => {
+            const newHeight = editorHeight + (moveEvent.clientY - startY); // editorHeight는 처음 높이
+            setEditorHeight(newHeight);
+        };
+
+        const onMouseUp = () => {
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        };
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    };
+
+
+    // 리사이즈 중
+    const handleMouseMove = (e) => {
+        if (isResizing && editorRef.current) {
+            const deltaY = e.clientY - startY.current; // Y축 이동 거리 계산
+            const newHeight = editorHeight + deltaY; // 새로운 높이 계산
+            if (newHeight > 100 && newHeight < window.innerHeight - 200) { // 최소/최대 높이 제한
+                setEditorHeight(newHeight);
+                startY.current = e.clientY; // 이전 Y 좌표 업데이트
+            }
+        }
+    };
+
+    // 리사이즈 종료
+    const stopResizing = () => {
+        setIsResizing(false); // 리사이즈 상태 종료
+    };
+
+    // 마우스 이벤트 처리
+    useEffect(() => {
+        if (isResizing) {
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", stopResizing);
+        } else {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", stopResizing);
+        }
+
+        return () => {
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", stopResizing);
+        };
+    }, [isResizing]);
+
+    // MonacoEditor가 마운트 될 때 실행
+    const handleEditorMount = (editor, monaco) => {
+        const container = editor.container;
+        editorRef.current = container;  // MonacoEditor의 컨테이너 DOM 요소를 ref에 저장
+
+        // container가 제대로 참조되는지 확인하기 위한 로그
+        if (container) {
+            console.log("Editor container:", container);
+            console.log(container.getBoundingClientRect()); // getBoundingClientRect() 사용 가능
+        }
     };
 
     return (
-
-        <div className="flex-1 min-w-[300px] min-h-[100px] bg-[#2A2A2A] p-6 rounded-lg shadow-lg m-4 flex flex-col">
-            <div className="flex justify-between items-center">
-                {/*<h2 className="text-xl font-semibold text-[#CAFF33]">코드 작성</h2>*/}
-
+        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col">
+            {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
+            <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
                     <select
                         value={language}
                         onChange={handleLanguageChange}
-                        className="bg-[#3E3E3E]  text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
+                        className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"
                     >
                         <option value="python">Python</option>
                         <option value="javascript">JavaScript</option>
@@ -313,7 +383,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         )}
                     </button>
 
-
                     <button
                         type="button"
                         onClick={handleSubmitCode}
@@ -348,128 +417,112 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             "SUBMIT"
                         )}
                     </button>
-
                 </div>
             </div>
 
-            <div className="mt-3 bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg flex-grow">
-                <MonacoEditor
-                    width="100%"
-                    height="calc(90vh - 300px)"
-                    language={language}
-                    theme="vs-dark"
-                    value={code}
-                    onChange={(value) => setCode(value || "")}
-                    options={{
-                        fontSize: 16,
-                        suggestOnTriggerCharacters: autoComplete,
-                        lineNumbers: "on",
-                        renderLineHighlight: "all",
-                    }}
-                    onMount={handleEditorMount}
-                />
-            </div>
-
-
-
-            <div className="mt-2 text-gray-300 text-sm">
-                Line: {cursorPosition.line}, Column: {cursorPosition.column}
-            </div>
-
-            {/*/!* 리사이즈 핸들 *!/*/}
-            {/*<div*/}
-            {/*    className="w-full h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize flex items-center justify-center transition-all"*/}
-            {/*    onMouseDown={startResizing}*/}
-            {/*>*/}
-            {/*    <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>*/}
-            {/*</div>*/}
-
-
-
-            <div className="mt-4 p-3 bg-[#1A1A1A] text-white rounded-md max-h-[400px] overflow-y-auto scrollbar-hide">
-                {/*<h3 className="text-lg">테스트 케이스</h3>*/}
-
-                {/* 테스트 케이스 선택 버튼 */}
-                <div className="flex gap-2 mt-2">
-                    {testCases.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setSelectedTestCase(index)}
-                            className={`px-2 py-1 text-xs rounded ${
-                                selectedTestCase === index
-                                    ? "bg-gray-700 text-white"
-                                    : "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                            }`}
-                        >
-                            TestCase {index + 1}
-                        </button>
-                    ))}
+            {/* 리사이즈 핸들러 위와 아래로 나누기 */}
+            <div className="flex flex-col h-full">
+                {/* 에디터 */}
+                <div
+                    ref={editorRef}
+                    className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2"
+                    style={{ height: `${editorHeight}px` }}
+                >
+                    <MonacoEditor
+                        width="100%"
+                        height="100%"
+                        language={language}
+                        theme="vs-dark"
+                        value={code}
+                        onChange={(value) => setCode(value || "")}
+                        options={{
+                            fontSize: 16,
+                            suggestOnTriggerCharacters: autoComplete,
+                            lineNumbers: "on",
+                            renderLineHighlight: "all",
+                        }}
+                        onMount={handleEditorMount}
+                    />
                 </div>
 
-                {/* 선택된 테스트 케이스만 표시 */}
-                <div className="mt-3 p-2 rounded bg-black">
-                    {/*<p>*/}
-                    {/*<span className="bg-gray-700 hover:bg-gray-600 p-1 text-xs rounded">*/}
-                    {/*    TestCase {selectedTestCase + 1}*/}
-                    {/*</span>*/}
-                    {/*</p>*/}
+                {/*<div className="mt-2 text-gray-300 text-sm">*/}
+                {/*    Line: {cursorPosition.line}, Column: {cursorPosition.column}*/}
+                {/*</div>*/}
 
-                    <div className="mt-1">
-                        <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
-                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                         {decodeText(testCases[selectedTestCase].input)}
-                    </pre>
+                {/* 리사이즈 핸들러 */}
+                {/*<div*/}
+                {/*    className="w-full mt-2 h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize flex items-center justify-center transition-all"*/}
+                {/*    onMouseDown={startResizing}  // 리사이즈 시작*/}
+                {/*>*/}
+                {/*    <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>*/}
+                {/*</div>*/}
+
+                {/* 결과 및 테스트 케이스 */}
+                <div className="mt-2 bg-[#1A1A1A] text-white rounded-md min-h-[100px] overflow-y-auto scrollbar-hide bg-[#2A2A2A] p-6 pt-4 rounded-lg">
+                    <div className="flex gap-2 ">
+                        {testCases.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setSelectedTestCase(index)}
+                                className={`px-2 py-1 text-xs rounded ${
+                                    selectedTestCase === index
+                                        ? "bg-gray-700 text-white"
+                                        : "bg-gray-600 hover:bg-gray-500 text-gray-300"
+                                }`}
+                            >
+                                TestCase {index + 1}
+                            </button>
+                        ))}
                     </div>
 
-                    <div className="mt-1 mb-3">
-                        <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
-                        <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                         {decodeText(testCases[selectedTestCase].output)}
+                    <div className="mt-3 p-2 rounded bg-black">
+                        <div className="mt-1">
+                            <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                    {decodeText(testCases[selectedTestCase].input)}
+                </pre>
+                        </div>
+
+                        <div className="mt-1 mb-3">
+                            <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                    {decodeText(testCases[selectedTestCase].output)}
+                </pre>
+                        </div>
+
+                        {result?.result && (
+                            <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
+                                <h4 className="text-xs text-gray-400"> 결과</h4>
+                                <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
+                        {result.result}
                     </pre>
+                            </div>
+                        )}
+
+                        {result?.error && (
+                            <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                                <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
+                                <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                        {result.error}
+                    </pre>
+                            </div>
+                        )}
+
+                        {result?.testCases?.[selectedTestCase] && (
+                            <>
+                                <p className="font-D2Coding text-gray-200">
+                                    <span className="font-D2Coding text-gray-200">결과 :</span>{" "}
+                                    {result.testCases[selectedTestCase].actualOutput} !
+                                </p>
+                            </>
+                        )}
                     </div>
-                    {/*{result?.message && result.isSubmit && (*/}
-                    {/*    <p className="mt-2  font-D2Coding text-gray-200">🚀 {result.message} !</p>*/}
-                    {/*)}*/}
-                    {result?.result && (
-                        <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                            <h4 className="text-xs text-gray-400"> 결과</h4>
-                            <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                {result.result}
-            </pre>
-                        </div>
-                    )}
-
-
-                    {result?.error && (
-                        <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                            <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
-                            <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-                {result.error}
-            </pre>
-                        </div>
-                    )}
-                    {result?.testCases?.[selectedTestCase] && (
-                        <>
-                            <p className="font-D2Coding text-gray-200">
-                                <span className="font-D2Coding text-gray-200">결과 :</span>{" "}
-                                {result.testCases[selectedTestCase].actualOutput} !
-                            </p>
-                            <p>
-                                {/*<span className="font-semibold">*/}
-                                {/*    {result.testCases[selectedTestCase].actualOutput === testCases[selectedTestCase].output*/}
-                                {/*        ? "✅ 통과"*/}
-                                {/*        : "❌ 실패"}*/}
-                                {/*</span>*/}
-                            </p>
-                        </>
-                    )}
-
-
                 </div>
             </div>
 
         </div>
     );
+
 };
 
 export default CodeEditor;

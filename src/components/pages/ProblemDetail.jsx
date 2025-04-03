@@ -189,7 +189,7 @@ const ProblemDetail = () => {
             </div>
 
             {/* 코드 에디터 */}
-            <div className="flex-1 flex flex-col min-w-[300px] overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto">
                 <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} testCases={problem.testCases} />
 
             </div>
