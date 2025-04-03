@@ -13,7 +13,7 @@ interface CodeEditorProps {
     testCases: { input: string; output: string }[];
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases: initialTestCases }) => {
     const [language, setLanguage] = useState("undefined");
     const [isRunningCode, setIsRunningCode] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,6 +48,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             return text; // 에러 발생 시 원본 반환
         }
     };
+    const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
+    const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
+    const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
+    const startY = useRef(0);
     const handleLanguageChange = (newLanguage) => {
          setLanguage(newLanguage);  // 언어 변경
     };
@@ -77,7 +81,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         const decoder = new TextDecoder();
         return decoder.decode(uint8Array);
     };
-
 
     const handleSubmitCode = async () => {
 
@@ -145,17 +148,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         setIsSubmitting(false);
     };
 
-
-
     const handleRunCode = async () => {
-
-
 
         if (language === "undefined") {
             alert("🚨언어를 선택해주세요!");
             return;
         }
-        setIsRunningCode(true); // 언어 선택 후 실행됨
+        setIsRunningCode(true);
         setResult(null);
         const token = localStorage.getItem("token");
         try {
@@ -170,10 +169,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             if (!problemResponse.ok) {
                 throw new Error("문제 정보를 가져오는 데 실패했습니다.");
             }
-
-
             const problemData = await problemResponse.json();
             const testCases = problemData?.data?.testCases || [];
+            const combinedTestCases = [
+                ...initialTestCases,
+                ...testCases.slice(initialTestCases.length) // 사용자가 추가한 테스트 케이스
+            ];
 
             if (testCases.length === 0) {
                 setResult({ message: "테스트 케이스가 없습니다.", isSubmit: false });
@@ -190,15 +191,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 body: JSON.stringify({
                     code: encodeBase64(code),
                     language: language.toUpperCase(),
-                    testCases: testCases.map(({ input, output }) => ({
-                        input: encodeBase64(input),
-                        output: encodeBase64(output),
+                    // testCases: testCases.map(({ input, output }) => ({
+                    //     input: encodeBase64(input),
+                    //     output: encodeBase64(output),
+                    // })),
+                    testCases: combinedTestCases.map(({ input, output }) => ({
+                        input: input,  // 🔥 이제 인코딩 필요 없음!
+                        output: output,
+                        // input: encodeBase64(input),
+                        // output: encodeBase64(output),
                     })),
                 }),
             });
 
             const resultData = await response.json();
-
 
             if (response.ok) {
                 setResult({
@@ -228,13 +234,6 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
         setIsRunningCode(false);
     };
-
-
-
-    const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
-    const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
-    const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
-    const startY = useRef(0); // 마우스의 시작 Y 좌표 추적
 
     // // 리사이즈 시작
     // const startResizing = (e) => {
@@ -303,6 +302,91 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             console.log(container.getBoundingClientRect()); // getBoundingClientRect() 사용 가능
         }
     };
+
+//     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
+//     // const [selectedTestCase, setSelectedTestCase] = useState(0);
+ const [testCases, setTestCases] = useState(initialTestCases);
+// // 새로운 테스트 케이스 추가 함수
+    const addTestCase = () => {
+        setTestCases((prevTestCases) => {
+            const newTestCases = [...prevTestCases, { input: "", output: "" }];
+            return newTestCases;
+        });
+
+        setSelectedTestCase((prevIndex) => prevIndex + 1); // 기존의 마지막 인덱스에서 +1
+    };
+
+    const handleTestCaseChange = (index: number, field: "input" | "output", value: string) => {
+        setTestCases((prevTestCases) =>
+            prevTestCases.map((testCase, i) =>
+                i === index ? { ...testCase, [field]: value } : testCase
+            )
+        );
+    };
+
+    const handleRunSingleTestCase = async (index: number) => {
+        if (language === "undefined") {
+            alert("🚨 언어를 선택해주세요!");
+            return;
+        }
+
+        setIsRunningCode(true);
+        setResult(null);
+
+        const token = localStorage.getItem("token");
+        const testCase = testCases[index];
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/judge/run/${problemId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    code: encodeBase64(code),
+                    language: language.toUpperCase(),
+                    testCases: [
+                        { input: encodeBase64(testCase.input),
+                            output: encodeBase64(testCase.output), }
+                    ],
+                }),
+            });
+
+            const resultData = await response.json();
+
+            if (response.ok) {
+                setResult({
+                    message: resultData.message || "🛠 실행 완료!",
+                    testCases: [
+                        {
+                            actualOutput: resultData.data[0].result,
+                            error: resultData.data[0].error || null,
+                            isPassed: resultData.data[0].result === testCase.output
+                        }
+                    ],
+                    isSubmit: false
+                });
+            } else {
+                setResult({
+                    error: `❌ 실행 실패: ${resultData.message}`,
+                    message: resultData.message || "실행 중 오류 발생",
+                    isSubmit: false
+                });
+            }
+        } catch (error) {
+            setResult({
+                message: "서버 요청 중 오류 발생",
+                isSubmit: false
+            });
+        }
+
+        setIsRunningCode(false);
+    };
+
+
+
+
 
     return (
         <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col">
@@ -442,40 +526,120 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
                 {/* 결과 및 테스트 케이스 */}
                 <div className="mt-2 bg-[#1A1A1A] text-white rounded-md min-h-[100px] overflow-y-auto scrollbar-hide bg-[#2A2A2A] p-6 pt-4 rounded-lg">
-                    <div className="flex gap-2 ">
+
+                    <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSelectedTestCase(index)}
-                                className={`px-2 py-1 text-xs rounded ${
-                                    selectedTestCase === index
-                                        ? "bg-gray-700 text-white"
-                                        : "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                                }`}
-                            >
-                                TestCase {index + 1}
-                            </button>
+                            <div key={index} className="relative">
+                                <button
+                                    onClick={() => setSelectedTestCase(index)}
+                                    className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
+                                        selectedTestCase === index
+                                            ? "bg-gray-700 text-white"
+                                            : "bg-gray-600 hover:bg-gray-500 text-gray-300"
+                                    }`}
+                                >
+                                    TestCase {index + 1}
+                                    {index >= initialTestCases.length && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // 부모 버튼 클릭 방지
+                                                setTestCases((prevTestCases) =>
+                                                    prevTestCases.filter((_, i) => i !== index)
+                                                );
+                                                setSelectedTestCase((prev) =>
+                                                    prev === index ? 0 : Math.max(0, prev - 1)
+                                                );
+                                            }}
+                                            className="text-red-400 hover:text-white text-xs ml-1"
+                                        >
+                                            x
+                                        </button>
+                                    )}
+                                </button>
+                            </div>
                         ))}
+
+                        <button
+                            onClick={addTestCase}
+                            className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"
+                        >
+                            +
+                        </button>
                     </div>
 
-                    <div className="mt-3 p-2 rounded bg-black">
-                        <div className="mt-1">
-                            <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                    {decodeText(testCases[selectedTestCase].input)}
-                </pre>
-                        </div>
 
-                        <div className="mt-1 mb-3">
-                            <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+
+                <div className="mt-3 p-2 rounded bg-black">
+                    <div className="mt-1">
+
+                        {selectedTestCase < initialTestCases.length ? (
+                            <div>
+                                <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
                             <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                    {decodeText(testCases[selectedTestCase].output)}
-                </pre>
-                        </div>
+                {decodeText(testCases[selectedTestCase].input)}
+            </pre>
+                            </div>
+                        ) : (
+                            <div>
+                                <button
+                                    onClick={() => handleRunSingleTestCase(selectedTestCase)}
+                                    className=" font-lexend mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"
+                                >
+                                    My Testcase RUN
+                                </button>
+                                <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+
+                                <textarea
+                                    className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                    value={testCases[selectedTestCase].input}
+                                    onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
+                                />
+
+                            </div>
+                        )}
+                    </div>
+
+
+                    <div className="mt-1 mb-3">
+                        <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+                        {selectedTestCase < initialTestCases.length ? (
+
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                {decodeText(testCases[selectedTestCase].output)}
+            </pre>
+                        ) : (
+<div>
+                            <textarea
+                                className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                value={testCases[selectedTestCase].output}
+                                onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
+                            />
+
+
+</div>
+                        )}
+                    </div>
+                {/*</div>*/}
+
+
+                    {/*    <div className="mt-3 p-2 rounded bg-black">*/}
+                {/*        <div className="mt-1">*/}
+                {/*            <h4 className="text-xs text-gray-400 ">입력 {selectedTestCase + 1}</h4>*/}
+                {/*            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+                {/*    {decodeText(testCases[selectedTestCase].input)}*/}
+                {/*</pre>*/}
+                {/*        </div>*/}
+
+                {/*        <div className="mt-1 mb-3">*/}
+                {/*            <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>*/}
+                {/*            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+                {/*    {decodeText(testCases[selectedTestCase].output)}*/}
+                {/*</pre>*/}
+                {/*        </div>*/}
 
                         {result?.result && (
                             <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                                <h4 className="text-xs text-gray-400"> 결과</h4>
+                                <h4 className="text-xs text-gray-400"> Result</h4>
                                 <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
                         {result.result}
                     </pre>
@@ -484,7 +648,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
                         {result?.error && (
                             <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                                <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
+                                <h4 className="text-xs text-red-400">❌ Error</h4>
                                 <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
                         {result.error}
                     </pre>
@@ -498,7 +662,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         {result?.testCases?.[0] && (
                             <>
                                 <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                                    <h4 className="text-xs text-gray-400"> 결과</h4>
+                                    <h4 className="text-xs text-gray-400"> Result</h4>
                                     <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
                                     {result.testCases[0].actualOutput} </pre>
                                 </div>
@@ -507,7 +671,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         {result?.testCases?.[0] && (
                             <>
                                 <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                                    <h4 className="text-xs text-red-400">❌ 오류 메시지</h4>
+                                    <h4 className="text-xs text-red-400">❌ Error</h4>
                                     <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
                                     {result.testCases[0].error} </pre>
                                 </div>
