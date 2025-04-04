@@ -180,7 +180,7 @@ const Problems = () => {
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
-                                            <span className="ml-2 text-xs ">🏁 </span>
+                                            <span className="ml-4 text-xs text-gray-500">( solved. ) </span>
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (

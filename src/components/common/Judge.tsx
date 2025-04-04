@@ -155,7 +155,10 @@ export default function JudgePage() {
                             </tr>
                         ) : (
                             paginatedJudges.map((judge, index) => (
-                                <tr key={`${judge.problemId}-${index}`} className="hover:bg-gray-700">
+                                <tr key={`${judge.problemId}-${index}`}
+                                    className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
+                                        judge.problemId % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
+                                    }`}>
                                     <td className="p-3 border-b border-gray-500">{judge.problemId}</td>
                                     {/*<td className="p-3 border-b border-gray-500">{judge.problemTitle || "-"}</td>*/}
                                     {/*<td className="p-3 border-b border-gray-500">{judge.user.name}</td>*/}
