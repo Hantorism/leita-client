@@ -5,7 +5,7 @@ const API_BASE_URL = process.env.REACT_APP_API_URL;
 const Footer = () => {
     return (
         <footer className="bg-white bg-opacity-10 text-white py-8 font-lexend mt-auto text-center">
-            <div className="container mx-auto px-6 pt-4">
+            <div className="container mx-auto px-6 pt-4 w-[75%]">
                 <div className="flex flex-col md:flex-row justify-between items-center">
 
                     {/* 왼쪽 */}
