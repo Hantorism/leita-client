@@ -218,7 +218,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                     //     output: encodeBase64(output),
                     // })),
                     testCases: combinedTestCases.map(({ input, output }) => ({
-                        input: input,  // 🔥 이제 인코딩 필요 없음!
+                        input: input,
                         output: output,
                         // input: encodeBase64(input),
                         // output: encodeBase64(output),
@@ -421,7 +421,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
     return (
-        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col">
+        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow-hidden h-full">
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
             <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
