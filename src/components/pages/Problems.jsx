@@ -4,43 +4,38 @@ import axios from "axios";
 import Footer from "../common/Footer";
 import JudgeButton from "../common/JudgeButton.tsx";
 
-const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
 const Problems = () => {
     const [problems, setProblems] = useState([]);
-    const [judgedProblems, setJudgedProblems] = useState([]); // 사용자가 푼 문제 상태 저장
+    const [judgedProblems, setJudgedProblems] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const problemsPerPage = 10;
-
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+    const problemsPerPage = 10;
+    const [filter, setFilter] = useState("ALL");
 
     useEffect(() => {
         const fetchProblems = async () => {
             try {
                 const res = await axios.get(`${API_BASE_URL}/problem`, {
                     params: {
-                        page: currentPage ,
+                        page: currentPage,
                         size: problemsPerPage,
                     },
                 });
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
-                setProblems(content);
-                setTotalPages(total);
-                console.log("Fetched problems:", content);
-
                 if (!Array.isArray(content)) {
                     throw new Error("Invalid response format");
                 }
-
                 setProblems(content);
+                setTotalPages(total);
             } catch (error) {
                 console.error("Failed to fetch problems:", error);
                 setProblems([]);
             }
         };
-
 
         const fetchJudgedProblems = async () => {
             try {
@@ -56,74 +51,33 @@ const Problems = () => {
                 console.error("Failed to fetch judged problems:", error);
             }
         };
-        console.log("Fetching problems with params:", { page: currentPage, size: problemsPerPage });
-
 
         fetchProblems();
         fetchJudgedProblems();
-    },  [ currentPage]);
-
-
-
-
-    const [currentProblems, setCurrentProblems] = useState([]);
-
-    useEffect(() => {
-
-
-        const indexOfLastProblem = (currentPage + 1) * problemsPerPage;
-        const indexOfFirstProblem = indexOfLastProblem - problemsPerPage;
-
-        // console.log("Slicing from", indexOfFirstProblem, "to", indexOfLastProblem);
-        setCurrentProblems(problems.slice(indexOfFirstProblem, indexOfLastProblem));
-    }, [problems, currentPage]);
-
-    useEffect(() => {
-
-        setCurrentProblems(problems); // 그대로 저장
-    }, [problems]);
-
+    }, [currentPage]);
 
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
             setCurrentPage(page);
         }
     };
-    const renderPagination = () => {
-        const pageNumbers = [];
-        const maxPageButtons = 5;
-        let startPage = Math.max(0, currentPage - 2);
-        let endPage = Math.min(totalPages - 1, startPage + maxPageButtons - 1);
-
-        if (endPage - startPage < maxPageButtons - 1) {
-            startPage = Math.max(0, endPage - maxPageButtons + 1);
-        }
-
-        for (let i = startPage; i <= endPage; i++) {
-            pageNumbers.push(
-                <button
-                    key={i}
-                    onClick={() => handlePageChange(i)}
-                    className={`px-3 py-1 mx-1 rounded-full transition ${
-                        currentPage === i ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
-                    }`}
-                >
-                    {i + 1}
-                </button>
-            );
-        }
-
-        return pageNumbers;
-    };
 
     const isProblemSolved = (problemId) => {
         return judgedProblems.some((judge) => judge.problemId === problemId);
     };
+
     const filteredProblems = problems.filter((problem) => {
-        return (
-            problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) || // 제목 검색
-            problem.problemId.toString().includes(searchQuery) // ID 검색
-        );
+        const matchesSearch =
+            problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            problem.problemId.toString().includes(searchQuery);
+
+        if (!matchesSearch) return false;
+
+        if (filter === "ALL") return true;
+        if (filter === "SOLVED") return isProblemSolved(problem.problemId);
+        if (filter === "UNSOLVED") return !isProblemSolved(problem.problemId);
+
+        return true;
     });
 
     return (
@@ -133,17 +87,45 @@ const Problems = () => {
             </header>
 
             <div className="flex w-full mt-6 items-center justify-center gap-4">
+                <div className="flex flex-wrap gap-2 w-[25%] rounded-full justify-center">
+                    {[
+                        { key: "ALL", label: "ALL" },
+                        { key: "SOLVED", label: "SOLVED" },
+                        { key: "UNSOLVED", label: "UNSOLVED" },
+                    ].map(({ key, label }) => (
+                        <button
+                            key={key}
+                            onClick={() => setFilter(key)}
+                            className={`px-4 py-1 rounded-full transition ${
+                                filter === key
+                                    ? "bg-[#2A2A2A] text-white"
+                                    : "text-white hover:bg-gray-600"
+                            }`}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
                 <input
                     type="text"
                     placeholder=" Search by Title or ID"
-                    className="w-[35%] p-2 border border-gray-500 rounded-full bg-[#2A2A2A] text-white text-center"
+                    className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A] border-collapse border border-gray-800  rounded-full bg-[#2A2A2A] text-white text-center"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-
-                {/* JudgeButton */}
                 <JudgeButton />
             </div>
+
+            {/*<div className="flex w-full mt-6 items-center justify-center gap-4">*/}
+            {/*    <input*/}
+            {/*        type="text"*/}
+            {/*        placeholder=" Search by Title or ID"*/}
+            {/*        className="w-[35%] p-2  rounded-full bg-[#2A2A2A] text-white text-center"*/}
+            {/*        value={searchQuery}*/}
+            {/*        onChange={(e) => setSearchQuery(e.target.value)}*/}
+            {/*    />*/}
+            {/*</div>*/}
+
 
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
@@ -164,23 +146,24 @@ const Problems = () => {
                                     onClick={() => {
                                         const problemUrl = `problems/${problem.problemId}`;
                                         const newWindow = window.open(problemUrl, "_blank");
-
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({accessToken: token}, `${window.location.host}`);
+                                                newWindow?.postMessage({ accessToken: token }, `${window.location.host}`);
                                             }
                                         });
                                     }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
-                                        problem.problemId % 2 === 0 ? "bg-white bg-opacity-10" : "bg-[#2A2A2A] bg-opacity-20"
+                                        problem.problemId % 2 === 0
+                                            ? "bg-white bg-opacity-10"
+                                            : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
                                 >
                                     <td className="p-3">{problem.problemId}</td>
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
-                                            <span className="ml-4 text-xs text-gray-500">( solved. ) </span>
+                                            <span className="ml-4 text-xs text-gray-500">( solved. )</span>
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
@@ -193,7 +176,9 @@ const Problems = () => {
                                             )) || <span className="text-xs text-gray-400">없음</span>}
                                         </div>
                                     </td>
-                                    <td className="p-3">{problem.solved?.rate != null ? `${problem.solved.rate}%` : "N/A"}</td>
+                                    <td className="p-3">
+                                        {problem.solved?.rate != null ? `${problem.solved.rate}%` : "N/A"}
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -206,22 +191,22 @@ const Problems = () => {
                         </tbody>
                     </table>
                 </div>
-                {/*<div className="flex justify-center mt-4">*/}
-                {/*    {renderPagination()}*/}
-                {/*</div>*/}
+
+                {/* 페이지네이션 */}
                 <div className="flex justify-center mt-4">
-                    {Array.from({length: totalPages}, (_, i) => (
+                    {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
                             onClick={() => handlePageChange(i)}
                             className={`px-3 py-1 mx-1 rounded-full transition ${
-                                currentPage === i ? "bg-[#CAFF33] text-black" : "bg-gray-700 text-white hover:bg-gray-600"
+                                currentPage === i
+                                    ? "bg-[#CAFF33] text-black"
+                                    : "bg-gray-700 text-white hover:bg-gray-600"
                             }`}
                         >
-                            {i+1 }
+                            {i + 1}
                         </button>
                     ))}
-
                 </div>
             </div>
 
