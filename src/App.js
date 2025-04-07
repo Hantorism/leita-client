@@ -13,6 +13,7 @@ import TermsPrivacyPage from "./components/pages/term";
 import TermsOfService from "./components/pages/term";
 import PrivacyPolicy from "./components/pages/Privacy";
 import JudgePage from "./components/common/Judge.tsx";
+import PrivateRoute from "./components/common/PrivateRoute.tsx";
 
 
 
@@ -24,15 +25,17 @@ const App = () => {
     return (
         <GoogleOAuthProvider clientId={clientId}>
             <Routes>
+                {/* 공개 라우트 */}
                 <Route path="/" element={<Home />} />
-                <Route path="/problems" element={<Problems />} />
-                <Route path="/study" element={<Study />} />
-                <Route path="/problems/:id" element={<ProblemDetail />} />
-                <Route path="/study/:id" element={<StudyDetail />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/judge" element={<JudgePage />} />
-                {/*<Route path="/login" element={<Login />} />*/}
+                <Route path="/problems" element={<Problems />} />
+                <Route path="/study" element={<Study />} /> />
+
+                {/* 보호된 라우트 */}
+                <Route path="/problems/:id" element={<PrivateRoute element={<ProblemDetail />} />} />
+                <Route path="/study/:id" element={<PrivateRoute element={<StudyDetail />} />} />
+                <Route path="/judge" element={<PrivateRoute element={<JudgePage />} />} />
             </Routes>
         </GoogleOAuthProvider>
     );
