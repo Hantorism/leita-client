@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
-import JudgeButton from "../common/JudgeButton.tsx";
+
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -114,7 +114,7 @@ const Problems = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <JudgeButton />
+                {/*<JudgeButton />*/}
             </div>
 
             {/*<div className="flex w-full mt-6 items-center justify-center gap-4">*/}

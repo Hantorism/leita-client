@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
 import { useNavigate } from "react-router-dom";
-import ProblemsButton from "./ProblemsButton.tsx";
+
 
 interface JudgeResponse {
     message: string;
@@ -146,7 +146,7 @@ export default function JudgePage() {
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
-                <ProblemsButton />
+                {/*<ProblemsButton />*/}
             </div>
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
