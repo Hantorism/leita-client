@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import MonacoEditor from "@monaco-editor/react";
-import * as monaco from "monaco-editor";
+import MonacoEditor, { Monaco } from "@monaco-editor/react";
 import { useNavigate } from 'react-router-dom';
+import * as monacoEditor from 'monaco-editor';
 
 import CustomDropdown from "./CustomDropdown";
 
@@ -28,14 +28,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [outputHeight, setOutputHeight] = useState(200);
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
-    const setupEditorDiagnostics = (editor, monaco) => {
-        if (language === "javascript") {
-            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+    const [editorInstance, setEditorInstance] = useState<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
+    const [monacoInstance, setMonacoInstance] = useState<Monaco | null>(null);
+
+    // 언어 변경 시 JavaScript 검증 설정 업데이트
+    useEffect(() => {
+        if (monacoInstance && language === "javascript") {
+            monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
                 noSemanticValidation: true,
-                noSyntaxValidation: true,
+                noSyntaxValidation: true
             });
         }
-    };
+    }, [language, monacoInstance]);
 
     const decodeText = (text) => {
         try {
@@ -63,7 +67,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
     const startY = useRef(0);
     const handleLanguageChange = (newLanguage) => {
-         setLanguage(newLanguage);  // 언어 변경
+        setLanguage(newLanguage);  // 언어 변경
+
+        // Monaco 인스턴스가 있고 JavaScript를 선택했을 때 에러 검증 비활성화
+        if (monacoInstance && newLanguage === "javascript") {
+            monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: true,
+                noSyntaxValidation: true
+            });
+        }
     };
 
 
@@ -302,9 +314,19 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     // }, [isResizing]);
 
     // MonacoEditor가 마운트 될 때 실행
-    const handleEditorMount = (editor, monaco) => {
-        const container = editor.container;
+    const handleEditorMount = (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+        setEditorInstance(editor);
+        setMonacoInstance(monaco);
+        const container = editor.getContainerDomNode();
         editorRef.current = container;  // MonacoEditor의 컨테이너 DOM 요소를 ref에 저장
+
+        // JavaScript 에러 검증 비활성화
+        if (language === "javascript") {
+            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: true,
+                noSyntaxValidation: true
+            });
+        }
 
         // container가 제대로 참조되는지 확인하기 위한 로그
         if (container) {
@@ -315,7 +337,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 //     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
 //     // const [selectedTestCase, setSelectedTestCase] = useState(0);
- const [testCases, setTestCases] = useState(initialTestCases);
+    const [testCases, setTestCases] = useState(initialTestCases);
 // // 새로운 테스트 케이스 추가 함수
     const addTestCase = () => {
         setTestCases((prevTestCases) => {
@@ -517,12 +539,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             suggestOnTriggerCharacters: autoComplete,
                             lineNumbers: "on",
                             renderLineHighlight: "all",
+                            // JavaScript 에러 표시 비활성화 설정
+                            "javascript.validate.enable": language === "javascript" ? false : true,
+                            // TypeScript 관련 검증도 함께 비활성화
+                            "typescript.validate.enable": language === "javascript" ? false : true,
+                            // 구문 검증 비활성화 (JavaScript의 경우)
+                            "editor.semanticHighlighting.enabled": language === "javascript" ? false : true,
                         }}
-                        onMount={(editor, monaco) => {
-                            handleEditorMount(editor, monaco);         // 기존 동작
-                            setupEditorDiagnostics(editor, monaco);    // 새 기능
-                        }}
-
+                        onMount={handleEditorMount}
                     />
                 </div>
 
