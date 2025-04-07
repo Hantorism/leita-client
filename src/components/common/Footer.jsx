@@ -34,7 +34,8 @@ const Footer = () => {
                     {/* 오른쪽 */}
                     <div className="mt-4 md:mt-0">
                         <p className="text-sm font-Pretend text-gray-400">© 2025 Leita. All rights reserved.</p>
-                        <p className="text-sm font-Pretend text-gray-400"> by 아주대 소프트웨어학과 이장원, 조성연, 오태림</p>
+                        <p className="text-sm font-Pretend text-gray-400"> 아주대 소프트웨어학과 이장원, 조성연, 오태림</p>
+                        <p className="text-sm font-Pretend text-gray-400"> leitaajou@gmail.com</p>
                     </div>
                 </div>
             </div>
