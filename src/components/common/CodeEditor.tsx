@@ -660,18 +660,19 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             </div>
                         )}
 
-                        {result?.error && (
-                            <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                                <h4 className="text-xs text-red-400">❌ Error</h4>
-                                <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-                        {result.error}
-                    </pre>
-                            </div>
-                        )}
+                    {result?.error?.trim() && (
+                        <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                            <h4 className="text-xs text-red-400">❌ Error</h4>
+                            <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+            {result.error}
+        </pre>
+                        </div>
+                    )}
 
 
 
-                        {/*run 결과 */}
+
+                    {/*run 결과 */}
 
                         {result?.testCases?.[0] && (
                             <>
@@ -682,16 +683,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 </div>
                             </>
                         )}
-                        {result?.testCases?.[0] && (
-                            <>
-                                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                                    <h4 className="text-xs text-red-400">❌ Error</h4>
-                                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-                                    {result.testCases[0].error} </pre>
-                                </div>
-                            </>
+                    {Array.isArray(result?.testCases) &&
+                        result.testCases[0]?.error?.trim() &&
+                        result.result !== "맞았습니다" && (
+                            <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                                <h4 className="text-xs text-red-400">❌ Error</h4>
+                                <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+            {result.testCases[0].error}
+        </pre>
+                            </div>
                         )}
-                    </div>
+
+                </div>
                 </div>
             </div>
 
