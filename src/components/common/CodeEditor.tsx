@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor from "@monaco-editor/react";
+import * as monaco from "monaco-editor";
 import { useNavigate } from 'react-router-dom';
 
 import CustomDropdown from "./CustomDropdown";
@@ -27,6 +28,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
     const [outputHeight, setOutputHeight] = useState(200);
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
+    const setupEditorDiagnostics = (editor, monaco) => {
+        if (language === "javascript") {
+            monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+                noSemanticValidation: true,
+                noSyntaxValidation: true,
+            });
+        }
+    };
+
     const decodeText = (text) => {
         try {
             if (!text) return ""; // 빈 값 방지
@@ -508,7 +518,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             lineNumbers: "on",
                             renderLineHighlight: "all",
                         }}
-                        onMount={handleEditorMount}
+                        onMount={(editor, monaco) => {
+                            handleEditorMount(editor, monaco);         // 기존 동작
+                            setupEditorDiagnostics(editor, monaco);    // 새 기능
+                        }}
+
                     />
                 </div>
 
