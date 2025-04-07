@@ -98,8 +98,8 @@ const Problems = () => {
                             onClick={() => setFilter(key)}
                             className={`px-4 py-1 rounded-full transition ${
                                 filter === key
-                                    ? "bg-[#2A2A2A] text-white"
-                                    : "text-white hover:bg-gray-600"
+                                    ? "bg-[#2A2A2A] text-white "
+                                    : "text-white hover:text-[#CAFF33]  hover:bg-opacity-0 "
                             }`}
                         >
                             {label}
@@ -109,7 +109,7 @@ const Problems = () => {
                 <input
                     type="text"
                     placeholder=" Search by Title or ID"
-                    className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A] border-collapse border border-gray-800  rounded-full bg-[#2A2A2A] text-white text-center"
+                    className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A]  rounded-full bg-[#2A2A2A] text-white text-center"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
