@@ -20,6 +20,7 @@ const Problems = () => {
             try {
                 const res = await axios.get(`${API_BASE_URL}/problem`, {
                     params: {
+                        //
                         page: currentPage,
                         size: problemsPerPage,
                     },
