@@ -42,6 +42,17 @@ const Header = () => {
                     </li>
                     <li>
                         <NavLink
+                            to="/judge"
+                            className={({ isActive }) => isActive
+                                ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full"
+                                : "nav-link text-white px-6 py-3"
+                            }
+                        >
+                           Solved
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink
                             to="/study"
                             className={({ isActive }) => isActive
                                 ? "nav-link bg-black bg-opacity-50 text-[#CAFF33] px-6 py-2 rounded-full"
@@ -90,6 +101,9 @@ const Header = () => {
                         </li>
                         <li>
                             <NavLink to="/problems" className="block px-6 py-3" onClick={() => setMenuOpen(false)}>Problems</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/judge" className="block px-6 py-3" onClick={() => setMenuOpen(false)}>Solved</NavLink>
                         </li>
                         <li>
                             <NavLink to="/study" className="block px-6 py-3" onClick={() => setMenuOpen(false)}>Study</NavLink>

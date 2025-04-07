@@ -75,10 +75,16 @@ const Login = ({ user, setUser }) => {
                 navigate("/");
             } catch (error) {
                 console.error(" Google login failed:", error);
+                if (axios.isAxiosError(error) && error.response?.status === 401) {
+                    alert("🚨 @ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!");
+                } else {
+                    alert("🚨 로그인 중 문제가 발생했습니다. 다시 시도해주세요.");
+                }
             }
         },
         onError: (error) => {
             console.error(" Google login error:", error);
+
         },
     });
 
@@ -97,23 +103,29 @@ const Login = ({ user, setUser }) => {
                 <div className="flex items-center gap-3">
                     <span className="text-white text-sm">Hello, {user.data.name} 👋</span>
                     <button
-                        className="bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
+                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
                         onClick={logout}
                     >
                         Logout
+
                     </button>
                 </div>
             ) : (
                 <div className="login-form">
                     <button
-                        className="bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
+                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
                         onClick={signInWithGoogle}
                     >
                         Sign in with Google
+                        {/*/!* Tooltip *!/*/}
+                        {/*<div className="absolute left-1/2 -translate-x-1/2 top-[-40px] w-max px-3 py-2 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">*/}
+                        {/*    @ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!*/}
+                        {/*</div>*/}
                     </button>
                 </div>
             )}
         </div>
+
     );
 };
 

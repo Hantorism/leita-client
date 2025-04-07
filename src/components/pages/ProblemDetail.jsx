@@ -14,6 +14,28 @@ const ProblemDetail = () => {
     const isDragging = useRef(false);
     const [code, setCode] = useState("");
     const [copiedId, setCopiedId] = useState(null);
+    const decodeText = (text) => {
+        try {
+            if (!text) return ""; // 빈 값 방지
+
+            // 1. URL-Encoded인지 확인
+            const urlDecoded = decodeURIComponent(text);
+            if (urlDecoded !== text) return urlDecoded;
+
+            // 2. Base64 인코딩된 경우
+            const base64Decoded = atob(text);
+            if (base64Decoded) return base64Decoded;
+
+            // 3. JSON 문자열인 경우
+            const jsonParsed = JSON.parse(text);
+            if (typeof jsonParsed === "string") return jsonParsed;
+
+            return text; // 디코딩 불가능하면 원본 반환
+        } catch (error) {
+            return text; // 에러 발생 시 원본 반환
+        }
+    };
+
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -82,8 +104,8 @@ const ProblemDetail = () => {
         });
     };
 
-    if (loading) return <div className="text-white text-center mt-10">문제를 불러오는 중...</div>;
-    if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
+    if (loading) return <div className="text-white text-center mt-10">👾 문제를 불러오는 중</div>;
+    if (!problem) return <div className="text-white text-center mt-10">👽 문제를 찾을 수 없습니다.</div>;
 
     return (
         <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretend ">
@@ -92,7 +114,7 @@ const ProblemDetail = () => {
                 className="scrollbar-hide bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
-                <h2 className="text-2xl font-bold text-gray-200"># {problem.problemId} {problem.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-200 font-Pretend"># {problem.problemId} {problem.title}</h2>
                 {/*<h1 className="text-2xl font-bold text-[#CAFF33]"></h1>*/}
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -104,23 +126,23 @@ const ProblemDetail = () => {
                 </div>
 
                 <div className="mt-3">
-                    <span className="text-gray-400">정답률:</span> {problem.solved?.rate}%
-                    <span className="ml-4 text-gray-400">풀이 제출 수:</span> {problem.solved?.count}
+                    <span className="text-gray-400 font-Pretend">정답률:</span> {problem.solved?.rate}%
+                    <span className="ml-4 text-gray-400 font-Pretend">풀이 제출 수:</span> {problem.solved?.count}
                 </div>
                 <hr className="border-t border-gray-500 mt-2" />
 
                 <div className="mt-6">
-                    <h2 className="text-xl font-normal pb-2 pt-1">문제 설명</h2>
-                    <p className="mt-2 text-gray-300">{problem.description.problem}</p>
+                    <h2 className="text-xl font-normal pb-2 pt-1 font-Pretend">문제 설명</h2>
+                    <pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretend">{problem.description.problem}</pre>
                 </div>
 
                 <div className="mt-4">
-                    <h3 className="text-lg font-normal pb-1 pt-2">입력</h3>
-                    <pre className="text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.input}</pre>
+                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">입력</h3>
+                    <pre className="text-gray-300 p-3 rounded-md mt-1 whitespace-pre-wrap font-Pretend"> {decodeText(problem.description.input)}</pre>
                 </div>
                 <div className="mt-4">
-                    <h3 className="text-lg font-normal pb-1 pt-2">출력</h3>
-                    <pre className="text-gray-300 p-3 rounded-md mt-1 font-D2Coding">{problem.description.output}</pre>
+                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">출력</h3>
+                    <pre className="text-gray-300 p-3 rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.output)}</pre>
                 </div>
 
 
@@ -132,9 +154,9 @@ const ProblemDetail = () => {
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
                             <div className="relative">
-                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{testCase.input}</pre>
+                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">  {decodeText(testCase.input)}</pre>
                                 <button
-                                    onClick={() => handleCopy(testCase.input, testCase.id || index)}
+                                    onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
                                     className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
                                 >
                                     {copiedId === (testCase.id || index) ? "복사완료!" : "복사하기"}
@@ -142,7 +164,7 @@ const ProblemDetail = () => {
                             </div>
 
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{testCase.output}</pre>
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">  {decodeText(testCase.output)}</pre>
                         </div>
                     ))}
                 </div>
@@ -167,7 +189,7 @@ const ProblemDetail = () => {
             </div>
 
             {/* 코드 에디터 */}
-            <div className="flex-1 flex flex-col min-w-[300px] overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full overflow-y-auto">
                 <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} testCases={problem.testCases} />
 
             </div>
