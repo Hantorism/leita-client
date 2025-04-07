@@ -105,7 +105,7 @@ export default function JudgePage() {
         setJudges(filtered);
     }, [filter, searchQuery, allJudges]);
 
-    if (loading) return <p className="text-center text-gray-500">로딩 중...</p>;
+    if (loading) return <p className="text-center text-gray-500 mt-[20%]">👾로딩 중...</p>;
     if (error) return <p className="text-center text-red-500">{error}</p>;
 
     const totalPages = Math.ceil(judges.length / ITEMS_PER_PAGE);
@@ -167,7 +167,7 @@ export default function JudgePage() {
                         {paginatedJudges.length === 0 ? (
                             <tr>
                                 <td colSpan={7} className="p-3 text-center text-gray-500">
-                                    해당 조건에 맞는 결과가 없습니다.
+                                    👽 해당 조건에 맞는 결과가 없습니다.
                                 </td>
                             </tr>
                         ) : (
