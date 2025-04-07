@@ -185,7 +185,7 @@ const Problems = () => {
                         ) : (
                             <tr>
                                 <td colSpan="3" className="p-3 text-center text-gray-400">
-                                    문제를 불러오는 중입니다.
+                                    👾 문제를 불러오는 중
                                 </td>
                             </tr>
                         )}

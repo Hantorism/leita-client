@@ -104,8 +104,8 @@ const ProblemDetail = () => {
         });
     };
 
-    if (loading) return <div className="text-white text-center mt-10">문제를 불러오는 중...</div>;
-    if (!problem) return <div className="text-white text-center mt-10">문제를 찾을 수 없습니다.</div>;
+    if (loading) return <div className="text-white text-center mt-10">👾 문제를 불러오는 중</div>;
+    if (!problem) return <div className="text-white text-center mt-10">👽 문제를 찾을 수 없습니다.</div>;
 
     return (
         <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretend ">
