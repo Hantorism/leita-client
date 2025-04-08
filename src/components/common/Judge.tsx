@@ -175,7 +175,7 @@ export default function JudgePage() {
                                 <tr
                                     key={`${judge.problemId}-${index}`}
                                     className={`border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
-                                        judge.problemId % 2 === 0
+                                        judge.result === "CORRECT"
                                             ? "bg-white bg-opacity-10"
                                             : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}

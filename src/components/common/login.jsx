@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
 import "./button.css";
+import axiosInstance from "./axiosInstance";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -39,7 +40,7 @@ const Login = ({ user, setUser }) => {
                 // console.log(" Google OAuth Token:", tokenResponse.access_token);
 
 
-                const res = await axios.post(`${API_BASE_URL}/auth/oauth`, {
+                const res = await axiosInstance.post(`${API_BASE_URL}/auth/oauth`, {
                     accessToken: tokenResponse.access_token,
                 }, {
                     headers: {
@@ -64,7 +65,7 @@ const Login = ({ user, setUser }) => {
 
 
 
-                const userRes = await axios.get(`${API_BASE_URL}/auth/info`, {
+                const userRes = await axiosInstance.get(`${API_BASE_URL}/auth/info`, {
                     headers: { Authorization: `Bearer ${accessToken}` },
                 });
 

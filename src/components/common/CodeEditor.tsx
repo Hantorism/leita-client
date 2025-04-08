@@ -43,25 +43,31 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
     const decodeText = (text) => {
         try {
-            if (!text) return ""; // 빈 값 방지
+            if (!text) return "";
 
-            // 1. URL-Encoded인지 확인
             const urlDecoded = decodeURIComponent(text);
             if (urlDecoded !== text) return urlDecoded;
 
-            // 2. Base64 인코딩된 경우
-            const base64Decoded = atob(text);
-            if (base64Decoded) return base64Decoded;
+            try {
+                const binary = atob(text);
+                const bytes = new Uint8Array([...binary].map(ch => ch.charCodeAt(0)));
+                const decoded = new TextDecoder().decode(bytes);
+                return decoded;
+            } catch (e) {
+                // 무시
+            }
 
-            // 3. JSON 문자열인 경우
+
             const jsonParsed = JSON.parse(text);
             if (typeof jsonParsed === "string") return jsonParsed;
 
-            return text; // 디코딩 불가능하면 원본 반환
+            return text;
         } catch (error) {
-            return text; // 에러 발생 시 원본 반환
+            return text;
         }
     };
+
+
     const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
     const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
     const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
@@ -78,17 +84,25 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         }
     };
 
-
-
     const encodeBase64 = (str: string): string => {
-        // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(str);
-
-        // Uint8Array를 base64로 변환
-        const base64String = btoa(String.fromCharCode(...uint8Array));
-        return base64String;
+        const utf8Bytes = new TextEncoder().encode(str);
+        const binary = Array.from(utf8Bytes)
+            .map(byte => String.fromCharCode(byte))
+            .join('');
+        return btoa(binary);
     };
+
+
+    //
+    // const encodeBase64 = (str: string): string => {
+    //     // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
+    //     const encoder = new TextEncoder();
+    //     const uint8Array = encoder.encode(str);
+    //
+    //     // Uint8Array를 base64로 변환
+    //     const base64String = btoa(String.fromCharCode(...uint8Array));
+    //     return base64String;
+    // };
 
     const decodeBase64 = (base64: string): string => {
         // base64를 디코딩하여 Uint8Array로 변환
@@ -421,7 +435,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
     return (
-        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow-hidden h-full">
+        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow: visible h-full">
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
             <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
@@ -563,9 +577,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 {/*</div>*/}
 
                 {/* 결과 및 테스트 케이스 */}
-                <div className="mt-2 bg-[#1A1A1A] text-white rounded-md min-h-[100px] overflow-y-auto scrollbar-hide bg-[#2A2A2A] p-6 pt-4 rounded-lg">
+                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[100px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
 
-                    <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
                             <div key={index} className="relative">
                                 <button
@@ -613,9 +627,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         {selectedTestCase < initialTestCases.length ? (
                             <div>
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                {decodeText(testCases[selectedTestCase].input)}
-            </pre>
+                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                {decodeText(testCases[selectedTestCase].input)}
+                            </pre>
                             </div>
                         ) : (
                             <div>
@@ -628,7 +642,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
 
                                 <textarea
-                                    className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                    className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                                     value={testCases[selectedTestCase].input}
                                     onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
                                 />
@@ -642,13 +656,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                         <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                         {selectedTestCase < initialTestCases.length ? (
 
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                 {decodeText(testCases[selectedTestCase].output)}
             </pre>
                         ) : (
 <div>
                             <textarea
-                                className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                                 value={testCases[selectedTestCase].output}
                                 onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
                             />
