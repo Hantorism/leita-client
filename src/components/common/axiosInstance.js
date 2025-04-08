@@ -21,7 +21,7 @@ instance.interceptors.response.use(
       localStorage.removeItem("token");
       Cookies.remove("accessToken");
       Cookies.remove("refreshToken");
-      window.location.href = "/login"; // 강제로 로그인 페이지로 이동
+
     }
     return Promise.reject(err);
   }
