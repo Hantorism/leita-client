@@ -161,7 +161,7 @@ const ProblemDetail = () => {
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
                             <div className="relative">
-                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{decodeText(testCase.input)}</pre>
+                                <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{decodeText(testCase.input)}</pre>
                                 <button
                                     onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
                                     className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
@@ -171,7 +171,7 @@ const ProblemDetail = () => {
                             </div>
 
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{decodeText(testCase.output)}</pre>
+                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{decodeText(testCase.output)}</pre>
                         </div>
                     ))}
                 </div>
