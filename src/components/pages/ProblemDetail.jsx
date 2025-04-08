@@ -20,25 +20,25 @@ const ProblemDetail = () => {
 
 
             const urlDecoded = decodeURIComponent(text);
-            if (urlDecoded !== text) return urlDecoded.trimStart();
+            if (urlDecoded !== text) return urlDecoded;
 
 
             try {
-                const binary = atob(text); // base64 → binary string
+                const binary = atob(text);
                 const bytes = new Uint8Array([...binary].map(ch => ch.charCodeAt(0)));
                 const decoded = new TextDecoder().decode(bytes);
-                return decoded.trimStart();
+                return decoded;
             } catch (e) {
-
+                // 무시
             }
 
 
             const jsonParsed = JSON.parse(text);
-            if (typeof jsonParsed === "string") return jsonParsed.trimStart();
+            if (typeof jsonParsed === "string") return jsonParsed;
 
-            return text.trimStart(); // 위 케이스에 해당하지 않으면 원본 반환
+            return text;
         } catch (error) {
-            return text.trimStart(); // 예외 발생 시도 앞뒤 공백 제거 후 반환
+            return text;
         }
     };
 
@@ -144,9 +144,7 @@ const ProblemDetail = () => {
 
                 <div className="mt-4">
                     <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">입력</h3>
-                    <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretend">
-  {decodeText(problem.description.input)}
-</pre>
+                    <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.input)}</pre>
 
                 </div>
                 <div className="mt-4">
