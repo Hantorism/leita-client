@@ -18,18 +18,27 @@ const ProblemDetail = () => {
         try {
             if (!text) return "";
 
+
             const urlDecoded = decodeURIComponent(text);
             if (urlDecoded !== text) return urlDecoded.trimStart();
 
-            const base64Decoded = atob(text);
-            if (base64Decoded) return base64Decoded.trimStart();
+
+            try {
+                const binary = atob(text); // base64 → binary string
+                const bytes = new Uint8Array([...binary].map(ch => ch.charCodeAt(0)));
+                const decoded = new TextDecoder().decode(bytes);
+                return decoded.trimStart();
+            } catch (e) {
+
+            }
+
 
             const jsonParsed = JSON.parse(text);
             if (typeof jsonParsed === "string") return jsonParsed.trimStart();
 
-            return text.trimStart();
+            return text.trimStart(); // 위 케이스에 해당하지 않으면 원본 반환
         } catch (error) {
-            return text.trimStart();
+            return text.trimStart(); // 예외 발생 시도 앞뒤 공백 제거 후 반환
         }
     };
 

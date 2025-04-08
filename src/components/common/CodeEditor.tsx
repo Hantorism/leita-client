@@ -43,25 +43,32 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
     const decodeText = (text) => {
         try {
-            if (!text) return ""; // 빈 값 방지
+            if (!text) return "";
 
-            // 1. URL-Encoded인지 확인
+
             const urlDecoded = decodeURIComponent(text);
-            if (urlDecoded !== text) return urlDecoded;
+            if (urlDecoded !== text) return urlDecoded.trimStart();
 
-            // 2. Base64 인코딩된 경우
-            const base64Decoded = atob(text);
-            if (base64Decoded) return base64Decoded;
 
-            // 3. JSON 문자열인 경우
+            try {
+                const binary = atob(text); // base64 → binary string
+                const bytes = new Uint8Array([...binary].map(ch => ch.charCodeAt(0)));
+                const decoded = new TextDecoder().decode(bytes);
+                return decoded.trimStart();
+            } catch (e) {
+
+            }
+
+
             const jsonParsed = JSON.parse(text);
-            if (typeof jsonParsed === "string") return jsonParsed;
+            if (typeof jsonParsed === "string") return jsonParsed.trimStart();
 
-            return text; // 디코딩 불가능하면 원본 반환
+            return text.trimStart(); // 위 케이스에 해당하지 않으면 원본 반환
         } catch (error) {
-            return text; // 에러 발생 시 원본 반환
+            return text.trimStart(); // 예외 발생 시도 앞뒤 공백 제거 후 반환
         }
     };
+
     const [editorHeight, setEditorHeight] = useState(400); // 에디터 높이 초기값
     const [isResizing, setIsResizing] = useState(false); // 리사이즈 상태 추적
     const editorRef = useRef(null); // MonacoEditor의 컨테이너 DOM 참조
@@ -78,17 +85,25 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
         }
     };
 
-
-
     const encodeBase64 = (str: string): string => {
-        // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
-        const encoder = new TextEncoder();
-        const uint8Array = encoder.encode(str);
-
-        // Uint8Array를 base64로 변환
-        const base64String = btoa(String.fromCharCode(...uint8Array));
-        return base64String;
+        const utf8Bytes = new TextEncoder().encode(str);
+        const binary = Array.from(utf8Bytes)
+            .map(byte => String.fromCharCode(byte))
+            .join('');
+        return btoa(binary);
     };
+
+
+    //
+    // const encodeBase64 = (str: string): string => {
+    //     // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
+    //     const encoder = new TextEncoder();
+    //     const uint8Array = encoder.encode(str);
+    //
+    //     // Uint8Array를 base64로 변환
+    //     const base64String = btoa(String.fromCharCode(...uint8Array));
+    //     return base64String;
+    // };
 
     const decodeBase64 = (base64: string): string => {
         // base64를 디코딩하여 Uint8Array로 변환
