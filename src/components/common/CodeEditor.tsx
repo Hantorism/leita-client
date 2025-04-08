@@ -436,7 +436,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
     return (
-        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow-hidden h-full">
+        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow: visible h-full">
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
             <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
                 <div className="flex items-center space-x-4">
@@ -578,9 +578,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                 {/*</div>*/}
 
                 {/* 결과 및 테스트 케이스 */}
-                <div className="mt-2 bg-[#1A1A1A] text-white rounded-md min-h-[100px] overflow-y-auto scrollbar-hide bg-[#2A2A2A] p-6 pt-4 rounded-lg">
+                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[100px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
 
-                    <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
                             <div key={index} className="relative">
                                 <button
