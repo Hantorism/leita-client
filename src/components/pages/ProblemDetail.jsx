@@ -16,23 +16,20 @@ const ProblemDetail = () => {
     const [copiedId, setCopiedId] = useState(null);
     const decodeText = (text) => {
         try {
-            if (!text) return ""; // 빈 값 방지
+            if (!text) return "";
 
-            // 1. URL-Encoded인지 확인
             const urlDecoded = decodeURIComponent(text);
-            if (urlDecoded !== text) return urlDecoded;
+            if (urlDecoded !== text) return urlDecoded.trimStart();
 
-            // 2. Base64 인코딩된 경우
             const base64Decoded = atob(text);
-            if (base64Decoded) return base64Decoded;
+            if (base64Decoded) return base64Decoded.trimStart();
 
-            // 3. JSON 문자열인 경우
             const jsonParsed = JSON.parse(text);
-            if (typeof jsonParsed === "string") return jsonParsed;
+            if (typeof jsonParsed === "string") return jsonParsed.trimStart();
 
-            return text; // 디코딩 불가능하면 원본 반환
+            return text.trimStart();
         } catch (error) {
-            return text; // 에러 발생 시 원본 반환
+            return text.trimStart();
         }
     };
 
@@ -138,11 +135,14 @@ const ProblemDetail = () => {
 
                 <div className="mt-4">
                     <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">입력</h3>
-                    <pre className="text-gray-300 p-3 rounded-md mt-1 whitespace-pre-wrap font-Pretend"> {decodeText(problem.description.input)}</pre>
+                    <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretend">
+  {decodeText(problem.description.input)}
+</pre>
+
                 </div>
                 <div className="mt-4">
                     <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">출력</h3>
-                    <pre className="text-gray-300 p-3 rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.output)}</pre>
+                    <pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.output)}</pre>
                 </div>
 
 
@@ -154,7 +154,7 @@ const ProblemDetail = () => {
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
                             <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
                             <div className="relative">
-                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">  {decodeText(testCase.input)}</pre>
+                                <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10"> {decodeText(testCase.input)}</pre>
                                 <button
                                     onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
                                     className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
@@ -164,7 +164,7 @@ const ProblemDetail = () => {
                             </div>
 
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md">  {decodeText(testCase.output)}</pre>
+                            <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md"> {decodeText(testCase.output)}</pre>
                         </div>
                     ))}
                 </div>

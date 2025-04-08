@@ -614,8 +614,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
                             <div>
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
                             <pre className="font-D2Coding bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                {decodeText(testCases[selectedTestCase].input)}
-            </pre>
+                                {decodeText(testCases[selectedTestCase].input)}
+                            </pre>
                             </div>
                         ) : (
                             <div>
