@@ -404,26 +404,23 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             if (response.ok) {
                 setResult({
                     message: resultData.message || "🛠 실행 완료!",
-                    testCases: [
-                        {
-                            actualOutput: resultData.data[0].result,
-                            error: resultData.data[0].error || null,
-                            isPassed: resultData.data[0].result === testCase.output
-                        }
-                    ],
-                    isSubmit: false
+                    testCases: resultData.data.map((item: any) => ({
+                        actualOutput: item.result,
+                        error: item.error || null,
+                    })),
+                    isSubmit: false,
                 });
             } else {
                 setResult({
                     error: `❌ 실행 실패: ${resultData.message}`,
                     message: resultData.message || "실행 중 오류 발생",
-                    isSubmit: false
+                    isSubmit: false,
                 });
             }
         } catch (error) {
             setResult({
                 message: "서버 요청 중 오류 발생",
-                isSubmit: false
+                isSubmit: false,
             });
         }
 
@@ -711,26 +708,47 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
 
 
                     {/*run 결과 */}
+                    {result?.testCases?.[selectedTestCase] && (
+                        <>
+                            <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
+                                <h4 className="text-xs text-gray-400">Result</h4>
+                                <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
+                {result.testCases[selectedTestCase].actualOutput}
+            </pre>
+                            </div>
+                        </>
+                    )}
 
-                        {result?.testCases?.[0] && (
-                            <>
-                                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                                    <h4 className="text-xs text-gray-400"> Result</h4>
-                                    <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                                    {result.testCases[0].actualOutput} </pre>
-                                </div>
-                            </>
-                        )}
                     {Array.isArray(result?.testCases) &&
-                        result.testCases[0]?.error?.trim() &&
-                        result.result !== "맞았습니다" && (
+                        result.testCases[selectedTestCase]?.error?.trim() && (
                             <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
                                 <h4 className="text-xs text-red-400">❌ Error</h4>
                                 <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-            {result.testCases[0].error}
-        </pre>
+                {result.testCases[selectedTestCase].error}
+            </pre>
                             </div>
                         )}
+
+
+        {/*            {result?.testCases?.[0] && (*/}
+        {/*                    <>*/}
+        {/*                        <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*/}
+        {/*                            <h4 className="text-xs text-gray-400"> Result</h4>*/}
+        {/*                            <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">*/}
+        {/*                            {result.testCases[0].actualOutput} </pre>*/}
+        {/*                        </div>*/}
+        {/*                    </>*/}
+        {/*                )}*/}
+        {/*            {Array.isArray(result?.testCases) &&*/}
+        {/*                result.testCases[0]?.error?.trim() &&*/}
+        {/*                result.result !== "맞았습니다" && (*/}
+        {/*                    <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*/}
+        {/*                        <h4 className="text-xs text-red-400">❌ Error</h4>*/}
+        {/*                        <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*/}
+        {/*    {result.testCases[0].error}*/}
+        {/*</pre>*/}
+        {/*                    </div>*/}
+        {/*                )}*/}
 
                 </div>
                 </div>
