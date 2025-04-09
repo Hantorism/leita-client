@@ -14,7 +14,7 @@ interface CodeEditorProps {
     testCases: { input: string; output: string }[];
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testCases: initialTestCases }) => {
+const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialTestCases }) => {
     const [language, setLanguage] = useState("undefined");
     const [isRunningCode, setIsRunningCode] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +40,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ code, setCode, problemId ,testC
             });
         }
     }, [language, monacoInstance]);
+
+    const [code, setCode] = useState(() => {
+        const saved = localStorage.getItem(`code-${problemId}`);
+        return saved || "";
+    });
+
+
+    useEffect(() => {
+        localStorage.setItem(`code-${problemId}`, code);
+
+    }, [code, problemId]);
+
 
     const decodeText = (text) => {
         try {
