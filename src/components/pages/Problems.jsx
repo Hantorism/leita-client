@@ -130,8 +130,8 @@ const Problems = () => {
 
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
-                <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden">
-                    <table className=" w-full text-left border-collapse border border-gray-600">
+                <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
+                    <table className=" w-full text-left ">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
                             <th className="p-3 border-b border-gray-500">ID</th>
