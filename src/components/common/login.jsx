@@ -13,6 +13,26 @@ const Login = ({ user, setUser }) => {
     const [userInfo, setUserInfo] = useState(null);
     const [logoutTimer, setLogoutTimer] = useState(null);
 
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
+
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+
+        if (token) {
+            axiosInstance.get(`${API_BASE_URL}/auth/info`, {
+                headers: { Authorization: `Bearer ${token}` },
+            }).then((res) => {
+                setUser(res.data);
+            }).catch(() => {
+                logout(); // 토큰 만료 시 로그아웃
+            });
+
+            startLogoutTimer();
+        }
+    }, []);
 
 
     useEffect(() => {
