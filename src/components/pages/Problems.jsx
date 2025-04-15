@@ -54,9 +54,10 @@ const Problems = () => {
         }
     };
 
-    const isProblemSolved = (problemId) => {
-        return judgedProblems.some((judge) => judge.problemId === problemId);
+    const isProblemSolved = (problem) => {
+        return problem.solved?.successCount > 0;
     };
+
 
     const filteredProblems = problems.filter((problem) => {
         const matchesSearch =
@@ -65,11 +66,12 @@ const Problems = () => {
 
         if (!matchesSearch) return false;
 
-        if (filter === "SOLVED") return isProblemSolved(problem.problemId);
-        if (filter === "UNSOLVED") return !isProblemSolved(problem.problemId);
+        if (filter === "SOLVED") return isProblemSolved(problem);
+        if (filter === "UNSOLVED") return !isProblemSolved(problem);
 
         return true;
     });
+
 
     return (
         <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
@@ -143,8 +145,8 @@ const Problems = () => {
                                     <td className="p-3">{problem.problemId}</td>
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
-                                        {isProblemSolved(problem.problemId) && (
-                                            <span className="ml-4 text-xs text-gray-500">( solved. )</span>
+                                        {isProblemSolved(problem) && (
+                                            <span className="ml-4 text-xs text-gray-500">(solved)</span>
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
