@@ -62,11 +62,11 @@ const Home = () => {
 
                 <motion.div
                     className="text-left"
-                    initial={{ opacity: 0, y: 40 }}   // 처음엔 아래쪽에 있고 투명
-                    animate={{ opacity: 1, y: 0 }}    // 서서히 위로 떠오르며 나타남
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
                         duration: 1.5,
-                        ease: "easeOut",                // 부드러운 곡선
+                        ease: "easeOut",
                     }}
                 >
 
