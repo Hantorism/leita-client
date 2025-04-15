@@ -132,7 +132,7 @@ const ProblemDetail = () => {
                 </div>
 
                 <div className="mt-3">
-                    <span className="text-gray-400 font-Pretend">정답률:</span>  {problem.solved?.rate?.toFixed(1)}%
+                    <span className="text-gray-400 font-Pretend">정답률:</span>  {problem.solved?.rate?.toFixed(2)}%
                     <span className="ml-4 text-gray-400 font-Pretend">풀이 제출 수:</span> {problem.solved?.count}
                 </div>
                 <hr className="border-t border-gray-500 mt-2" />

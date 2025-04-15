@@ -176,11 +176,16 @@ const Problems = () => {
                                             : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
                                 >
-                                    <td className="p-3">{problem.problemId}</td>
+                                    <td className="p-4">{problem.problemId}</td>
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
-                                            <span className="ml-4 text-xs text-gray-500">( solved. )</span>
+                                            // <span className="ml-4 text-xs text-gray-500">( solved )</span>
+                                            <img
+                                                src="/image/solved.svg"
+                                                alt="solved"
+                                                className="ml-2 w-3 h-3 mb-1 inline-block"
+                                            />
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
