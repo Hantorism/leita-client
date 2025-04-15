@@ -44,7 +44,24 @@ const Problems = () => {
                 setProblems([]);
             }
         };
+        const fetchJudgedProblems = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get(`${API_BASE_URL}/judge`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+                const judgedData = res.data?.data ?? [];
+                setJudgedProblems(judgedData.filter((judge) => judge.result === "CORRECT"));
+            } catch (error) {
+                console.error("Failed to fetch judged problems:", error);
+            }
+        };
+
         fetchProblems();
+        fetchJudgedProblems();
+
 
     }, [currentPage, searchQuery, filter]);
 
@@ -54,10 +71,9 @@ const Problems = () => {
         }
     };
 
-    const isProblemSolved = (problem) => {
-        return problem.solved?.successCount > 0;
+    const isProblemSolved = (problemId) => {
+        return judgedProblems.some((judge) => judge.problemId === problemId);
     };
-
 
     const filteredProblems = problems.filter((problem) => {
         const matchesSearch =
@@ -66,11 +82,29 @@ const Problems = () => {
 
         if (!matchesSearch) return false;
 
-        if (filter === "SOLVED") return isProblemSolved(problem);
-        if (filter === "UNSOLVED") return !isProblemSolved(problem);
+        if (filter === "ALL") return true;
+        if (filter === "SOLVED") return isProblemSolved(problem.problemId);
+        if (filter === "UNSOLVED") return !isProblemSolved(problem.problemId);
 
         return true;
     });
+    // const isProblemSolved = (problem) => {
+    //     return problem.solved?.successCount > 0;
+    // };
+
+    //
+    // const filteredProblems = problems.filter((problem) => {
+    //     const matchesSearch =
+    //         problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         problem.problemId.toString().includes(searchQuery);
+    //
+    //     if (!matchesSearch) return false;
+    //
+    //     if (filter === "SOLVED") return isProblemSolved(problem);
+    //     if (filter === "UNSOLVED") return !isProblemSolved(problem);
+    //
+    //     return true;
+    // });
 
 
     return (
@@ -145,8 +179,8 @@ const Problems = () => {
                                     <td className="p-3">{problem.problemId}</td>
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
-                                        {isProblemSolved(problem) && (
-                                            <span className="ml-4 text-xs text-gray-500">(solved)</span>
+                                        {isProblemSolved(problem.problemId) && (
+                                            <span className="ml-4 text-xs text-gray-500">( solved. )</span>
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
