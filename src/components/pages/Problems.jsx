@@ -157,7 +157,7 @@ const Problems = () => {
                         </thead>
                         <tbody>
                         {filteredProblems.length > 0 ? (
-                            filteredProblems.map((problem) => (
+                            filteredProblems.map((problem, index) => (
                                 <tr
                                     key={problem.problemId}
                                     onClick={() => {
@@ -166,12 +166,15 @@ const Problems = () => {
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({ accessToken: token }, `${window.location.host}`);
+                                                newWindow?.postMessage(
+                                                    { accessToken: token },
+                                                    `${window.location.host}`
+                                                );
                                             }
                                         });
                                     }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
-                                        problem.problemId % 2 === 0
+                                        index % 2 === 0
                                             ? "bg-white bg-opacity-10"
                                             : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
