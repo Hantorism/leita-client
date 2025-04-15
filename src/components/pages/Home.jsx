@@ -3,6 +3,7 @@ import Header from "../common/Header";
 import  Footer  from "../common/Footer";
 import { useNavigate } from 'react-router-dom';
 import PopularProblems from "../common/PopularProblems.tsx";
+import { motion } from "framer-motion";
 
 const Home = () => {
     // const [currentImage, setCurrentImage] = useState(0);
@@ -28,6 +29,16 @@ const Home = () => {
     // }, []);
 
     const navigate = useNavigate();
+    const [startAnimation, setStartAnimation] = useState(false);
+
+    useEffect(() => {
+        // 페이지 로딩 직후 애니메이션 시작
+        const timer = setTimeout(() => {
+            setStartAnimation(true);
+        }, 500); // 약간의 delay
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleClick = () => {
         navigate('/problems'); // 버튼 클릭 시 /problems 경로로 이동
@@ -47,6 +58,18 @@ const Home = () => {
                         다양한 프로그래밍 문제를 풀고, 실시간 온라인 채점을 통해 실력을 확인하세요.
                     </a>
                 </div>
+
+
+                <motion.div
+                    className="text-left"
+                    initial={{ opacity: 0, y: 40 }}   // 처음엔 아래쪽에 있고 투명
+                    animate={{ opacity: 1, y: 0 }}    // 서서히 위로 떠오르며 나타남
+                    transition={{
+                        duration: 1.5,
+                        ease: "easeOut",                // 부드러운 곡선
+                    }}
+                >
+
                 <div className="text-left">
                     <h1 className="text-[2.5rem] font-sans font-extrabold leading-[1.3] uppercase text-white">
                         START <br />
@@ -54,20 +77,27 @@ const Home = () => {
                         WITH LEITA! 🚀
                     </h1>
                 </div>
+                </motion.div>
+                <motion.div
+                    className="text-left"
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                        duration: 3,
+                        ease: "easeOut",
+                    }}
+                >
                 <button
                     onClick={handleClick}
                     className="font-lexend mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
                 >
                     Let's solve problems!
                 </button>
-
+                </motion.div>
                 <div className="mt-20">
-
                 </div>
-
-
-
             </div>
+
             <div className="  pl-[10%]  pr-[10%] p-10 pt-3 w-full text-left">
                 <PopularProblems />
             </div>
