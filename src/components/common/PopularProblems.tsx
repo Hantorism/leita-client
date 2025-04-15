@@ -49,7 +49,7 @@ const PopularProblems = () => {
                         className="cursor-pointer w-full h-40 bg-white bg-opacity-10 p-4 rounded-xl transition-transform duration-200 hover:scale-105 hover:bg-opacity-20"
                     >
                         <h3 className="text-lg font-semibold text-white">{problem.title}</h3>
-                        <p className="text-sm text-gray-300">{problem.solved.totalCount}명이 풀었어요!</p>
+                        <p className="text-sm text-gray-300">{problem.solved.totalCount}번 풀었어요!</p>
                     </div>
                 ))}
             </div>

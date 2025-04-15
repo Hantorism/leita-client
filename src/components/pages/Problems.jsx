@@ -12,21 +12,26 @@ const Problems = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+
+
     const problemsPerPage = 10;
     const [filter, setFilter] = useState("ALL");
-
+    const token = localStorage.getItem("token");
     useEffect(() => {
+        if (!token) return;
         const fetchProblems = async () => {
             try {
                 const params = {
                     page: currentPage,
                     size: problemsPerPage,
                     search: searchQuery,
-                    filter: filter === "ALL" ? undefined : filter,
+                    filter: filter !== "ALL" ? filter : undefined,
                 };
 
 
-                const res = await axios.get(`${API_BASE_URL}/problem`, { params, withCredentials: true, });
+                const res = await axios.get(`${API_BASE_URL}/problem`, { params,  headers: {
+                        Authorization: `Bearer ${token}`,
+                    },withCredentials: true, });
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
                 if (!Array.isArray(content)) {
