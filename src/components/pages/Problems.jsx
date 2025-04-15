@@ -18,13 +18,15 @@ const Problems = () => {
     useEffect(() => {
         const fetchProblems = async () => {
             try {
-                const res = await axios.get(`${API_BASE_URL}/problem`, {
-                    params: {
-                        //
-                        page: currentPage,
-                        size: problemsPerPage,
-                    },
-                });
+                const params = {
+                    page: currentPage,
+                    size: problemsPerPage,
+                    search: searchQuery,
+                    filter: filter === "ALL" ? undefined : filter,
+                };
+
+
+                const res = await axios.get(`${API_BASE_URL}/problem`, { params, withCredentials: true, });
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
                 if (!Array.isArray(content)) {
@@ -37,25 +39,9 @@ const Problems = () => {
                 setProblems([]);
             }
         };
-
-        const fetchJudgedProblems = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const res = await axios.get(`${API_BASE_URL}/judge`, {
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                    },
-                });
-                const judgedData = res.data?.data ?? [];
-                setJudgedProblems(judgedData.filter((judge) => judge.result === "CORRECT"));
-            } catch (error) {
-                console.error("Failed to fetch judged problems:", error);
-            }
-        };
-
         fetchProblems();
-        fetchJudgedProblems();
-    }, [currentPage]);
+
+    }, [currentPage, searchQuery, filter]);
 
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
@@ -74,7 +60,6 @@ const Problems = () => {
 
         if (!matchesSearch) return false;
 
-        if (filter === "ALL") return true;
         if (filter === "SOLVED") return isProblemSolved(problem.problemId);
         if (filter === "UNSOLVED") return !isProblemSolved(problem.problemId);
 
@@ -114,18 +99,8 @@ const Problems = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                {/*<JudgeButton />*/}
             </div>
 
-            {/*<div className="flex w-full mt-6 items-center justify-center gap-4">*/}
-            {/*    <input*/}
-            {/*        type="text"*/}
-            {/*        placeholder=" Search by Title or ID"*/}
-            {/*        className="w-[35%] p-2  rounded-full bg-[#2A2A2A] text-white text-center"*/}
-            {/*        value={searchQuery}*/}
-            {/*        onChange={(e) => setSearchQuery(e.target.value)}*/}
-            {/*    />*/}
-            {/*</div>*/}
 
 
 
@@ -178,7 +153,7 @@ const Problems = () => {
                                         </div>
                                     </td>
                                     <td className="p-3">
-                                        {problem.solved?.rate != null ? `${problem.solved.rate}%` : "N/A"}
+                                        {problem.solved?.rate != null ? `${problem.solved.rate.toFixed(2)}%` : "N/A"}
                                     </td>
                                 </tr>
                             ))
