@@ -45,7 +45,7 @@ const CreateProblem = () => {
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
-        <div className="create-problem-container max-w-5xl mx-auto p-6  rounded-lg shadow-lg">
+        <div className="create-problem-container max-w-5xl mx-auto p-6  rounded-lg ">
             <h2 className="text-3xl  text-center mb-6 text-white">Create Problem 👾</h2>
             <form onSubmit={handleSubmit} className="space-y-6 ">
                 <div>
@@ -115,73 +115,78 @@ const CreateProblem = () => {
                         />
                     </div>
                 </div>
-
                 <div>
-                    <label className="block text-lg font-medium text-white">Test Cases</label>
+                    <label className="block text-lg font-medium text-white mb-2">Test Cases (최소 2개)</label>
                     {testCases.map((testCase, index) => (
-                        <div key={index} className="space-y-3">
+                        <div key={index}
+                             className="space-y-3 mb-6 p-4 border border-gray-600 rounded-lg bg-white bg-opacity-10">
+                            <h3 className="text-white font-semibold mb-2">Test Case #{index + 1}</h3>
+
                             <div>
-                                <textarea
-                                    placeholder="Test case input"
-                                    value={testCase.input}
-                                    onChange={(e) =>
-                                        setTestCases([
-                                            ...testCases.slice(0, index),
-                                            {...testCase, input: e.target.value},
-                                            ...testCases.slice(index + 1),
-                                        ])
-                                    }
-                                    className="w-full p-3 border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
-                                    rows={3}
-                                />
+                <textarea
+                    placeholder="Test case input"
+                    value={testCase.input}
+                    onChange={(e) =>
+                        setTestCases([
+                            ...testCases.slice(0, index),
+                            {...testCase, input: e.target.value},
+                            ...testCases.slice(index + 1),
+                        ])
+                    }
+                    className="w-full p-3 border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                    rows={3}
+                />
                             </div>
                             <div>
-                                <textarea
-                                    placeholder="Test case output"
-                                    value={testCase.output}
-                                    onChange={(e) =>
-                                        setTestCases([
-                                            ...testCases.slice(0, index),
-                                            {...testCase, output: e.target.value},
-                                            ...testCases.slice(index + 1),
-                                        ])
-                                    }
-                                    className="w-full p-3 border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
-                                    rows={3}
-                                />
+                <textarea
+                    placeholder="Test case output"
+                    value={testCase.output}
+                    onChange={(e) =>
+                        setTestCases([
+                            ...testCases.slice(0, index),
+                            {...testCase, output: e.target.value},
+                            ...testCases.slice(index + 1),
+                        ])
+                    }
+                    className="w-full p-3 border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                    rows={3}
+                />
                             </div>
 
-                            <button
-                                type="button"
-                                onClick={() =>
-                                    setTestCases(testCases.filter((_, i) => i !== index))
-                                }
-                                className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
-                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
-                            >
-                                Remove Test Case (-)
-                            </button>
+                            {testCases.length > 2 && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setTestCases(testCases.filter((_, i) => i !== index))
+                                    }
+                                    className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white hover:text-[#CAFF33] hover:bg-opacity-0"
+                                >
+                                    Remove Test Case (-)
+                                </button>
+                            )}
                         </div>
                     ))}
+
                     <button
                         type="button"
                         onClick={() =>
                             setTestCases([...testCases, {input: "", output: ""}])
                         }
-                        className=" px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
-                              hover:text-[#CAFF33]  hover:bg-opacity-0 "
+                        className="mt-2 px-4 py-2 rounded-full transition bg-[#2A2A2A] text-white hover:text-[#CAFF33] hover:bg-opacity-0"
                     >
                         Add Test Case (+)
                     </button>
                 </div>
 
+
                 <div>
                     <label className="block text-lg font-medium text-white">Source</label>
                     <input
+                        placeholder="출처"
                         type="text"
                         value={source}
                         onChange={(e) => setSource(e.target.value)}
-                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                        className=" p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                     />
                 </div>
 
@@ -191,6 +196,7 @@ const CreateProblem = () => {
                         {category.map((cat, index) => (
                             <div key={index} className="flex gap-2">
                                 <input
+                                    placeholder="ex) 자료구조, 수학 .."
                                     type="text"
                                     value={cat}
                                     onChange={(e) => {
@@ -208,7 +214,7 @@ const CreateProblem = () => {
                                     className="px-3 py-[0.2] rounded-full transition bg-[#2A2A2A] text-white
                                 hover:text-[#CAFF33]  hover:bg-opacity-0 "
                                 >
-                                  -
+                                    -
                                 </button>
                             </div>
                         ))}
@@ -217,7 +223,7 @@ const CreateProblem = () => {
                     <button
                         type="button"
                         onClick={() => setCategory([...category, ""])}
-                        className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
+                        className="px-2 mt-4 py-1 rounded-full transition bg-[#2A2A2A] text-white
                                 hover:text-[#CAFF33]  hover:bg-opacity-0 "
                     >
                         Add Category (+)
