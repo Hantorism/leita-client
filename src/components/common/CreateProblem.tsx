@@ -220,7 +220,7 @@ const CreateProblem = () => {
                         className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
                                 hover:text-[#CAFF33]  hover:bg-opacity-0 "
                     >
-                        카테고리 추가
+                        Add Category (+)
                     </button>
                 </div>
 
