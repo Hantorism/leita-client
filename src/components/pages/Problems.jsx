@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
+import CreateProblemButton from "../common/CreateProblemButton.tsx";
+
 
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
@@ -145,6 +147,7 @@ const Problems = () => {
 
 
 
+
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
                     <table className=" w-full text-left ">
@@ -218,7 +221,7 @@ const Problems = () => {
                 </div>
 
                 {/* 페이지네이션 */}
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-4 mb-4">
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
@@ -233,7 +236,10 @@ const Problems = () => {
                         </button>
                     ))}
                 </div>
+
+                <CreateProblemButton/>
             </div>
+
 
             <footer className="w-full text-left mt-20">
                 <Footer />

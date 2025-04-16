@@ -14,6 +14,7 @@ import TermsOfService from "./components/pages/term";
 import PrivacyPolicy from "./components/pages/Privacy";
 import JudgePage from "./components/common/Judge.tsx";
 import PrivateRoute from "./components/common/PrivateRoute.tsx";
+import CreateProblem from "./components/common/CreateProblem.tsx";
 
 
 
@@ -36,6 +37,7 @@ const App = () => {
                 <Route path="/problems/:id" element={<PrivateRoute element={<ProblemDetail />} />} />
                 <Route path="/study/:id" element={<PrivateRoute element={<StudyDetail />} />} />
                 <Route path="/judge" element={<PrivateRoute element={<JudgePage />} />} />
+                <Route path="/create-problem" element={<CreateProblem />} />
             </Routes>
         </GoogleOAuthProvider>
     );
