@@ -40,7 +40,10 @@ const PopularProblems = () => {
 
     return (
         <div className="mt-20 w-full mb-20 border-collapse bg-white bg-opacity-10 rounded-xl shadow-lg   p-4">
-            <h2 className="text-2xl font-normal text-white mb-4 font-lexend">🏆 Best Problems</h2>
+            <h2 className="text-2xl font-normal text-white mb-4 pl-3 font-lexend flex items-center gap-2">
+                <img src="/image/popular.png" alt="Popular" width={28} height={28} />
+                Best Problems
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 font-nanum">
                 {problems.map((problem) => (
                     <div
