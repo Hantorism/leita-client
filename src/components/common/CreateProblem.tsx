@@ -60,7 +60,7 @@ const CreateProblem = () => {
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Problem Description</label>
+                    <label className="block text-lg font-medium text-white">Problem Description</label>
                     <textarea
                         value={description.problem}
                         onChange={(e) => setDescription({ ...description, problem: e.target.value })}
@@ -71,7 +71,7 @@ const CreateProblem = () => {
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Input Description</label>
+                    <label className="block text-lg font-medium text-white">Input Description</label>
                     <textarea
                         value={description.input}
                         onChange={(e) => setDescription({ ...description, input: e.target.value })}
@@ -82,7 +82,7 @@ const CreateProblem = () => {
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Output Description</label>
+                    <label className="block text-lg font-medium text-white">Output Description</label>
                     <textarea
                         value={description.output}
                         onChange={(e) => setDescription({ ...description, output: e.target.value })}
@@ -94,7 +94,7 @@ const CreateProblem = () => {
 
                 <div className="grid grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-lg font-medium text-white">Memory Limit (MB)</label>
+                        <label className="block text-lg font-medium text-white">Memory Limit (KB)</label>
                         <input
                             type="number"
                             value={limit.memory}
@@ -105,7 +105,7 @@ const CreateProblem = () => {
                     </div>
 
                     <div>
-                        <label className="block text-lg font-medium text-gray-700">Time Limit (ms)</label>
+                        <label className="block text-lg font-medium text-white">Time Limit (ms)</label>
                         <input
                             type="number"
                             value={limit.time}
@@ -117,7 +117,7 @@ const CreateProblem = () => {
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Test Cases</label>
+                    <label className="block text-lg font-medium text-white">Test Cases</label>
                     {testCases.map((testCase, index) => (
                         <div key={index} className="space-y-3">
                             <div>
@@ -150,14 +150,16 @@ const CreateProblem = () => {
                                     rows={3}
                                 />
                             </div>
+
                             <button
                                 type="button"
                                 onClick={() =>
                                     setTestCases(testCases.filter((_, i) => i !== index))
                                 }
-                                className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600"
+                                className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
+                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
                             >
-                                Remove Test Case
+                                Remove Test Case (-)
                             </button>
                         </div>
                     ))}
@@ -166,14 +168,15 @@ const CreateProblem = () => {
                         onClick={() =>
                             setTestCases([...testCases, { input: "", output: "" }])
                         }
-                        className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600"
+                        className=" px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
+                              hover:text-[#CAFF33]  hover:bg-opacity-0 "
                     >
-                        Add Test Case
+                        Add Test Case (+)
                     </button>
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Source</label>
+                    <label className="block text-lg font-medium text-white">Source</label>
                     <input
                         type="text"
                         value={source}
@@ -183,7 +186,7 @@ const CreateProblem = () => {
                 </div>
 
                 <div>
-                    <label className="block text-lg font-medium text-gray-700">Category</label>
+                    <label className="block text-lg font-medium text-white">Category</label>
                     <input
                         type="text"
                         value={category[0]}
