@@ -63,7 +63,7 @@ const CreateProblem = () => {
                     <label className="block text-lg font-medium text-white">Problem Description</label>
                     <textarea
                         value={description.problem}
-                        onChange={(e) => setDescription({ ...description, problem: e.target.value })}
+                        onChange={(e) => setDescription({...description, problem: e.target.value})}
                         required
                         className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         rows={4}
@@ -74,7 +74,7 @@ const CreateProblem = () => {
                     <label className="block text-lg font-medium text-white">Input Description</label>
                     <textarea
                         value={description.input}
-                        onChange={(e) => setDescription({ ...description, input: e.target.value })}
+                        onChange={(e) => setDescription({...description, input: e.target.value})}
                         required
                         className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         rows={3}
@@ -85,7 +85,7 @@ const CreateProblem = () => {
                     <label className="block text-lg font-medium text-white">Output Description</label>
                     <textarea
                         value={description.output}
-                        onChange={(e) => setDescription({ ...description, output: e.target.value })}
+                        onChange={(e) => setDescription({...description, output: e.target.value})}
                         required
                         className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         rows={3}
@@ -98,7 +98,7 @@ const CreateProblem = () => {
                         <input
                             type="number"
                             value={limit.memory}
-                            onChange={(e) => setLimit({ ...limit, memory: Number(e.target.value) })}
+                            onChange={(e) => setLimit({...limit, memory: Number(e.target.value)})}
                             required
                             className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
@@ -109,7 +109,7 @@ const CreateProblem = () => {
                         <input
                             type="number"
                             value={limit.time}
-                            onChange={(e) => setLimit({ ...limit, time: Number(e.target.value) })}
+                            onChange={(e) => setLimit({...limit, time: Number(e.target.value)})}
                             required
                             className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
@@ -127,7 +127,7 @@ const CreateProblem = () => {
                                     onChange={(e) =>
                                         setTestCases([
                                             ...testCases.slice(0, index),
-                                            { ...testCase, input: e.target.value },
+                                            {...testCase, input: e.target.value},
                                             ...testCases.slice(index + 1),
                                         ])
                                     }
@@ -142,7 +142,7 @@ const CreateProblem = () => {
                                     onChange={(e) =>
                                         setTestCases([
                                             ...testCases.slice(0, index),
-                                            { ...testCase, output: e.target.value },
+                                            {...testCase, output: e.target.value},
                                             ...testCases.slice(index + 1),
                                         ])
                                     }
@@ -166,7 +166,7 @@ const CreateProblem = () => {
                     <button
                         type="button"
                         onClick={() =>
-                            setTestCases([...testCases, { input: "", output: "" }])
+                            setTestCases([...testCases, {input: "", output: ""}])
                         }
                         className=" px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
                               hover:text-[#CAFF33]  hover:bg-opacity-0 "
@@ -187,13 +187,43 @@ const CreateProblem = () => {
 
                 <div>
                     <label className="block text-lg font-medium text-white">Category</label>
-                    <input
-                        type="text"
-                        value={category[0]}
-                        onChange={(e) => setCategory([e.target.value])}
-                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
-                    />
+                    <div className="space-y-3">
+                        {category.map((cat, index) => (
+                            <div key={index} className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={cat}
+                                    onChange={(e) => {
+                                        const newCategories = [...category];
+                                        newCategories[index] = e.target.value;
+                                        setCategory(newCategories);
+                                    }}
+                                    className="p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setCategory(category.filter((_, i) => i !== index))
+                                    }
+                                    className="px-3 py-[0.2] rounded-full transition bg-[#2A2A2A] text-white
+                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
+                                >
+                                  -
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => setCategory([...category, ""])}
+                        className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white
+                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
+                    >
+                        카테고리 추가
+                    </button>
                 </div>
+
 
                 <button
                     type="submit"
@@ -204,7 +234,7 @@ const CreateProblem = () => {
             </form>
         </div>
             <footer className="w-full text-left mt-20">
-                <Footer />
+                <Footer/>
             </footer>
         </div>
     );
