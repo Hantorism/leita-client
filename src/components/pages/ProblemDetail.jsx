@@ -155,7 +155,7 @@ const ProblemDetail = () => {
 
 
                 {/* 예제 케이스 */}
-                <div className="mt-6">
+                <div className="pt-6">
                     <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
@@ -196,7 +196,7 @@ const ProblemDetail = () => {
             </div>
 
             {/* 코드 에디터 */}
-            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full overflow-y-auto">
+            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full">
                 <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} testCases={problem.testCases} />
 
             </div>

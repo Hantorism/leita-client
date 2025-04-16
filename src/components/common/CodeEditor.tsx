@@ -451,7 +451,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
 
     return (
-        <div className="flex-1 min-w-[300px] min-h-[80px] h-screen overflow-x-auto  shadow-lg m-4 flex flex-col  h-full scrollbar-hide">
+        <div className="flex-1 min-w-[300px] min-h-[80px] h-screen overflow-y-hidden  shadow-lg m-4 flex flex-col">
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
             <div className="flex justify-between items-center  rounded-lg">
                 <div className="flex items-center space-x-4">
@@ -554,7 +554,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 {/* 에디터 */}
                 <div
                     ref={editorRef}
-                    className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2 min-h-300"
+                    className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2 min-h-[300px]"
                     style={{ height: `${editorHeight}px` }}
                 >
                     <MonacoEditor
@@ -593,7 +593,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 {/*</div>*/}
 
                 {/* 결과 및 테스트 케이스 */}
-                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[70px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
+                <div className="mt-2 mb-8 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
                     {/* 테스트 케이스 선택 바 */}
                     <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
