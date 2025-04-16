@@ -444,9 +444,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
 
     return (
-        <div className="flex-1 min-w-[300px] min-h-[80px]  shadow-lg m-4 flex flex-col overflow: visible h-full">
+        <div className="flex-1 min-w-[300px] min-h-[80px] h-screen overflow-x-auto  shadow-lg m-4 flex flex-col  h-full scrollbar-hide">
             {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
-            <div className="flex justify-between items-center bg-[#2A2A2A] p-4 rounded-lg">
+            <div className="flex justify-between items-center  rounded-lg">
                 <div className="flex items-center space-x-4">
                     {/*<select*/}
                     {/*    value={language}*/}
@@ -547,7 +547,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 {/* 에디터 */}
                 <div
                     ref={editorRef}
-                    className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2"
+                    className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2 min-h-300"
                     style={{ height: `${editorHeight}px` }}
                 >
                     <MonacoEditor
@@ -558,7 +558,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                         value={code}
                         onChange={(value) => setCode(value || "")}
                         options={{
-                            fontSize: 16,
+                            fontSize: 15,
                             suggestOnTriggerCharacters: autoComplete,
                             lineNumbers: "on",
                             renderLineHighlight: "all",
@@ -586,9 +586,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 {/*</div>*/}
 
                 {/* 결과 및 테스트 케이스 */}
-                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[100px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
-
-                <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[80px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
+                    {/* 테스트 케이스 선택 바 */}
+                    <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
                             <div key={index} className="relative">
                                 <button
