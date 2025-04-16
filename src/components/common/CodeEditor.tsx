@@ -51,7 +51,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
         localStorage.setItem(`code-${problemId}`, code);
 
     }, [code, problemId]);
-
+    // useEffect(() => {
+    //     const savedLang = localStorage.getItem("preferred-language");
+    //     if (savedLang) {
+    //         setLanguage(savedLang);
+    //     }
+    // }, []);
+    //
+    //
 
     const decodeText = (text) => {
         try {
@@ -586,7 +593,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 {/*</div>*/}
 
                 {/* 결과 및 테스트 케이스 */}
-                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[80px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
+                <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[70px] max-h-[700px] overflow-y-auto p-6 pt-4 scrollbar-hide">
                     {/* 테스트 케이스 선택 바 */}
                     <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
                         {testCases.map((_, index) => (
