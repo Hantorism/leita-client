@@ -22,6 +22,11 @@ const CreateProblem = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (testCases.length < 2) {
+            alert("👽 테스트 케이스는 최소 2개 이상이어야 합니다!");
+            return;
+        }
+
         try {
             const response = await axios.post("/problem", {
                 title,
@@ -32,13 +37,14 @@ const CreateProblem = () => {
                 category,
             });
 
-            console.log(response.data.message); // Display message or handle data
+            console.log(response.data.message);
             alert("Problem created successfully!");
         } catch (error) {
             console.error("Error creating problem", error);
             alert("Error creating problem.");
         }
     };
+
 
     return (
         <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">

@@ -6,7 +6,7 @@ const CreateProblemButton = () => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate("/create-problem");  // Redirect to the problem creation page
+        navigate("/create-problem");
     };
 
     return (
