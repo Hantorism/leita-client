@@ -132,8 +132,8 @@ const ProblemDetail = () => {
                 </div>
 
                 <div className="mt-3">
-                    <span className="text-gray-400 font-Pretend">정답률:</span> {problem.solved?.rate}%
-                    <span className="ml-4 text-gray-400 font-Pretend">풀이 제출 수:</span> {problem.solved?.count}
+                    <span className="text-gray-400 font-Pretend">정답률:</span>  {problem.solved?.rate?.toFixed(2)}%
+                    <span className="ml-4 text-gray-400 font-Pretend">풀이 제출 수:</span> {problem.solved?.totalCount}
                 </div>
                 <hr className="border-t border-gray-500 mt-2" />
 
@@ -155,7 +155,7 @@ const ProblemDetail = () => {
 
 
                 {/* 예제 케이스 */}
-                <div className="mt-6">
+                <div className="pt-6">
                     <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
@@ -196,7 +196,7 @@ const ProblemDetail = () => {
             </div>
 
             {/* 코드 에디터 */}
-            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full overflow-y-auto">
+            <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full">
                 <CodeEditor code={code} setCode={setCode} problemId={problem.problemId} testCases={problem.testCases} />
 
             </div>
