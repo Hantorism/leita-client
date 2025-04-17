@@ -378,7 +378,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
             return newTestCases;
         });
 
-        setSelectedTestCase((prevIndex) => prevIndex + 1); // 기존의 마지막 인덱스에서 +1
+        setSelectedTestCase((prevIndex) => prevIndex + 1);
     };
 
     const handleTestCaseChange = (index: number, field: "input" | "output", value: string) => {
@@ -643,7 +643,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                         {selectedTestCase < initialTestCases.length ? (
                             <div>
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                            <pre className="font-lexend bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                                 {decodeText(testCases[selectedTestCase].input)}
                             </pre>
                             </div>
@@ -658,7 +658,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
 
                                 <textarea
-                                    className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                    className="font-lexend bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                                     value={testCases[selectedTestCase].input}
                                     onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
                                 />

@@ -18,23 +18,28 @@ const CreateProblem = () => {
     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
     const [source, setSource] = useState("");
     const [category, setCategory] = useState([""]);
+    const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (testCases.length < 2) {
-            alert("👽 테스트 케이스는 최소 2개 이상이어야 합니다!");
+        const token = localStorage.getItem("token");
+        if (testCases.length < 5) {
+            alert("👽 테스트 케이스는 최소 5개 이상이어야 합니다!");
             return;
         }
 
         try {
-            const response = await axios.post("/problem", {
+            const response = await axios.post(`${API_BASE_URL}/problem`,{
                 title,
                 description,
                 limit,
                 testCases,
                 source,
                 category,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
             });
 
             console.log(response.data.message);
