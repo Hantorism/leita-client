@@ -127,7 +127,7 @@ const CreateProblem = () => {
                     </div>
                 </div>
                 <div>
-                    <label className="block text-lg font-medium text-white mb-2">Test Cases (최소 2개)</label>
+                    <label className="block text-lg font-medium text-white mb-2">Test Cases (최소 5개)</label>
                     {testCases.map((testCase, index) => (
                         <div key={index}
                              className="space-y-3 mb-6 p-4 border border-gray-600 rounded-lg bg-white bg-opacity-10">
