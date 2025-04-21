@@ -19,10 +19,20 @@ const CreateProblem = () => {
     const [source, setSource] = useState("");
     const [category, setCategory] = useState([""]);
     const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
-
+    const encodeBase64 = (str: string): string => {
+        const utf8Bytes = new TextEncoder().encode(str);
+        const binary = Array.from(utf8Bytes)
+            .map(byte => String.fromCharCode(byte))
+            .join('');
+        return btoa(binary);
+    };
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const token = localStorage.getItem("token");
+        const encodedTestCases = testCases.map(tc => ({
+            input: encodeBase64(tc.input),
+            output: encodeBase64(tc.output),
+        }));
         if (testCases.length < 5) {
             alert("👽 테스트 케이스는 최소 5개 이상이어야 합니다!");
             return;
@@ -33,12 +43,13 @@ const CreateProblem = () => {
                 title,
                 description,
                 limit,
-                testCases,
+                testCases: encodedTestCases,
                 source,
                 category,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 }
             });
 
@@ -207,7 +218,7 @@ const CreateProblem = () => {
                         {category.map((cat, index) => (
                             <div key={index} className="flex gap-2">
                                 <input
-                                    placeholder="ex) 자료구조, 수학 .."
+                                    placeholder="ex) 자료구조"
                                     type="text"
                                     value={cat}
                                     onChange={(e) => {
