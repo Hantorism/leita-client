@@ -20,7 +20,8 @@ const CreateProblem = () => {
     const [category, setCategory] = useState([""]);
     const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
     const encodeBase64 = (str: string): string => {
-        const utf8Bytes = new TextEncoder().encode(str);
+        const trimmed = str.replace(/[\n\t\s]+$/g, "");
+        const utf8Bytes = new TextEncoder().encode(trimmed);
         const binary = Array.from(utf8Bytes)
             .map(byte => String.fromCharCode(byte))
             .join('');

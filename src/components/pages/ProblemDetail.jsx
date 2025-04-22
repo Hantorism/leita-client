@@ -158,7 +158,9 @@ const ProblemDetail = () => {
                 <div className="pt-6">
                     <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
+
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
+
                             <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
                             <div className="relative">
                                 <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{decodeText(testCase.input)}</pre>
