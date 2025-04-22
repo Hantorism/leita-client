@@ -158,22 +158,29 @@ const ProblemDetail = () => {
                 <div className="pt-6">
                     <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
                     {problem.testCases.map((testCase, index) => (
-
                         <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
+                            {testCase.input.trim() !== "" && (
+                                <>
+                                    <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
+                                    <div className="relative">
+                        <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">
+                            {decodeText(testCase.input)}
+                        </pre>
+                                        <button
+                                            onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
+                                            className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
+                                        >
+                                            {copiedId === (testCase.id || index) ? "복사완료!" : "복사하기"}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
 
-                            <h3 className="text-sm text-gray-400 ">입력 {index + 1}</h3>
-                            <div className="relative">
-                                <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">{decodeText(testCase.input)}</pre>
-                                <button
-                                    onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
-                                    className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-                                >
-                                    {copiedId === (testCase.id || index) ? "복사완료!" : "복사하기"}
-                                </button>
-                            </div>
-
+                            {/* 출력은 항상 렌더링 */}
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{decodeText(testCase.output)}</pre>
+                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md">
+                {decodeText(testCase.output)}
+            </pre>
                         </div>
                     ))}
                 </div>

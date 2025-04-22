@@ -641,9 +641,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                     <div className="mt-1">
 
                         {selectedTestCase < initialTestCases.length ? (
+
                             <div>
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                            <pre className="font-lexend bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                                 {decodeText(testCases[selectedTestCase].input)}
                             </pre>
                             </div>
@@ -658,7 +659,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                 <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
 
                                 <textarea
-                                    className="font-lexend bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                    className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                                     value={testCases[selectedTestCase].input}
                                     onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
                                 />
