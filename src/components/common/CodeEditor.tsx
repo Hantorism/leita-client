@@ -639,14 +639,16 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
                 <div className="mt-3 p-2 rounded bg-black">
                     <div className="mt-1">
-
                         {selectedTestCase < initialTestCases.length ? (
-
                             <div>
-                                <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                            <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                                {decodeText(testCases[selectedTestCase].input)}
-                            </pre>
+                                {testCases[selectedTestCase].input.trim() !== "" && (
+                                    <>
+                                        <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+                                        <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                            {decodeText(testCases[selectedTestCase].input)}
+                        </pre>
+                                    </>
+                                )}
                             </div>
                         ) : (
                             <div>
