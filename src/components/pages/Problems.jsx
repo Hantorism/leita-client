@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
+import CreateProblemButton from "../common/CreateProblemButton.tsx";
+
 
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
@@ -12,19 +14,26 @@ const Problems = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
+
+
     const problemsPerPage = 10;
     const [filter, setFilter] = useState("ALL");
-
+    const token = localStorage.getItem("token");
     useEffect(() => {
+        if (!token) return;
         const fetchProblems = async () => {
             try {
-                const res = await axios.get(`${API_BASE_URL}/problem`, {
-                    params: {
-                        //
-                        page: currentPage,
-                        size: problemsPerPage,
-                    },
-                });
+                const params = {
+                    page: currentPage,
+                    size: problemsPerPage,
+                    search: searchQuery,
+                    filter: filter !== "ALL" ? filter : undefined,
+                };
+
+
+                const res = await axios.get(`${API_BASE_URL}/problem`, { params,  headers: {
+                        Authorization: `Bearer ${token}`,
+                    },withCredentials: true, });
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
                 if (!Array.isArray(content)) {
@@ -37,7 +46,6 @@ const Problems = () => {
                 setProblems([]);
             }
         };
-
         const fetchJudgedProblems = async () => {
             try {
                 const token = localStorage.getItem("token");
@@ -55,7 +63,9 @@ const Problems = () => {
 
         fetchProblems();
         fetchJudgedProblems();
-    }, [currentPage]);
+
+
+    }, [currentPage, searchQuery, filter]);
 
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
@@ -80,6 +90,24 @@ const Problems = () => {
 
         return true;
     });
+    // const isProblemSolved = (problem) => {
+    //     return problem.solved?.successCount > 0;
+    // };
+
+    //
+    // const filteredProblems = problems.filter((problem) => {
+    //     const matchesSearch =
+    //         problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         problem.problemId.toString().includes(searchQuery);
+    //
+    //     if (!matchesSearch) return false;
+    //
+    //     if (filter === "SOLVED") return isProblemSolved(problem);
+    //     if (filter === "UNSOLVED") return !isProblemSolved(problem);
+    //
+    //     return true;
+    // });
+
 
     return (
         <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
@@ -110,23 +138,11 @@ const Problems = () => {
                 <input
                     type="text"
                     placeholder=" Search by Title or ID"
-                    className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A]  rounded-full bg-[#2A2A2A] text-white text-center"
+                    className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A] text-white text-center"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                {/*<JudgeButton />*/}
             </div>
-
-            {/*<div className="flex w-full mt-6 items-center justify-center gap-4">*/}
-            {/*    <input*/}
-            {/*        type="text"*/}
-            {/*        placeholder=" Search by Title or ID"*/}
-            {/*        className="w-[35%] p-2  rounded-full bg-[#2A2A2A] text-white text-center"*/}
-            {/*        value={searchQuery}*/}
-            {/*        onChange={(e) => setSearchQuery(e.target.value)}*/}
-            {/*    />*/}
-            {/*</div>*/}
-
 
 
             <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
@@ -141,7 +157,7 @@ const Problems = () => {
                         </thead>
                         <tbody>
                         {filteredProblems.length > 0 ? (
-                            filteredProblems.map((problem) => (
+                            filteredProblems.map((problem, index) => (
                                 <tr
                                     key={problem.problemId}
                                     onClick={() => {
@@ -150,21 +166,29 @@ const Problems = () => {
                                         newWindow?.addEventListener("load", () => {
                                             const token = localStorage.getItem("accessToken");
                                             if (token) {
-                                                newWindow?.postMessage({ accessToken: token }, `${window.location.host}`);
+                                                newWindow?.postMessage(
+                                                    { accessToken: token },
+                                                    `${window.location.host}`
+                                                );
                                             }
                                         });
                                     }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
-                                        problem.problemId % 2 === 0
+                                        index % 2 === 0
                                             ? "bg-white bg-opacity-10"
                                             : "bg-[#2A2A2A] bg-opacity-20"
                                     }`}
                                 >
-                                    <td className="p-3">{problem.problemId}</td>
+                                    <td className="p-4">{problem.problemId}</td>
                                     <td className="p-3 font-Pretend">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
-                                            <span className="ml-4 text-xs text-gray-500">( solved. )</span>
+                                            // <span className="ml-4 text-xs text-gray-500">( solved )</span>
+                                            <img
+                                                src="/image/solved.svg"
+                                                alt="solved"
+                                                className="ml-2 w-3 h-3 mb-1 inline-block"
+                                            />
                                         )}
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {problem.category?.map((cat, i) => (
@@ -178,7 +202,7 @@ const Problems = () => {
                                         </div>
                                     </td>
                                     <td className="p-3">
-                                        {problem.solved?.rate != null ? `${problem.solved.rate}%` : "N/A"}
+                                        {problem.solved?.rate != null ? `${problem.solved.rate.toFixed(2)}%` : "N/A"}
                                     </td>
                                 </tr>
                             ))
@@ -194,7 +218,7 @@ const Problems = () => {
                 </div>
 
                 {/* 페이지네이션 */}
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-4 mb-4">
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
@@ -209,7 +233,13 @@ const Problems = () => {
                         </button>
                     ))}
                 </div>
+
+
             </div>
+            {/*<div className="flex w-full mt-6 items-center justify-center gap-4">*/}
+            {/*    <CreateProblemButton/>*/}
+            {/*</div>*/}
+
 
             <footer className="w-full text-left mt-20">
                 <Footer />
