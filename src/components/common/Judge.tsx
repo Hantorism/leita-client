@@ -160,7 +160,7 @@ export default function JudgePage() {
                             <th className="p-3 border-b border-gray-500">메모리(KB)</th>
                             <th className="p-3 border-b border-gray-500">시간(ms)</th>
                             <th className="p-3 border-b border-gray-500">언어</th>
-                            <th className="p-3 border-b border-gray-500">코드 크기(bytes)</th>
+                            <th className="p-3 border-b border-gray-500">코드 길이(bytes)</th>
                         </tr>
                         </thead>
                         <tbody>
