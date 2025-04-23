@@ -177,18 +177,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 });
 
 
-                const userConfirmed = window.confirm("🏁제출이 완료되었습니다! 내가 푼 문제 페이지로 이동할까요?");
-                if (userConfirmed) {
-                    navigate("/judge");
-                }
-            } else {
-
-                setResult({
-                    message: `❌ 제출 실패: ${resultData.message}`,
-                    isSubmit: false,
-                    result: "",
-                    error: resultData.data?.error || "알 수 없는 오류 발생"
-                });
+            //     const userConfirmed = window.confirm("🏁제출이 완료되었습니다! 내가 푼 문제 페이지로 이동할까요?");
+            //     if (userConfirmed) {
+            //         navigate("/judge");
+            //     }
+            // } else {
+            //
+            //     setResult({
+            //         message: `❌ 제출 실패: ${resultData.message}`,
+            //         isSubmit: false,
+            //         result: "",
+            //         error: resultData.data?.error || "알 수 없는 오류 발생"
+            //     });
             }
         } catch (error) {
             console.error("서버 요청 오류:", error);
