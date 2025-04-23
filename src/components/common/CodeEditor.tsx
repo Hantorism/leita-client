@@ -610,7 +610,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                     {index >= initialTestCases.length && (
                                         <button
                                             onClick={(e) => {
-                                                e.stopPropagation(); // 부모 버튼 클릭 방지
+                                                e.stopPropagation();
                                                 setTestCases((prevTestCases) =>
                                                     prevTestCases.filter((_, i) => i !== index)
                                                 );
