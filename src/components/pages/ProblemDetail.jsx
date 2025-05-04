@@ -164,7 +164,7 @@ const ProblemDetail = () => {
                                     <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
                                     <div className="relative">
                         <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">
-                            <div className="overflow-x-auto w-[calc(100%-30px)] scrollbar-none">
+                            <div className="overflow-x-auto w-[calc(100%-30px)] scrollbar-hide">
                                 {decodeText(testCase.input)}
                             </div>
                         </pre>
