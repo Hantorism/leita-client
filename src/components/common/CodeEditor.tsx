@@ -15,7 +15,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialTestCases }) => {
-    const [language, setLanguage] = useState("undefined");
+    // const [language, setLanguage] = useState("undefined");
     const [isRunningCode, setIsRunningCode] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [autoComplete, setAutoComplete] = useState(true);
@@ -37,6 +37,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
     const editorRef = useRef<HTMLDivElement>(null);
     const resizeHandlerRef = useRef<HTMLDivElement>(null);
     const [isSubmitMode, setIsSubmitMode] = useState(false);
+    const [language, setLanguage] = useState(() => {
+        return localStorage.getItem("selectedLanguage") || "undefined";
+    });
 
     // 언어 변경 시 JavaScript 검증 설정 업데이트
     useEffect(() => {
@@ -93,14 +96,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
     const [editorHeight, setEditorHeight] = useState(600);
 
-    const handleLanguageChange = (newLanguage) => {
-        setLanguage(newLanguage);  // 언어 변경
+    const handleLanguageChange = (newLanguage: string) => {
+        setLanguage(newLanguage);
+        localStorage.setItem("selectedLanguage", newLanguage);
 
-        // Monaco 인스턴스가 있고 JavaScript를 선택했을 때 에러 검증 비활성화
         if (monacoInstance && newLanguage === "javascript") {
             monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
                 noSemanticValidation: true,
-                noSyntaxValidation:   true
+                noSyntaxValidation: true,
             });
         }
     };
@@ -327,61 +330,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
         setIsRunningCode(false);
     };
 
-    // // 리사이즈 시작
-    // const startResizing = (e) => {
-    //     e.preventDefault();
-    //     // 시작 지점 기록
-    //     // const startY = e.clientY;
-    //     startY.current = e.clientY; // 마우스 클릭 위치 기록
-    //     setIsResizing(true);
-    //
-    //     const onMouseMove = (moveEvent) => {
-    //         const newHeight = editorHeight + (moveEvent.clientY - startY); // editorHeight는 처음 높이
-    //         setEditorHeight(newHeight);
-    //     };
-    //
-    //     const onMouseUp = () => {
-    //         window.removeEventListener('mousemove', onMouseMove);
-    //         window.removeEventListener('mouseup', onMouseUp);
-    //     };
-    //
-    //     window.addEventListener('mousemove', onMouseMove);
-    //     window.addEventListener('mouseup', onMouseUp);
-    // };
-    //
-    //
-    // // 리사이즈 중
-    // const handleMouseMove = (e) => {
-    //     if (isResizing && editorRef.current) {
-    //         const deltaY = e.clientY - startY.current; // Y축 이동 거리 계산
-    //         const newHeight = editorHeight + deltaY; // 새로운 높이 계산
-    //         if (newHeight > 100 && newHeight < window.innerHeight - 200) { // 최소/최대 높이 제한
-    //             setEditorHeight(newHeight);
-    //             startY.current = e.clientY; // 이전 Y 좌표 업데이트
-    //         }
-    //     }
-    // };
-    //
-    // // 리사이즈 종료
-    // const stopResizing = () => {
-    //     setIsResizing(false); // 리사이즈 상태 종료
-    // };
-    //
-    // // 마우스 이벤트 처리
-    // useEffect(() => {
-    //     if (isResizing) {
-    //         document.addEventListener("mousemove", handleMouseMove);
-    //         document.addEventListener("mouseup", stopResizing);
-    //     } else {
-    //         document.removeEventListener("mousemove", handleMouseMove);
-    //         document.removeEventListener("mouseup", stopResizing);
-    //     }
-    //
-    //     return () => {
-    //         document.removeEventListener("mousemove", handleMouseMove);
-    //         document.removeEventListener("mouseup", stopResizing);
-    //     };
-    // }, [isResizing]);
+
 
     // MonacoEditor가 마운트 될 때 실행
     const handleEditorMount = (editor: monacoEditor.editor.IStandaloneCodeEditor, monaco: Monaco) => {
