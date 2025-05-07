@@ -115,6 +115,7 @@ const Login = ({ user, setUser }) => {
         localStorage.removeItem("user");
         localStorage.removeItem("accessToken");
         Cookies.remove("accessToken");
+        localStorage.removeItem("token");
         Cookies.remove("refreshToken");
     };
 
