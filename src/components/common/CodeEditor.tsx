@@ -747,13 +747,26 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
                       </div>
                       <div className="mt-2 p-2 bg-black rounded-md">
+
+                          {result?.testCases && (
+                              <div className="mb-2 text-sm text-gray-400 font-nanum font-semibold">
+                                  {result.testCases.length}개 테스트 케이스 중
+                                  <span className="font-bold mx-1 text-white">
+                            {result.testCases.filter(tc => tc.actualOutput === "맞았습니다").length}개
+                                    </span>
+                                  맞았습니다.
+                              </div>
+                          )}
+
+
                           {result?.testCases?.map((testCase, index) => (
                               <div key={index}>
-                                  <div className="mt-2 p-2 bg-[#1E1E1E] rounded-md">
-                                      <h4 className="text-xs text-gray-400"> Testcase {index + 1}</h4>
-                                      <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                {testCase.actualOutput}
-            </pre>
+                                  <div className={`mt-2 p-2 rounded-md ${testCase.actualOutput === "맞았습니다" ? "bg-[#2A2A2A]" : "bg-[#2A2A2A]"}`}>
+                                      <h4 className="text-xs text-gray-400">Testcase {index + 1}</h4>
+                                      <pre className={`font-nanum font-semibold whitespace-pre-wrap ${testCase.actualOutput === "맞았습니다" ? "text-[#CAFF33]" : "text-white-400"}`}>
+        {testCase.actualOutput}
+      </pre>
+
                                   </div>
 
                                   {testCase.error?.trim() && (
