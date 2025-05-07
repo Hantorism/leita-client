@@ -19,8 +19,54 @@ const Problems = () => {
     const problemsPerPage = 10;
     const [filter, setFilter] = useState("ALL");
     const token = localStorage.getItem("token");
+    // useEffect(() => {
+    //     if (!token) return;
+    //     const fetchProblems = async () => {
+    //         try {
+    //             const params = {
+    //                 page: currentPage,
+    //                 size: problemsPerPage,
+    //                 search: searchQuery,
+    //                 filter: filter !== "ALL" ? filter : undefined,
+    //             };
+    //
+    //
+    //             const res = await axios.get(`${API_BASE_URL}/problem`, { params,  headers: {
+    //                     Authorization: `Bearer ${token}`,
+    //                 },withCredentials: true, });
+    //             const content = res.data?.data?.content ?? [];
+    //             const total = res.data?.data?.totalPages ?? 1;
+    //             if (!Array.isArray(content)) {
+    //                 throw new Error("Invalid response format");
+    //             }
+    //             setProblems(content);
+    //             setTotalPages(total);
+    //         } catch (error) {
+    //             console.error("Failed to fetch problems:", error);
+    //             setProblems([]);
+    //         }
+    //     };
+    //     const fetchJudgedProblems = async () => {
+    //         try {
+    //             const token = localStorage.getItem("token");
+    //             const res = await axios.get(`${API_BASE_URL}/judge`, {
+    //                 headers: {
+    //                     "Authorization": `Bearer ${token}`,
+    //                 },
+    //             });
+    //             const judgedData = res.data?.data ?? [];
+    //             setJudgedProblems(judgedData.filter((judge) => judge.result === "CORRECT"));
+    //         } catch (error) {
+    //             console.error("Failed to fetch judged problems:", error);
+    //         }
+    //     };
+    //
+    //     fetchProblems();
+    //     fetchJudgedProblems();
+    //
+    //
+    // }, [currentPage, searchQuery, filter]);
     useEffect(() => {
-        if (!token) return;
         const fetchProblems = async () => {
             try {
                 const params = {
@@ -30,15 +76,23 @@ const Problems = () => {
                     filter: filter !== "ALL" ? filter : undefined,
                 };
 
+                const headers = token
+                    ? { Authorization: `Bearer ${token}` }
+                    : undefined;
 
-                const res = await axios.get(`${API_BASE_URL}/problem`, { params,  headers: {
-                        Authorization: `Bearer ${token}`,
-                    },withCredentials: true, });
+                const res = await axios.get(`${API_BASE_URL}/problem`, {
+                    params,
+                    headers,
+                    withCredentials: true,
+                });
+
                 const content = res.data?.data?.content ?? [];
                 const total = res.data?.data?.totalPages ?? 1;
+
                 if (!Array.isArray(content)) {
                     throw new Error("Invalid response format");
                 }
+
                 setProblems(content);
                 setTotalPages(total);
             } catch (error) {
@@ -46,12 +100,13 @@ const Problems = () => {
                 setProblems([]);
             }
         };
+
         const fetchJudgedProblems = async () => {
+            if (!token) return; // ✅ 판별된 문제는 로그인한 유저만
             try {
-                const token = localStorage.getItem("token");
                 const res = await axios.get(`${API_BASE_URL}/judge`, {
                     headers: {
-                        "Authorization": `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`,
                     },
                 });
                 const judgedData = res.data?.data ?? [];
@@ -63,9 +118,8 @@ const Problems = () => {
 
         fetchProblems();
         fetchJudgedProblems();
-
-
     }, [currentPage, searchQuery, filter]);
+
 
     const handlePageChange = (page) => {
         if (page >= 0 && page < totalPages) {
