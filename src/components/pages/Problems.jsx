@@ -159,18 +159,21 @@ const Problems = () => {
                         {filteredProblems.length > 0 ? (
                             filteredProblems.map((problem, index) => (
                                 <tr
-                                    key={problem.problemId}
                                     onClick={() => {
+                                        const token = localStorage.getItem("user");
+                                        if (!token) {
+                                            alert("🚨 로그인이 필요합니다.");
+                                            return;
+                                        }
+
                                         const problemUrl = `problems/${problem.problemId}`;
                                         const newWindow = window.open(problemUrl, "_blank");
+
                                         newWindow?.addEventListener("load", () => {
-                                            const token = localStorage.getItem("accessToken");
-                                            if (token) {
-                                                newWindow?.postMessage(
-                                                    { accessToken: token },
-                                                    `${window.location.host}`
-                                                );
-                                            }
+                                            newWindow.postMessage(
+                                                { accessToken: token },
+                                                `${window.location.origin}`
+                                            );
                                         });
                                     }}
                                     className={`cursor-pointer border-b border-gray-500 hover:bg-black hover:text-[#CAFF33] transition ${
