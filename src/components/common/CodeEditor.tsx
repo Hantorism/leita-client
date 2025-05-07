@@ -36,6 +36,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
     const startY = useRef(0);
     const editorRef = useRef<HTMLDivElement>(null);
     const resizeHandlerRef = useRef<HTMLDivElement>(null);
+    const [isSubmitMode, setIsSubmitMode] = useState(false);
 
     // 언어 변경 시 JavaScript 검증 설정 업데이트
     useEffect(() => {
@@ -185,6 +186,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
             return;
         }
         setIsSubmitting(true);
+        setIsSubmitMode(true);
         setResult(null);
 
         try {
@@ -234,6 +236,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
         }
 
         setIsSubmitting(false);
+
+
     };
 
     const handleRunCode = async () => {
@@ -243,6 +247,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
             return;
         }
         setIsRunningCode(true);
+        setIsSubmitMode(false);
         setResult(null);
         const token = localStorage.getItem("token");
         try {
@@ -621,147 +626,293 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
               </div>
           </div>
 
-            {/* 결과 및 테스트 케이스 */}
-            <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
-                {/* 테스트 케이스 선택 바 */}
-                <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                    {testCases.map((_, index) => (
-                    <div key={index} className="relative">
-                        <button
-                            onClick={() => setSelectedTestCase(index)}
-                            className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
-                            selectedTestCase === index
-                                ? "bg-gray-700 text-white"
-                                : "bg-gray-600 hover:bg-gray-500 text-gray-300"
-                            }`}
-                        >
-                            TestCase {index + 1}
-                            {index >= initialTestCases.length && (
-                                <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setTestCases((prevTestCases) =>
-                                        prevTestCases.filter((_, i) => i !== index)
-                                    );
-                                    setSelectedTestCase((prev) =>
-                                        prev === index ? 0 : Math.max(0, prev - 1)
-                                    );
-                                }}
-                                className="text-red-400 hover:text-white text-xs ml-1"
-                                >
-                                    x
-                                </button>
-                            )}
-                        </button>
-                    </div>
-                    ))}
 
-                    <button
-                    onClick={addTestCase}
-                    className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"
-                    >
-                        +
-                    </button>
-                </div>
+          <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
+              {/* 테스트 케이스 선택 바 */}
+              {isSubmitMode ? null : (
+                  <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                      {testCases.map((_, index) => (
+                          <div key={index} className="relative">
+                              <button
+                                  onClick={() => setSelectedTestCase(index)}
+                                  className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
+                                      selectedTestCase === index
+                                          ? "bg-gray-700 text-white"
+                                          : "bg-gray-600 hover:bg-gray-500 text-gray-300"
+                                  }`}
+                              >
+                                  TestCase {index + 1}
+                                  {index >= initialTestCases.length && (
+                                      <button
+                                          onClick={(e) => {
+                                              e.stopPropagation();
+                                              setTestCases((prevTestCases) =>
+                                                  prevTestCases.filter((_, i) => i !== index)
+                                              );
+                                              setSelectedTestCase((prev) =>
+                                                  prev === index ? 0 : Math.max(0, prev - 1)
+                                              );
+                                          }}
+                                          className="text-red-400 hover:text-white text-xs ml-1"
+                                      >
+                                          x
+                                      </button>
+                                  )}
+                              </button>
+                          </div>
+                      ))}
 
+                      <button
+                          onClick={addTestCase}
+                          className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"
+                      >
+                          +
+                      </button>
+                  </div>
+              )}
 
-                <div className="mt-3 p-2 rounded bg-black">
-                    <div className="mt-1">
-                        {selectedTestCase < initialTestCases.length ? (
-                        <div>
-                            {testCases[selectedTestCase].input.trim() !== "" && (
-                                <>
-                                    <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                                    <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                        {decodeText(testCases[selectedTestCase].input)}
+              {isSubmitMode ? (
+                  // ✅ Submit 모드일 때: 결과만 출력
+                  <>
+                      {result?.result && (
+                          <div className="mt-2 p-2 bg-black rounded-md">
+                              <h4 className="text-xs text-gray-400">Result</h4>
+                              <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-D2Coding whitespace-pre-wrap">
+                        {result.result}
                     </pre>
-                                </>
-                            )}
-                        </div>
-                        ) : (
-                        <div>
-                            <button
-                                onClick={() => handleRunSingleTestCase(selectedTestCase)}
-                                className=" font-lexend mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"
-                            >
-                                My Testcase RUN
-                            </button>
-                            <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+                          </div>
+                      )}
 
-                            <textarea
-                                className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
-                                value={testCases[selectedTestCase].input}
-                                onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
-                            />
+                      {result?.error?.trim() && (
+                          <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                              <h4 className="text-xs text-red-400">❌ Error</h4>
+                              <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                        {result.error}
+                    </pre>
+                          </div>
+                      )}
+                  </>
+              ) : (
+                  // 테스트 케이스 입력 모드
+                  <>
+                      <div className="mt-3 p-2 rounded bg-black">
+                          <div className="mt-1">
+                              {selectedTestCase < initialTestCases.length ? (
+                                  <div>
+                                      {testCases[selectedTestCase].input.trim() !== "" && (
+                                          <>
+                                              <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+                                              <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                        {decodeText(testCases[selectedTestCase].input)}
+                                    </pre>
+                                          </>
+                                      )}
+                                  </div>
+                              ) : (
+                                  <div>
+                                      <button
+                                          onClick={() => handleRunSingleTestCase(selectedTestCase)}
+                                          className="font-lexend mt-1 mb-2 px-3 py-1 text-xs border-2 border border-gray-800 rounded-md hover:bg-gray-500 text-white hover:text-white"
+                                      >
+                                          My Testcase RUN
+                                      </button>
+                                      <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
 
-                        </div>
-                        )}
-                    </div>
+                                      <textarea
+                                          className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                          value={testCases[selectedTestCase].input}
+                                          onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
+                                      />
+                                  </div>
+                              )}
+                          </div>
 
-
-                    <div className="mt-1 mb-3">
-                        <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
-                        {selectedTestCase < initialTestCases.length ? (
-
-                        <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                          <div className="mt-1 mb-3">
+                              <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+                              {selectedTestCase < initialTestCases.length ? (
+                                  <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
             {decodeText(testCases[selectedTestCase].output)}
         </pre>
-                        ) : (
-                        <div>
-                        <textarea
-                            className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
-                            value={testCases[selectedTestCase].output}
-                            onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
-                        />
+                              ) : (
+                                  <div>
+            <textarea
+                className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                value={testCases[selectedTestCase].output}
+                onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
+            />
+                                  </div>
+                              )}
+                          </div>
 
 
-                    </div>
-                    )}
-                </div>
+                      </div>
+                      <div className="mt-2 p-2 bg-black rounded-md">
+                          {result?.testCases?.map((testCase, index) => (
+                              <div key={index}>
+                                  <div className="mt-2 p-2 bg-[#1E1E1E] rounded-md">
+                                      <h4 className="text-xs text-gray-400"> Testcase {index + 1}</h4>
+                                      <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
+                {testCase.actualOutput}
+            </pre>
+                                  </div>
 
-                    {result?.result && (
-                    <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                        <h4 className="text-xs text-gray-400"> Result</h4>
-                        <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-                    {result.result}
+                                  {testCase.error?.trim() && (
+                                      <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                                          <h4 className="text-xs text-red-400">❌ Error : Testcase {index + 1}</h4>
+                                          <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                    {testCase.error}
                 </pre>
-                    </div>
-                    )}
-
-                    {result?.error?.trim() && (
-                    <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                        <h4 className="text-xs text-red-400">❌ Error</h4>
-                        <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-        {result.error}
-    </pre>
-                    </div>
-                    )}
+                                      </div>
+                                  )}
+                              </div>
+                          ))}
+                      </div>
+                  </>
+              )}
+          </div>
 
 
-                    {/*run 결과 */}
-                    {result?.testCases?.[selectedTestCase] && (
-                    <>
-                        <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">
-                            <h4 className="text-xs text-gray-400">Result</h4>
-                            <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">
-            {result.testCases[selectedTestCase].actualOutput}
-        </pre>
-                        </div>
-                    </>
-                    )}
+          {/*        /!* 결과 및 테스트 케이스 *!/*/}
+    {/*        <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">*/}
+    {/*            /!* 테스트 케이스 선택 바 *!/*/}
+    {/*            <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">*/}
+    {/*                {testCases.map((_, index) => (*/}
+    {/*                <div key={index} className="relative">*/}
+    {/*                    <button*/}
+    {/*                        onClick={() => setSelectedTestCase(index)}*/}
+    {/*                        className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${*/}
+    {/*                        selectedTestCase === index*/}
+    {/*                            ? "bg-gray-700 text-white"*/}
+    {/*                            : "bg-gray-600 hover:bg-gray-500 text-gray-300"*/}
+    {/*                        }`}*/}
+    {/*                    >*/}
+    {/*                        TestCase {index + 1}*/}
+    {/*                        {index >= initialTestCases.length && (*/}
+    {/*                            <button*/}
+    {/*                            onClick={(e) => {*/}
+    {/*                                e.stopPropagation();*/}
+    {/*                                setTestCases((prevTestCases) =>*/}
+    {/*                                    prevTestCases.filter((_, i) => i !== index)*/}
+    {/*                                );*/}
+    {/*                                setSelectedTestCase((prev) =>*/}
+    {/*                                    prev === index ? 0 : Math.max(0, prev - 1)*/}
+    {/*                                );*/}
+    {/*                            }}*/}
+    {/*                            className="text-red-400 hover:text-white text-xs ml-1"*/}
+    {/*                            >*/}
+    {/*                                x*/}
+    {/*                            </button>*/}
+    {/*                        )}*/}
+    {/*                    </button>*/}
+    {/*                </div>*/}
+    {/*                ))}*/}
 
-                {Array.isArray(result?.testCases) &&
-                result.testCases[selectedTestCase]?.error?.trim() && (
-                    <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                        <h4 className="text-xs text-red-400">❌ Error</h4>
-                        <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
-        {result.testCases[selectedTestCase].error}
-    </pre>
-                    </div>
-                )}
+    {/*                <button*/}
+    {/*                onClick={addTestCase}*/}
+    {/*                className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"*/}
+    {/*                >*/}
+    {/*                    +*/}
+    {/*                </button>*/}
+    {/*            </div>*/}
 
-            </div>
-        </div>
+
+    {/*            <div className="mt-3 p-2 rounded bg-black">*/}
+    {/*                <div className="mt-1">*/}
+    {/*                    {selectedTestCase < initialTestCases.length ? (*/}
+    {/*                    <div>*/}
+    {/*                        {testCases[selectedTestCase].input.trim() !== "" && (*/}
+    {/*                            <>*/}
+    {/*                                <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
+    {/*                                <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+    {/*                    {decodeText(testCases[selectedTestCase].input)}*/}
+    {/*                </pre>*/}
+    {/*                            </>*/}
+    {/*                        )}*/}
+    {/*                    </div>*/}
+    {/*                    ) : (*/}
+    {/*                    <div>*/}
+    {/*                        <button*/}
+    {/*                            onClick={() => handleRunSingleTestCase(selectedTestCase)}*/}
+    {/*                            className=" font-lexend mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"*/}
+    {/*                        >*/}
+    {/*                            My Testcase RUN*/}
+    {/*                        </button>*/}
+    {/*                        <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
+
+    {/*                        <textarea*/}
+    {/*                            className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"*/}
+    {/*                            value={testCases[selectedTestCase].input}*/}
+    {/*                            onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}*/}
+    {/*                        />*/}
+
+    {/*                    </div>*/}
+    {/*                    )}*/}
+    {/*                </div>*/}
+
+
+    {/*                <div className="mt-1 mb-3">*/}
+    {/*                    <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>*/}
+    {/*                    {selectedTestCase < initialTestCases.length ? (*/}
+
+    {/*                    <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+    {/*        {decodeText(testCases[selectedTestCase].output)}*/}
+    {/*    </pre>*/}
+    {/*                    ) : (*/}
+    {/*                    <div>*/}
+    {/*                    <textarea*/}
+    {/*                        className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"*/}
+    {/*                        value={testCases[selectedTestCase].output}*/}
+    {/*                        onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}*/}
+    {/*                    />*/}
+
+
+    {/*                </div>*/}
+    {/*                )}*/}
+    {/*            </div>*/}
+
+    {/*/!*                {result?.result && (*!/*/}
+    {/*/!*                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*!/*/}
+    {/*/!*                    <h4 className="text-xs text-gray-400"> Result</h4>*!/*/}
+    {/*/!*                    <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">*!/*/}
+    {/*/!*                {result.result}*!/*/}
+    {/*/!*            </pre>*!/*/}
+    {/*/!*                </div>*!/*/}
+    {/*/!*                )}*!/*/}
+
+    {/*/!*                {result?.error?.trim() && (*!/*/}
+    {/*/!*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*!/*/}
+    {/*/!*                    <h4 className="text-xs text-red-400">❌ Error</h4>*!/*/}
+    {/*/!*                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*!/*/}
+    {/*/!*    {result.error}*!/*/}
+    {/*/!*</pre>*!/*/}
+    {/*/!*                </div>*!/*/}
+    {/*/!*                )}*!/*/}
+
+
+    {/*                /!*run 결과 *!/*/}
+    {/*                {result?.testCases?.[selectedTestCase] && (*/}
+    {/*                <>*/}
+    {/*                    <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*/}
+    {/*                        <h4 className="text-xs text-gray-400">Result</h4>*/}
+    {/*                        <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">*/}
+    {/*        {result.testCases[selectedTestCase].actualOutput}*/}
+    {/*    </pre>*/}
+    {/*                    </div>*/}
+    {/*                </>*/}
+    {/*                )}*/}
+
+    {/*            {Array.isArray(result?.testCases) &&*/}
+    {/*            result.testCases[selectedTestCase]?.error?.trim() && (*/}
+    {/*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*/}
+    {/*                    <h4 className="text-xs text-red-400">❌ Error</h4>*/}
+    {/*                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*/}
+    {/*    {result.testCases[selectedTestCase].error}*/}
+    {/*</pre>*/}
+    {/*                </div>*/}
+    {/*            )}*/}
+
+    {/*        </div>*/}
+    {/*    </div>*/}
       </div>
     );
 }
