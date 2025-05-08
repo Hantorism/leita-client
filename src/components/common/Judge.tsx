@@ -149,14 +149,14 @@ export default function JudgePage() {
                 {/*<ProblemsButton />*/}
             </div>
 
-            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
+            <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5 ">
                 <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
-                    <table className="font-Pretend w-full text-left ">
+                    <table className=" w-full text-left ">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
-                            <th className="p-3 border-b border-gray-500">문제 ID</th>
+                            <th className="p-3  border-gray-500">문제 ID</th>
 
-                            <th className="p-3 border-b border-gray-500">결과</th>
+                            <th className="p-3  border-gray-500">결과</th>
                             <th className="p-3 border-b border-gray-500">메모리(KB)</th>
                             <th className="p-3 border-b border-gray-500">시간(ms)</th>
                             <th className="p-3 border-b border-gray-500">언어</th>

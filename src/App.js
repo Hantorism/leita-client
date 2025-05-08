@@ -31,13 +31,14 @@ const App = () => {
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/problems" element={<Problems />} />
-                <Route path="/study" element={<Study />} /> />
+
 
                 {/* 보호된 라우트 */}
                 <Route path="/problems/:id" element={<PrivateRoute element={<ProblemDetail />} />} />
                 <Route path="/study/:id" element={<PrivateRoute element={<StudyDetail />} />} />
                 <Route path="/judge" element={<PrivateRoute element={<JudgePage />} />} />
                 <Route path="/create-problem" element={<CreateProblem />} />
+                <Route path="/study" element={<PrivateRoute element={<Study />} />} />
             </Routes>
         </GoogleOAuthProvider>
     );
