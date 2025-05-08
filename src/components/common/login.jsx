@@ -93,6 +93,9 @@ const Login = ({ user, setUser }) => {
 
                 setUser(userRes.data);
                 localStorage.setItem("user", JSON.stringify(userRes.data));
+                // 로그인 성공 후 이메일 저장
+                localStorage.setItem("email", userRes.email);
+
                 navigate("/");
             } catch (error) {
                 console.error(" Google login failed:", error);
