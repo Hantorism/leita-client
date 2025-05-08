@@ -38,9 +38,9 @@ const CreateStudyModal = ({ onClose, onCreated }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-nanum">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-Pretend">
             <div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg">
-                <h2 className="text-xl font-bold mb-4">스터디 그룹 생성</h2>
+                <h2 className="text-xl  mb-4">Create Study</h2>
                 <input
                     className="w-full mb-3 p-2 border rounded"
                     placeholder="Title"

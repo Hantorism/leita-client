@@ -201,8 +201,23 @@ const Study = () => {
                             </button>
                             <button
                                 className="px-4 py-2  bg-gray-600 text-white rounded-full  hover:text-[#CAFF33]"
-                                onClick={() => {
-                                    alert("🚀 가입 요청을 전송했습니다.");
+                                onClick={async () => {
+                                    try {
+                                        const res = await fetch(`/study-class/${selectedStudy.id}/join`, {
+                                            method: "GET",
+                                            credentials: "include",
+                                        });
+
+                                        if (res.ok) {
+                                            alert("🚀 가입 요청을 전송했습니다.");
+                                        } else {
+                                            alert("❗가입 요청에 실패했습니다.");
+                                        }
+                                    } catch (error) {
+                                        alert("❗네트워크 오류가 발생했습니다.");
+                                        console.error(error);
+                                    }
+
                                     setShowStudyDetailModal(false);
                                 }}
                             >
