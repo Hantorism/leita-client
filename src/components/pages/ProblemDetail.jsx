@@ -181,8 +181,10 @@ const ProblemDetail = () => {
                             {/* 출력은 항상 렌더링 */}
                             <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
                             <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md">
-                {decodeText(testCase.output)}
-            </pre>
+                                <div className="overflow-x-auto scrollbar-hide">
+                                    {decodeText(testCase.output)}
+                                </div>
+                            </pre>
                         </div>
                     ))}
                 </div>
