@@ -256,16 +256,13 @@ const StudyDetails = () => {
                         </div>
                     )}
 
-
-
-
                 </div>
             )}
 
             {study && (
                 <div className="w-full mt-6">
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-2xl">🚀 Session List</h2>
+                        <h2 className="text-2xl">[ Session List ]</h2>
                         {isAdmin && (
                             <button
                                 onClick={() => setIsSessionModalOpen(true)}

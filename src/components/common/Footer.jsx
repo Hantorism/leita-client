@@ -30,6 +30,16 @@ const Footer = () => {
                         <a href="/privacy" className="text-sm font-Pretend text-gray-400 hover:text-white">
                             개인정보 처리방침
                         </a>
+                        <p className="text-sm font-Pretend text-gray-400"> | </p>
+
+                        <a
+                            href="https://forms.gle/HsXCDSjUntg32iHg8"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm font-Pretend text-gray-400 hover:text-white"
+                        >
+                            문의하기
+                        </a>
                     </div>
 
                     {/* 오른쪽 */}

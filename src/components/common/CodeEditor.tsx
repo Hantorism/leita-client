@@ -291,9 +291,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                     //     input: encodeBase64(input),
                     //     output: encodeBase64(output),
                     // })),
-                    testCases: combinedTestCases.map(({ input, output }) => ({
+                    testCases: combinedTestCases.map(({ input, output ,result}) => ({
                         input:  input,
                         output: output,
+                        result:result,
                         // input: encodeBase64(input),
                         // output: encodeBase64(output),
                     })),
@@ -305,10 +306,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
             if (response.ok) {
                 setResult({
                     message:   resultData.message || "🛠 실행 완료!",
-                    testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
+                    testCases: resultData.data.map((testResult: { result: string; error?: string; output:string}, index: number) => ({
                         actualOutput: testResult.result,
                         error:        testResult.error || null,
-                        isPassed:     testResult.result === testCases[index].output
+                        isPassed:     testResult.result === testCases[index].output,
+                        output:testResult.output,
                     })),
                     isSubmit:  false
                 });
@@ -574,6 +576,29 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                   <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>
               </div>
           </div>
+        {/*  {isSubmitMode && result?.testCases && result.testCases[selectedTestCase] && (*/}
+        {/*      <div className="mt-3 p-2 bg-[#111111] rounded-md">*/}
+        {/*          <h4 className="text-xs text-gray-400">실제 출력 {selectedTestCase + 1}</h4>*/}
+        {/*          <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
+        {/*    {decodeBase64(result.testCases[selectedTestCase].output)}*/}
+        {/*</pre>*/}
+
+        {/*          <h4 className="text-xs text-gray-400 mt-2">결과</h4>*/}
+        {/*          <div className={`text-sm font-bold ${result.testCases[selectedTestCase].result === "맞았습니다" ? "text-green-400" : "text-red-400"}`}>*/}
+        {/*              {result.testCases[selectedTestCase].result}*/}
+        {/*          </div>*/}
+
+        {/*  */}
+        {/*          {result.testCases[selectedTestCase].error?.trim() && (*/}
+        {/*              <>*/}
+        {/*                  <h4 className="text-xs text-red-400 mt-2">에러</h4>*/}
+        {/*                  <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*/}
+        {/*            {result.testCases[selectedTestCase].error}*/}
+        {/*        </pre>*/}
+        {/*              </>*/}
+        {/*          )}*/}
+        {/*      </div>*/}
+        {/*  )}*/}
 
 
           <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
@@ -677,11 +702,15 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                           </div>
 
                           <div className="mt-1 mb-3">
+
                               <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                               {selectedTestCase < initialTestCases.length ? (
                                   <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-            {decodeText(testCases[selectedTestCase].output)}
-        </pre>
+                                    {decodeText(testCases[selectedTestCase].output)}
+                                      {/*{decodeText(result.testCases[selectedTestCase].output)}*/}
+                                  </pre>
+
+
                               ) : (
                                   <div>
             <textarea
@@ -695,6 +724,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
 
                       </div>
+
                       <div className="mt-2 p-2 bg-black rounded-md">
 
                           {result?.testCases && (
