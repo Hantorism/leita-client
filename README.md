@@ -1,46 +1,69 @@
-# Getting Started with Create React App
+# Leita
+https://leita.dev/
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Leita**는 아주대학교 학생들을 위한 **코딩 연습 플랫폼**으로, 기존 알고리즘 문제 풀이 사이트의 불편함을 해소하고, 더 나은 사용자 경험과 실질적인 학습 성장을 돕기 위해 개발되었어요.
 
-## Available Scripts
+## 🎯 프로젝트 목적
 
-In the project directory, you can run:
+Leita는 다음과 같은 문제를 해결하고자 시작되었어요:
 
-### `npm start`
+- **기존 플랫폼의 복잡한 인터페이스**: 문제와 코드 입력 창이 분리되어 있어 사용자가 자주 창을 전환해야 하는 불편함이 존재했어요.
+- **접근성 부족**: 학내 후배들이 쉽게 접근하고 사용할 수 있는, 로컬 기반의 간단한 코딩 플랫폼이 필요했어요.
+- **문제 제작/관리의 어려움**: 스터디 운영자나 멘토가 직접 문제를 등록하고 관리할 수 있는 기능이 부족했어요.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## ✅ 우리가 해결한 방식
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Leita는 다음과 같은 기능을 중심으로 문제를 해결하고자 했어요:
 
-### `npm test`
+### 📌 사용자 중심 인터페이스
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **문제 설명 + 코드 작성 창을 한 페이지에 구성**하여 학습 몰입도를 높였어요.
+- 실시간 코드 입력 및 제출 후 결과 확인 가능해요.
+- 직접 테스트 케이스 추가 및 결과 확인 가능해요.
+- 유저 별 제출 결과 및 문제 풀이 히스토리를 기록해요.
 
-### `npm run build`
+### 🧩 문제 출제 기능
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- 운영자/멘토가 직접 문제를 등록할 수 있는 **문제 제작 페이지** 제공해요.
+- 문제에는 다음과 같은 요소를 포함할 수 있어요:
+    - 제목
+    - 설명
+    - 시간/메모리 제한
+    - 테스트 케이스
+    - 출처 및 카테고리
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🔐 인증 시스템
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- 아주대 이메일 기반 회원가입 및 로그인이 가능해요.
 
-### `npm run eject`
+### 📊 스터디 참여 시스템
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- 향후 스터디 출석 시스템 도입 예정이에요.
+- 코드를 공유하고 토론할 수 있는 커뮤니케이션 기능 도입 예정이에요.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🛠 기술 스택
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+| 분류 | 사용 기술 |
+|------|------------|
+| 언어 | TypeScript |
+| 프론트엔드 | React, Next.js |
+| 스타일링 | Tailwind |
+| 빌드 툴 | Vite, webpack, ESBuild |
+| 패키지 매니저 | pnpm |
+| 인증 | JWT 기반 API (`/auth/login` etc.) |
+| 배포 | GitHub Actions |
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## 🚧 현재 진행 중인 기능
 
-## Learn More
+- 사용자 제출 코드 채점 서버 연동되어 있어요.
+- 문제 검색 및 필터링 기능을 제공하고 있어요.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🎯 프로젝트 성과
+- 프로젝트 배포 후 신입생 스터디에서 사용되어 2주만에 약 2000번의 문제 채점이 이루어졌어요.
+- 사용자의 피드백을 받으며 기능 수정, UI 수정이 꾸준히 이루어지고 있어요.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+---
+
+> Leita는 단순한 코딩 플랫폼을 넘어서, 아주대학교 학생들의 실력 향상과 학습 습관 형성을 돕는 **교육 도구**로 발전해나갈 것입니다.
