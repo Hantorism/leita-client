@@ -1,7 +1,11 @@
-# Leita
+# ![Leita 메인](./public/image/Icon.svg) Leita
 https://leita.dev/
 
+
+![Leita 메인](./src/assets/main%20화면.png)
+
 **Leita**는 아주대학교 학생들을 위한 **코딩 연습 플랫폼**으로, 기존 알고리즘 문제 풀이 사이트의 불편함을 해소하고, 더 나은 사용자 경험과 실질적인 학습 성장을 돕기 위해 개발되었어요.
+
 
 ## 🎯 프로젝트 목적
 
@@ -16,6 +20,11 @@ Leita는 다음과 같은 문제를 해결하고자 시작되었어요:
 Leita는 다음과 같은 기능을 중심으로 문제를 해결하고자 했어요:
 
 ### 📌 사용자 중심 인터페이스
+
+<p align="center">
+  <img src="./src/assets/채점%20화면.png" alt="채점 화면" width="45%" style="margin-right: 10px;"/>
+  <img src="./src/assets/에러%20화면.png" alt="에러 화면" width="45%"/>
+</p>
 
 - **문제 설명 + 코드 작성 창을 한 페이지에 구성**하여 학습 몰입도를 높였어요.
 - 실시간 코드 입력 및 제출 후 결과 확인 가능해요.
