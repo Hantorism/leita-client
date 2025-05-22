@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import {LeitaButton} from "../designs/LeitaButton/index.tsx";
+
+
 
 import Header from "../common/Header";
 import axios from "axios";
@@ -190,15 +193,17 @@ const CreateProblem = () => {
                         </div>
                     ))}
 
-                    <button
-                        type="button"
+                    <LeitaButton
                         onClick={() =>
                             setTestCases([...testCases, {input: "", output: ""}])
                         }
-                        className="mt-2 px-4 py-2 rounded-full transition bg-[#2A2A2A] text-white hover:text-[#CAFF33] hover:bg-opacity-0"
+                        variant="secondary"
+                        size="sm"
+                        shape="pill"
                     >
-                        Add Test Case (+)
-                    </button>
+                        Add Category (+)
+                    </LeitaButton>
+
                 </div>
 
 
@@ -217,7 +222,7 @@ const CreateProblem = () => {
                     <label className="block text-lg font-medium text-white">Category</label>
                     <div className="space-y-3">
                         {category.map((cat, index) => (
-                            <div key={index} className="flex gap-2">
+                            <div key={index} className="flex pb-2">
                                 <input
                                     placeholder="ex) 자료구조"
                                     type="text"
@@ -229,37 +234,43 @@ const CreateProblem = () => {
                                     }}
                                     className="p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                                 />
-                                <button
-                                    type="button"
+
+                                <LeitaButton
                                     onClick={() =>
                                         setCategory(category.filter((_, i) => i !== index))
                                     }
-                                    className="px-3 py-[0.2] rounded-full transition bg-[#2A2A2A] text-white
-                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
-                                >
-                                    -
-                                </button>
+                                variant="secondary"
+                                size="sm"
+                                shape="pill"
+                            >
+                               (-)
+                            </LeitaButton>
+
                             </div>
                         ))}
                     </div>
 
-                    <button
-                        type="button"
+
+                    <LeitaButton
                         onClick={() => setCategory([...category, ""])}
-                        className="px-2 mt-4 py-1 rounded-full transition bg-[#2A2A2A] text-white
-                                hover:text-[#CAFF33]  hover:bg-opacity-0 "
+                        variant="secondary"
+                        size="sm"
+                        shape="pill"
                     >
                         Add Category (+)
-                    </button>
+                    </LeitaButton>
+
                 </div>
 
-
-                <button
+                <LeitaButton
                     type="submit"
-                    className="font-lexend mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
+                    variant="primary"
+                    shape="round"
+                    size="lg"
                 >
                     Create Problem
-                </button>
+                </LeitaButton>
+
             </form>
         </div>
             <footer className="w-full text-left mt-20">
