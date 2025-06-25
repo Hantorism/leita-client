@@ -154,9 +154,9 @@ export default function JudgePage() {
                     <table className=" w-full text-left ">
                         <thead>
                         <tr className="bg-[#2A2A2A] text-white">
-                            <th className="p-3  border-gray-500">문제 ID</th>
+                            <th className="p-3 border-b border-gray-500">문제 ID</th>
 
-                            <th className="p-3  border-gray-500">결과</th>
+                            <th className="p-3 border-b border-gray-500">결과</th>
                             <th className="p-3 border-b border-gray-500">메모리(KB)</th>
                             <th className="p-3 border-b border-gray-500">시간(ms)</th>
                             <th className="p-3 border-b border-gray-500">언어</th>
