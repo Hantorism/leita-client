@@ -204,7 +204,7 @@ const Study = () => {
                                 onClick={async () => {
                                     try {
                                         const res = await fetch(`/study-class/${selectedStudy.id}/join`, {
-                                            method: "POST",
+                                            method: "GET",
                                             credentials: "include",
                                         });
 

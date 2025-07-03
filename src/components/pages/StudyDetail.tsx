@@ -71,7 +71,7 @@ const StudyDetails = () => {
                     body: JSON.stringify({
                         startDateTime: now.toISOString(),
                         endDateTime: end.toISOString(),
-                        description: description || "스터디 세션",
+                        // description: description || "스터디 세션",
                     }),
                 }
             );
@@ -286,14 +286,14 @@ const StudyDetails = () => {
                                         <strong>시작:</strong> {new Date(session.startDateTime).toLocaleString()}<br />
                                         <strong>종료:</strong> {new Date(session.endDateTime).toLocaleString()}
                                     </p>
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                        {session.participants.map(p => (
-                                            <div key={p.email} className="flex items-center space-x-2 bg-gray-700 text-white px-2 py-1 rounded-full">
-                                                <span className="font-medium">{p.name}</span>
-                                                <span className="text-xs">({p.email})</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {/*<div className="mt-2 flex flex-wrap gap-2">*/}
+                                    {/*    {session.participants.map(p => (*/}
+                                    {/*        <div key={p.email} className="flex items-center space-x-2 bg-gray-700 text-white px-2 py-1 rounded-full">*/}
+                                    {/*            <span className="font-medium">{p.name}</span>*/}
+                                    {/*            <span className="text-xs">({p.email})</span>*/}
+                                    {/*        </div>*/}
+                                    {/*    ))}*/}
+                                    {/*</div>*/}
                                 </li>
                             ))}
                         </ul>
