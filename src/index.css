@@ -60,3 +60,81 @@ code {
 /*  font-family: 'Lexend', sans-serif;*/
 /*  font-weight: 100;*/
 /*}*/
+
+.prose ul > li::marker,
+.prose ol > li::marker {
+  color: white;
+}
+
+/* Adjust Tiptap editor line-height to be more compact */
+.tiptap-editor .ProseMirror {
+    line-height: 1.25; /* tighter */
+}
+
+/* Reduce space between paragraphs and lists in the editor */
+.tiptap-editor .ProseMirror p,
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+/* Remove margins for the very first and last elements to align with the container */
+.tiptap-editor .ProseMirror > :first-child {
+    margin-top: 0;
+}
+.tiptap-editor .ProseMirror > :last-child {
+    margin-bottom: 0;
+}
+
+.ProseMirror:focus {
+    outline: none;
+}
+
+.tiptap-editor .tiptap-mathematics-render {
+  padding: 0 0.25rem;
+  border-radius: 0.25rem;
+}
+
+.tiptap-editor .tiptap-mathematics-render--editable {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.tiptap-editor .tiptap-mathematics-render--editable:hover {
+  background: #444; /* Adapted for dark theme */
+}
+
+.tiptap-editor .tiptap-mathematics-render[data-type='inline-math'] {
+  display: inline-block;
+}
+
+.tiptap-editor .tiptap-mathematics-render[data-type='block-math'] {
+  display: block;
+  margin: 1rem 0;
+  padding: 1rem;
+  text-align: center;
+}
+
+.tiptap-editor .tiptap-mathematics-render.inline-math-error,
+.tiptap-editor .tiptap-mathematics-render.block-math-error {
+  background: rgba(255, 0, 0, 0.2); /* Adapted for dark theme */
+  color: #ff8888; /* Adapted for dark theme */
+  border: 1px solid #ff0000;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+/* Custom style for Tiptap code elements */
+.tiptap-editor code {
+  background-color: rgba(255, 255, 255, 0.4);
+  color: #dc1414;
+  padding: 0.1em 0.3em;
+  border-radius: 4px;
+}
+
+/* Hide backticks around code elements */
+.tiptap-editor code::before,
+.tiptap-editor code::after {
+  content: none;
+}

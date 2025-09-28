@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import ProblemDescriptionEditor from "./ProblemDescriptionEditor.tsx";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
@@ -78,39 +78,37 @@ const CreateProblem = () => {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
-                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                        className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                     />
                 </div>
 
                 <div>
                     <label className="block text-lg font-medium text-white">Problem Description</label>
-                    <textarea
+                    <ProblemDescriptionEditor
                         value={description.problem}
-                        onChange={(e) => setDescription({...description, problem: e.target.value})}
-                        required
-                        className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                        onChange={(content) => setDescription({...description, problem: content})}
+                        className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
                         rows={4}
                     />
                 </div>
 
                 <div>
                     <label className="block text-lg font-medium text-white">Input Description</label>
-                    <textarea
+                    <ProblemDescriptionEditor
                         value={description.input}
-                        onChange={(e) => setDescription({...description, input: e.target.value})}
-                        required
-                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                        onChange={(content) => setDescription({...description, input: content})}
+                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
                         rows={3}
+                        readonly
                     />
                 </div>
 
                 <div>
                     <label className="block text-lg font-medium text-white">Output Description</label>
-                    <textarea
-                        value={description.output}
-                        onChange={(e) => setDescription({...description, output: e.target.value})}
-                        required
-                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                    <ProblemDescriptionEditor
+                        content={description.output}
+                        onChange={(content) => setDescription({...description, output: content})}
+                        className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
                         rows={3}
                     />
                 </div>
@@ -123,7 +121,7 @@ const CreateProblem = () => {
                             value={limit.memory}
                             onChange={(e) => setLimit({...limit, memory: Number(e.target.value)})}
                             required
-                            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                            className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
                     </div>
 
@@ -134,7 +132,7 @@ const CreateProblem = () => {
                             value={limit.time}
                             onChange={(e) => setLimit({...limit, time: Number(e.target.value)})}
                             required
-                            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                            className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
                     </div>
                 </div>
@@ -156,7 +154,7 @@ const CreateProblem = () => {
                             ...testCases.slice(index + 1),
                         ])
                     }
-                    className="w-full p-3 border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                     rows={3}
                 />
                             </div>
@@ -171,7 +169,7 @@ const CreateProblem = () => {
                             ...testCases.slice(index + 1),
                         ])
                     }
-                    className="w-full p-3 border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                     rows={3}
                 />
                             </div>
@@ -209,7 +207,7 @@ const CreateProblem = () => {
                         type="text"
                         value={source}
                         onChange={(e) => setSource(e.target.value)}
-                        className=" p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                        className=" p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                     />
                 </div>
 
@@ -227,7 +225,7 @@ const CreateProblem = () => {
                                         newCategories[index] = e.target.value;
                                         setCategory(newCategories);
                                     }}
-                                    className="p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
+                                    className="p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                                 />
                                 <button
                                     type="button"
