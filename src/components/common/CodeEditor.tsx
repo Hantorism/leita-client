@@ -669,7 +669,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
                                       <textarea
                                           className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
-                                          value={testCases[selectedTestCase].input}
+                                          // value={testCases[selectedTestCase].input}
+                                          value={testCases}
                                           onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
                                       />
                                   </div>
@@ -686,7 +687,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                   <div>
             <textarea
                 className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
-                value={testCases[selectedTestCase].output}
+                // value={testCases[selectedTestCase].output}
+                value={testCases}
                 onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
             />
                                   </div>
