@@ -56,6 +56,12 @@ code {
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'JetBrain Mono';
+  src: url('/public/fonts/JetBrainMono-Regular.ttf') format('truetype');
+  font-style: normal;
+}
+
 /*body {*/
 /*  font-family: 'Lexend', sans-serif;*/
 /*  font-weight: 100;*/
@@ -126,15 +132,36 @@ code {
 }
 
 /* Custom style for Tiptap code elements */
-.tiptap-editor code {
-  background-color: rgba(255, 255, 255, 0.4);
-  color: #dc1414;
+.tiptap-editor :not(pre) > code {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: inherit;
   padding: 0.1em 0.3em;
   border-radius: 4px;
+  font-family: 'JetBrain Mono', monospace;
+  font-weight: normal;
+}
+
+.tiptap-editor pre code {
+    font-family: 'JetBrain Mono', monospace;
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    border-radius: 0;
 }
 
 /* Hide backticks around code elements */
 .tiptap-editor code::before,
 .tiptap-editor code::after {
   content: none;
+}
+
+.tiptap-editor img {
+  display: block;
+  height: auto;
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+
+.tiptap-editor img.ProseMirror-selectednode {
+  outline: 3px solid white;
 }
