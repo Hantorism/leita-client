@@ -5,6 +5,7 @@ import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Image from '@tiptap/extension-image'
 import 'katex/dist/katex.min.css';
 import ImageModal from './ImageModal.tsx';
+import Logger from '../../utils/logger';
 
 const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage }) => {
     const editorState = useEditorState({
@@ -153,7 +154,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
         content: content,
         onUpdate: ({ editor }) => {
             const content = editor.getHTML();
-            console.log(content);
+            Logger.print(content);
             onChange(content);
         },
         onCreate: ({ editor: currentEditor }) => {

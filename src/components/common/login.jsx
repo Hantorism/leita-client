@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import "./button.css";
 import axiosInstance from "./axiosInstance";
+import Logger from '../../utils/logger';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -57,7 +58,7 @@ const Login = ({ user, setUser }) => {
     const signInWithGoogle = useGoogleLogin({
         onSuccess: async (tokenResponse) => {
             try {
-                // console.log(" Google OAuth Token:", tokenResponse.access_token);
+                // Logger.print(" Google OAuth Token:", tokenResponse.access_token);
 
 
                 const res = await axiosInstance.post(`${API_BASE_URL}/auth/oauth`, {
@@ -68,11 +69,11 @@ const Login = ({ user, setUser }) => {
                     }
                 });
 
-                console.log(" Google Login Response:", res.data);
+                Logger.print(" Google Login Response:", res.data);
 
 
                 const accessToken = res.data.data.accessToken;
-                console.log(" Google Login Response Data:", res.data);
+                Logger.print(" Google Login Response Data:", res.data);
                 if (!accessToken) {
 
                     return;
@@ -89,7 +90,7 @@ const Login = ({ user, setUser }) => {
                     headers: { Authorization: `Bearer ${accessToken}` },
                 });
 
-                console.log(" User Info Response:", userRes.data);
+                Logger.print(" User Info Response:", userRes.data);
 
                 setUser(userRes.data);
                 localStorage.setItem("user", JSON.stringify(userRes.data));

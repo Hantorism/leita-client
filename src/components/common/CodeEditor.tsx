@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import MonacoEditor, { Monaco } from "@monaco-editor/react";
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
-
 import CustomDropdown from "./CustomDropdown";
+import Logger from '../../utils/logger';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -349,8 +349,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
         // container가 제대로 참조되는지 확인하기 위한 로그
         if (container) {
-            console.log("Editor container:", container);
-            console.log(container.getBoundingClientRect()); // getBoundingClientRect() 사용 가능
+            Logger.print("Editor container:", container);
+            Logger.print(container.getBoundingClientRect()); // getBoundingClientRect() 사용 가능
         }
     };
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../common/Header";
 import Footer from "../common/Footer";
 import CreateStudyModal from "../common/CreateStudyModal.tsx";
+import Logger from '../../utils/logger';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
@@ -57,7 +58,7 @@ const Study = () => {
             const currentUser = JSON.parse(localStorage.getItem("user"));
             const currentUserEmail = currentUser ? currentUser.data.email : null;
 
-            console.log("Current Email:", currentUserEmail);
+            Logger.print("Current Email:", currentUserEmail);
 
 
 
