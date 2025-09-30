@@ -2,9 +2,10 @@ import React, { useEffect, useCallback } from "react";
 import { useEditor, EditorContent, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
+import Image from '@tiptap/extension-image'
 import 'katex/dist/katex.min.css';
 
-const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
+const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onAddImage }) => {
     const editorState = useEditorState({
         editor,
         selector: ctx => ({
@@ -17,6 +18,8 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
             canSetHardBreak: ctx.editor.can().chain().setHardBreak().run(),
             isCode: ctx.editor.isActive('code'),
             canCode: ctx.editor.can().chain().toggleCode().run(),
+            isCodeBlock: ctx.editor.isActive('codeBlock'),
+            canCodeBlock: ctx.editor.can().chain().toggleCodeBlock().run(),
         }),
     });
 
@@ -30,7 +33,7 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editorState.canBold}
-                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBold ? 'bg-[#CAFF33] text-black' : ''}`}
+                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBold ? 'bg-[#CAFF33] !text-black' : ''}`}
             >
                 Bold
             </button>
@@ -38,7 +41,7 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 disabled={!editorState.canBulletList}
-                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBulletList ? 'bg-[#CAFF33] text-black' : ''}`}
+                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBulletList ? 'bg-[#CAFF33] !text-black' : ''}`}
             >
                 Bullet List
             </button>
@@ -46,7 +49,7 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleOrderedList().run()}
                 disabled={!editorState.canOrderedList}
-                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isOrderedList ? 'bg-[#CAFF33] text-black' : ''}`}
+                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isOrderedList ? 'bg-[#CAFF33] !text-black' : ''}`}
             >
                 Ordered List
             </button>
@@ -62,9 +65,17 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
                 type="button"
                 onClick={() => editor.chain().focus().toggleCode().run()}
                 disabled={!editorState.canCode}
-                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isCode ? 'bg-[#CAFF33] text-black' : ''}`}
+                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isCode ? 'bg-[#CAFF33] !text-black' : ''}`}
             >
                 Code
+            </button>
+            <button
+                type="button"
+                onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+                disabled={!editorState.canCodeBlock}
+                className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isCodeBlock ? 'bg-[#CAFF33] !text-black' : ''}`}
+            >
+                Code Block
             </button>
             <button
                 type="button"
@@ -80,6 +91,13 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath }) => {
             >
                 Block Math
             </button>
+            <button
+                type="button"
+                onClick={onAddImage}
+                className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
+            >
+                Image
+            </button>
         </div>
     );
 };
@@ -91,7 +109,6 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
         extensions: [
             StarterKit.configure({
                 blockquote: false,
-                codeBlock: false,
                 dropcursor: false,
                 gapcursor: false,
                 heading: false,
@@ -117,6 +134,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
                     },
                 },
             }),
+            Image,
         ],
         editorProps: {
             handleKeyDown(view, event) {
@@ -148,12 +166,11 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
             const { from, to } = editor.state.selection;
             const latex = editor.state.doc.textBetween(from, to, ' ');
             if (!latex) return;
-            editor.chain().focus().deleteSelection().insertInlineMath({ latex }).run();
-						return;
+            return editor.chain().focus().deleteSelection().insertInlineMath({ latex }).run();
         }
 
         const latex = prompt('Enter inline math expression:', '');
-        editor.chain().focus().insertInlineMath({ latex }).run();
+        return editor.chain().focus().insertInlineMath({ latex }).run();
     }, [editor]);
 
     const onInsertBlockMath = useCallback(() => {
@@ -164,13 +181,20 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
             const { from, to } = editor.state.selection;
             const latex = editor.state.doc.textBetween(from, to, ' ');
             if (!latex) return;
-            editor.chain().focus().deleteSelection().insertBlockMath({ latex }).run();
-	          return;
+            return editor.chain().focus().deleteSelection().insertBlockMath({ latex }).run();
         }
 
         const latex = prompt('Enter block math expression:', '');
-        editor.chain().focus().insertBlockMath({ latex }).run();
+        return editor.chain().focus().insertBlockMath({ latex }).run();
     }, [editor]);
+
+		const onAddImage = useCallback(() => {
+			const url = window.prompt('URL')
+
+			if (url) {
+				editor.chain().focus().setImage({ src: url }).run()
+			}
+		}, [editor])
 
     useEffect(() => {
         if (!editor) return;
@@ -198,6 +222,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
                     editor={editor}
                     onInsertInlineMath={onInsertInlineMath}
                     onInsertBlockMath={onInsertBlockMath}
+                    onAddImage={onAddImage}
                 />
             }
             <div style={{ minHeight }}>
