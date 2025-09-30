@@ -1,11 +1,12 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useEditor, EditorContent, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Image from '@tiptap/extension-image'
 import 'katex/dist/katex.min.css';
+import ImageModal from './ImageModal.tsx';
 
-const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onAddImage }) => {
+const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage }) => {
     const editorState = useEditorState({
         editor,
         selector: ctx => ({
@@ -93,7 +94,7 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onAddImage }) 
             </button>
             <button
                 type="button"
-                onClick={onAddImage}
+                onClick={onInsertImage}
                 className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
             >
                 Image
@@ -104,6 +105,8 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onAddImage }) 
 
 
 const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly }) => {
+    const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+
     const editor = useEditor({
         editable: !readonly,
         extensions: [
@@ -188,13 +191,16 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
         return editor.chain().focus().insertBlockMath({ latex }).run();
     }, [editor]);
 
-		const onAddImage = useCallback(() => {
-			const url = window.prompt('URL')
+		const onInsertImage = useCallback(() => {
+			setIsImageModalOpen(true);
+		}, [])
 
-			if (url) {
-				editor.chain().focus().setImage({ src: url }).run()
-			}
-		}, [editor])
+    const handleInsertImage = useCallback((url) => {
+        if (url && editor) {
+            editor.chain().focus().setImage({ src: url }).run();
+            setIsImageModalOpen(false);
+        }
+    }, [editor]);
 
     useEffect(() => {
         if (!editor) return;
@@ -222,9 +228,14 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
                     editor={editor}
                     onInsertInlineMath={onInsertInlineMath}
                     onInsertBlockMath={onInsertBlockMath}
-                    onAddImage={onAddImage}
+                    onInsertImage={onInsertImage}
                 />
             }
+            <ImageModal
+                isOpen={isImageModalOpen}
+                onClose={() => setIsImageModalOpen(false)}
+                onInsert={handleInsertImage}
+            />
             <div style={{ minHeight }}>
                 <EditorContent editor={editor} />
             </div>
