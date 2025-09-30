@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import CodeEditor from "../common/CodeEditor.tsx";
+import Logger from '../../utils/logger';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -47,12 +48,12 @@ const ProblemDetail = () => {
         const queryParams = new URLSearchParams(window.location.search);
         const token = queryParams.get("token");
 
-        console.log("🔍 Extracted token from URL:", token);
+        Logger.print("🔍 Extracted token from URL:", token);
 
 
         if (token) {
             localStorage.setItem("accessToken", token);
-            // console.log("✅ Token restored in localStorage:", token);
+            // Logger.print("✅ Token restored in localStorage:", token);
         }
     }, [location.search]);
 

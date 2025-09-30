@@ -3,6 +3,7 @@ import ProblemDescriptionEditor from "./ProblemDescriptionEditor.tsx";
 import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
+import Logger from '../../utils/logger';
 
 const CreateProblem = () => {
     const [title, setTitle] = useState("");
@@ -54,7 +55,7 @@ const CreateProblem = () => {
                 }
             });
 
-            console.log(response.data.message);
+            Logger.print(response.data.message);
             alert("Problem created successfully!");
         } catch (error) {
             console.error("Error creating problem", error);
