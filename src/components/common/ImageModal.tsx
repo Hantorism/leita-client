@@ -1,25 +1,28 @@
 import React, { useState, useRef, useEffect } from 'react';
+import imageCompression from 'browser-image-compression';
+import Logger from '../../utils/logger'
 
 const ImageModal = ({ isOpen, onClose, onInsert }) => {
     const [selectedImage, setSelectedImage] = useState(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [uploadedUrl, setUploadedUrl] = useState(null);
+    const [isCompressing, setIsCompressing] = useState(false);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
         if (!isOpen) {
             setSelectedImage(null);
             setUploadedUrl(null);
+            return;
         }
 
-        const handleKeyDown = (event) => {
+        const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === 'Escape') {
                 onClose();
             }
         };
 
-        if (isOpen) {
-            document.addEventListener('keydown', handleKeyDown);
-        }
+        document.addEventListener('keydown', handleKeyDown);
 
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
@@ -30,14 +33,43 @@ const ImageModal = ({ isOpen, onClose, onInsert }) => {
         return null;
     }
 
-    const handleFileSelect = (event) => {
-        const file = event.target.files[0];
-        if (file) {
+    const compressFile = async (file: File): Promise<File> => {
+        const options = {
+            maxSizeMB: 1,
+            useWebWorker: true,
+        };
+        return await imageCompression(file, options);
+    };
+
+    const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const rawFile = event.target.files?.[0];
+        if (!rawFile) return;
+	      Logger.print(rawFile);
+
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+        if (!allowedTypes.includes(rawFile.type)) {
+            alert('Only PNG, JPG, and JPEG files are allowed.');
+            return;
+        }
+
+        setIsCompressing(true);
+        try {
+            const oneMB = 1024 * 1024;
+            const file = (rawFile.size > oneMB) ? await compressFile(rawFile) : rawFile;
+
+						Logger.print(file);
+            setSelectedFile(file);
+
             const reader = new FileReader();
             reader.onload = (e) => {
-                setSelectedImage(e.target.result);
+                setSelectedImage(e.target.result as string);
             };
             reader.readAsDataURL(file);
+        } catch (error) {
+            Logger.error('Image processing failed:', error);
+            alert('An error occurred while processing the image.');
+        } finally {
+            setIsCompressing(false);
         }
     };
 
@@ -45,8 +77,37 @@ const ImageModal = ({ isOpen, onClose, onInsert }) => {
         fileInputRef.current.click();
     };
 
-    const handleUpload = () => {
-        // Simulate API call
+    const handleUpload = async () => {
+        /*
+        if (!selectedFile) {
+            alert('Please select an image first.');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', selectedFile);
+
+        try {
+            // '/upload/image'는 실제 서버의 엔드포인트로 수정해야 합니다.
+            const response = await axiosInstance.post('/upload/image', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            const imageUrl = response.data.url;
+            if (imageUrl) {
+                setUploadedUrl(imageUrl);
+                alert('Image uploaded successfully!');
+            } else {
+                alert('Failed to get image URL from response.');
+            }
+        } catch (error) {
+            console.error('Image upload failed:', error);
+            alert('Image upload failed.');
+        }
+        */
+
         setTimeout(() => {
             setUploadedUrl('https://ecimg.cafe24img.com/pg725b28316328009/rediettkr/web/product/extra/small/20241224/083a51d8f6124e463274b4bc0e14b012.jpg');
             alert('Image uploaded successfully!');
@@ -63,6 +124,10 @@ const ImageModal = ({ isOpen, onClose, onInsert }) => {
                 <div className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-500 rounded-lg mb-4">
                     {selectedImage ? (
                         <img src={selectedImage} alt="Preview" className="w-full max-w-full max-h-96 object-contain" />
+                    ) : isCompressing ? (
+                        <div className="flex items-center justify-center h-24">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        </div>
                     ) : (
                         <button onClick={handlePlusButtonClick} className="flex items-center gap-2">
                             <img src="/image/icon-add.png" alt="Add image" className="w-6 h-6 invert" />
