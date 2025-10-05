@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from 'react';
 import { useEditor, EditorContent, useEditorState } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
-import Image from '@tiptap/extension-image'
+import Image from '@tiptap/extension-image';
 import 'katex/dist/katex.min.css';
 import ImageModal from './ImageModal.tsx';
 import Logger from '../../utils/logger';
@@ -104,7 +104,6 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage 
     );
 };
 
-
 const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly }) => {
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
@@ -158,14 +157,14 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
             onChange(content);
         },
         onCreate: ({ editor: currentEditor }) => {
-            migrateMathStrings(currentEditor)
+            migrateMathStrings(currentEditor);
         },
     });
 
     const onInsertInlineMath = useCallback(() => {
         if (!editor) return;
-        const hasSelection = !editor.state.selection.empty;
 
+        const hasSelection = !editor.state.selection.empty;
         if (hasSelection) {
             const { from, to } = editor.state.selection;
             const latex = editor.state.doc.textBetween(from, to, ' ');
@@ -179,8 +178,8 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 
     const onInsertBlockMath = useCallback(() => {
         if (!editor) return;
-        const hasSelection = !editor.state.selection.empty;
 
+        const hasSelection = !editor.state.selection.empty;
         if (hasSelection) {
             const { from, to } = editor.state.selection;
             const latex = editor.state.doc.textBetween(from, to, ' ');
@@ -194,22 +193,24 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 
 		const onInsertImage = useCallback(() => {
 			setIsImageModalOpen(true);
-		}, [])
+		}, []);
 
-    const handleInsertImage = useCallback((url) => {
-        if (url && editor) {
-            editor.chain().focus().setImage({ src: url }).run();
-            setIsImageModalOpen(false);
-        }
+    const handleInsertImage = useCallback((url: string) => {
+        if (!url || !editor) return;
+
+        editor.chain().focus().setImage({ src: url }).run();
+        setIsImageModalOpen(false);
     }, [editor]);
 
     useEffect(() => {
         if (!editor) return;
+
         editor.setEditable(!readonly);
     }, [readonly, editor]);
 
     useEffect(() => {
         if (!editor || editor.getHTML() === content) return;
+
         editor.commands.setContent(content);
     }, [content, editor]);
 
@@ -224,14 +225,14 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
             className={`${className} tiptap-editor prose prose-invert`}
             onClick={() => editor.chain().focus().run()}
         >
-            {!readonly &&
+            {!readonly && (
                 <MenuBar
                     editor={editor}
                     onInsertInlineMath={onInsertInlineMath}
                     onInsertBlockMath={onInsertBlockMath}
                     onInsertImage={onInsertImage}
                 />
-            }
+            )}
             <ImageModal
                 isOpen={isImageModalOpen}
                 onClose={() => setIsImageModalOpen(false)}
