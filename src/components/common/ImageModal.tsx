@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import Logger from '../../utils/logger'
+import { IconAdd, IconUpload, IconInsert } from '../../assets/images/export';
 
 const ImageModal = ({ isOpen, onClose, onInsert }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -130,7 +131,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }) => {
                         </div>
                     ) : (
                         <button onClick={handlePlusButtonClick} className="flex items-center gap-2">
-                            <img src="/image/icon-add.png" alt="Add image" className="w-6 h-6 invert" />
+                            <img src={IconAdd} alt="Add image" className="w-6 h-6 invert" />
                             <span>Add</span>
                         </button>
                     )}
@@ -145,13 +146,13 @@ const ImageModal = ({ isOpen, onClose, onInsert }) => {
                 <div className="flex justify-end gap-2">
                     {selectedImage && !uploadedUrl && (
                         <button onClick={handleUpload} className="flex items-center justify-center gap-2 px-4 py-1 bg-gray-600 text-white rounded-md w-32">
-                            <img src="/image/icon-upload.png" alt="Upload image" className="w-6 h-6 invert" />
+                            <img src={IconUpload} alt="Upload image" className="w-6 h-6 invert" />
                             <span>Upload</span>
                         </button>
                     )}
                     {uploadedUrl && (
                         <button onClick={() => onInsert(uploadedUrl)} className="flex items-center justify-center gap-2 px-4 py-1 bg-[#CAFF33] text-black rounded-md w-32">
-                            <img src="/image/icon-insert.png" alt="Insert image" className="w-6 h-6" />
+                            <img src={IconInsert} alt="Insert image" className="w-6 h-6" />
                             <span>Insert</span>
                         </button>
                     )}

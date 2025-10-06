@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import Header from "../common/Header";
 import  Footer  from "../common/Footer";
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '../../assets/images/export';
 import PopularProblems from "../common/PopularProblems.tsx";
 import { motion } from "framer-motion";
 
 const Home = () => {
     // const [currentImage, setCurrentImage] = useState(0);
     // const images = [
-    //     "/image/Comment.png",
+    //     "../../assets/images/Comment.png",
     //     "/image/Comment%20(1).png",
     //     "/image/Component%206.png"
     // ];
@@ -53,7 +54,7 @@ const Home = () => {
 
             <div className="flex flex-col items-start justify-center w-[90%] max-w-[900px] p-5 pl-[13%] pt-[8%]">
                 <div className="inline-flex items-center gap-1 bg-white bg-opacity-10 px-3 py-2 rounded-[60px] w-fit mb-5">
-                    <img src="/image/Icon.svg" className="w-[24px] h-[24px]" />
+                    <img src={Icon} className="w-[24px] h-[24px]" />
                     <a className="font-Pretendard text-sm font-light text-[#E0E0E0] leading-[1.5]">
                         다양한 프로그래밍 문제를 풀고, 실시간 온라인 채점을 통해 실력을 확인하세요.
                     </a>

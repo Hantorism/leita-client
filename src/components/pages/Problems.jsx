@@ -3,6 +3,7 @@ import Header from "../common/Header";
 import axios from "axios";
 import Footer from "../common/Footer";
 import CreateProblemButton from "../common/CreateProblemButton.tsx";
+import { Solved } from '../../assets/images/export';
 
 
 
@@ -242,7 +243,7 @@ const Problems = () => {
                                         {isProblemSolved(problem.problemId) && (
                                             // <span className="ml-4 text-xs text-gray-500">( solved )</span>
                                             <img
-                                                src="/image/solved.svg"
+                                                src={Solved}
                                                 alt="solved"
                                                 className="ml-2 w-3 h-3 mb-1 inline-block"
                                             />
