@@ -112,7 +112,7 @@ export default function JudgePage() {
     const paginatedJudges = judges.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-200 pt-[5%] bg-[#1A1A1A] font-lexend">
+        <div className="flex flex-col items-start min-h-screen text-gray-200 pt-[5%] bg-[#1A1A1A] font-Pretendard">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>

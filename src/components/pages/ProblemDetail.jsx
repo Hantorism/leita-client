@@ -115,13 +115,13 @@ const ProblemDetail = () => {
     if (!problem) return <div className="text-white text-center mt-10">👽 문제를 찾을 수 없습니다.</div>;
 
     return (
-        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretend">
+        <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretendard">
             {/* 문제 설명 영역 */}
             <div
                 className="scrollbar-hide bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
                 style={{ width: `${leftWidth}px`, height: "calc(100vh - 60px)" }}
             >
-                <h2 className="text-2xl font-bold text-gray-200 font-Pretend"># {problem.problemId} {problem.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-200 font-Pretendard"># {problem.problemId} {problem.title}</h2>
                 {/*<h1 className="text-2xl font-bold text-[#CAFF33]"></h1>*/}
 
                 <div className="mt-3 flex flex-wrap gap-2">
@@ -133,24 +133,24 @@ const ProblemDetail = () => {
                 </div>
 
                 <div className="mt-3">
-                    <span className="text-gray-400 font-Pretend">정답률:</span>  {problem.solved?.rate?.toFixed(2)}%
-                    <span className="ml-4 text-gray-400 font-Pretend">풀이 제출 수:</span> {problem.solved?.totalCount}
+                    <span className="text-gray-400 font-Pretendard">정답률:</span>  {problem.solved?.rate?.toFixed(2)}%
+                    <span className="ml-4 text-gray-400 font-Pretendard">풀이 제출 수:</span> {problem.solved?.totalCount}
                 </div>
                 <hr className="border-t border-gray-500 mt-2" />
 
                 <div className="mt-6">
-                    <h2 className="text-xl font-normal pb-2 pt-1 font-Pretend">문제 설명</h2>
-                    <pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretend">{problem.description.problem}</pre>
+                    <h2 className="text-xl font-normal pb-2 pt-1 font-Pretendard">문제 설명</h2>
+                    <pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretendard">{problem.description.problem}</pre>
                 </div>
 
                 <div className="mt-4">
-                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">입력</h3>
-                    <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.input)}</pre>
+                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">입력</h3>
+                    <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.input)}</pre>
 
                 </div>
                 <div className="mt-4">
-                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretend">출력</h3>
-                    <pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretend">{decodeText(problem.description.output)}</pre>
+                    <h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">출력</h3>
+                    <pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.output)}</pre>
                 </div>
 
 

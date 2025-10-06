@@ -164,7 +164,7 @@ const Problems = () => {
 
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-Pretendard">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
@@ -237,7 +237,7 @@ const Problems = () => {
                                     }`}
                                 >
                                     <td className="p-4">{problem.problemId}</td>
-                                    <td className="p-3 font-Pretend">
+                                    <td className="p-3 font-Pretendard">
                                         {problem.title || "제목 없음"}
                                         {isProblemSolved(problem.problemId) && (
                                             // <span className="ml-4 text-xs text-gray-500">( solved )</span>

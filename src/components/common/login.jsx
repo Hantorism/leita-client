@@ -129,7 +129,7 @@ const Login = ({ user, setUser }) => {
                 <div className="flex items-center gap-3">
                     <span className="text-white text-sm">Hello, {user.data.name} 👋</span>
                     <button
-                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
+                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030]"
                         onClick={logout}
                     >
                         Logout
@@ -139,7 +139,7 @@ const Login = ({ user, setUser }) => {
             ) : (
                 <div className="login-form">
                     <button
-                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-lexend hover:bg-[#ededed] hover:text-[#303030]"
+                        className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030]"
                         onClick={signInWithGoogle}
                     >
                         Sign in with Google
