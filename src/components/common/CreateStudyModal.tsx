@@ -38,7 +38,7 @@ const CreateStudyModal = ({ onClose, onCreated }) => {
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-nanum">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-NanumSquare">
             <div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg">
                 <h2 className="text-xl font-bold mb-4">스터디 그룹 생성</h2>
                 <input
@@ -59,7 +59,7 @@ const CreateStudyModal = ({ onClose, onCreated }) => {
                     value={requirement}
                     onChange={(e) => setRequirement(e.target.value)}
                 />
-                <div className="flex justify-end gap-2 mt-4 font-lexend">
+                <div className="flex justify-end gap-2 mt-4 font-Pretendard">
                     <button
                         className="px-4 py-2 bg-gray-300 rounded-full"
                         onClick={onClose}

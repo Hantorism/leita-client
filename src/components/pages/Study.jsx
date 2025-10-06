@@ -95,15 +95,15 @@ const Study = () => {
     };
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-Pretendard">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
 
-            <div className="pl-[15%] pr-[15%] mt-6 w-full flex justify-end font-lexend">
+            <div className="pl-[15%] pr-[15%] mt-6 w-full flex justify-end font-Pretendard">
                 <button
                     onClick={() => setShowModal(true)}
-                    className=" bg-white bg-opacity-30 text-white px-6 py-2 font-lexend rounded-full hover:text-[#b0e82e] hover:bg-opacity-10"
+                    className=" bg-white bg-opacity-30 text-white px-6 py-2 font-Pretendard rounded-full hover:text-[#b0e82e] hover:bg-opacity-10"
                 >
                     Create Study
                 </button>
@@ -114,7 +114,7 @@ const Study = () => {
                     🚀 진행 중인 스터디가 없습니다.
                 </p>
             ) : (
-                <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5 font-Pretend">
+                <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5 font-Pretendard">
                     <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
                         <table className=" w-full text-left ">
                         <thead >
@@ -185,11 +185,11 @@ const Study = () => {
             {showStudyDetailModal && selectedStudy && (
                 <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
                     <div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg ">
-                        <h2 className="text-xl font-extrabold mb-4 font-nanum">{selectedStudy.title}</h2>
-                        <p className="mb-3 font-bold text-gray-600 font-nanum">
+                        <h2 className="text-xl font-extrabold mb-4 font-NanumSquare">{selectedStudy.title}</h2>
+                        <p className="mb-3 font-bold text-gray-600 font-NanumSquare">
                             {selectedStudy.description}
                         </p>
-                        <p className="mb-10 text-sm text-gray-600 font-nanum">
+                        <p className="mb-10 text-sm text-gray-600 font-NanumSquare">
                             모집 조건: {selectedStudy.requirement}
                         </p>
                         <div className="flex justify-end space-x-2">

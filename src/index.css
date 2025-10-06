@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,54 +17,26 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
 @font-face {
-  font-family: 'Lexend';
-  src: url('/public/fonts/Lexend-VariableFont_wght.ttf') format('truetype');
-  font-weight: 100;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'nanum';
-  src: url('/public/fonts/NanumSquareNeo-aLt.ttf') format('truetype');
+  font-family: 'NanumSquare Neo';
+  src: url('./assets/fonts/NanumSquareNeo.ttf') format('truetype');
 
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Pretend';
-  src: url('/public/fonts/PretendardVariable.ttf') format('truetype');
+  font-family: 'Pretendard';
+  src: url('./assets/fonts/Pretendard.ttf') format('truetype');
 
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'D2Coding';
-  src: url('/public/fonts/D2Coding-Ver1.3-20171129.ttf') format('truetype');
-
-  font-style: normal;
-}
-
-
-
-
-@font-face {
-  font-family: 'pan';
-  src: url('/public/fonts/Panchang-Variable.ttf') format('truetype');
-
-  font-style: normal;
-}
 
 @font-face {
   font-family: 'JetBrain Mono';
-  src: url('/public/fonts/JetBrainMono-Regular.ttf') format('truetype');
+  src: url('./assets/fonts/JetBrainMono.ttf') format('truetype');
   font-style: normal;
 }
-
-/*body {*/
-/*  font-family: 'Lexend', sans-serif;*/
-/*  font-weight: 100;*/
-/*}*/
 
 .prose ul > li::marker,
 .prose ol > li::marker {
