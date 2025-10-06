@@ -66,8 +66,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
     //         setLanguage(savedLang);
     //     }
     // }, []);
-    //
-    //
+    // 
+    // 
 
     const decodeText = (text) => {
         try {
@@ -116,12 +116,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
         return btoa(binary);
     };
 
-    //
+    // 
     // const encodeBase64 = (str: string): string => {
     //     // TextEncoder로 UTF-8 문자열을 Uint8Array로 변환
     //     const encoder = new TextEncoder();
     //     const uint8Array = encoder.encode(str);
-    //
+    // 
     //     // Uint8Array를 base64로 변환
     //     const base64String = btoa(String.fromCharCode(...uint8Array));
     //     return base64String;
@@ -220,7 +220,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                 //         navigate("/judge");
                 //     }
                 // } else {
-                //
+                // 
                 //     setResult({
                 //         message: `❌ 제출 실패: ${resultData.message}`,
                 //         isSubmit: false,
@@ -443,8 +443,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                   {/*    value={language}*/}
                   {/*    onChange={handleLanguageChange}*/}
                   {/*    // className="custom-select"*/}
-                  {/*    className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-lexend text-[0.9rem]"*/}
-                  {/*>*/}
+                  {/*    className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-Pretendard text-[0.9rem]"*/}
+                  {/*>*!/}
                   {/*    <option value="python">Python</option>*/}
                   {/*    <option value="javascript">JavaScript</option>*/}
                   {/*    <option value="java">Java</option>*/}
@@ -549,6 +549,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                     value={code}
                     onChange={(value) => setCode(value || "")}
                     options={{
+                        fontFamily: 'JetBrain Mono',
                         fontSize:                   15,
                         suggestOnTriggerCharacters: autoComplete,
                         lineNumbers:                "on",
@@ -584,8 +585,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                           <div key={index} className="relative">
                               <button
                                   onClick={() => setSelectedTestCase(index)}
-                                  className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
-                                      selectedTestCase === index
+                                  className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${selectedTestCase === index
                                           ? "bg-gray-700 text-white"
                                           : "bg-gray-600 hover:bg-gray-500 text-gray-300"
                                   }`}
@@ -626,7 +626,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                       {result?.result && (
                           <div className="mt-2 p-2 bg-black rounded-md">
                               <h4 className="text-xs text-gray-400">Result</h4>
-                              <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-D2Coding whitespace-pre-wrap">
+                              <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-JetBrain whitespace-pre-wrap">
                         {result.result}
                     </pre>
                           </div>
@@ -635,7 +635,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                       {result?.error?.trim() && (
                           <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
                               <h4 className="text-xs text-red-400">❌ Error</h4>
-                              <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                              <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">
                         {result.error}
                     </pre>
                           </div>
@@ -651,7 +651,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                       {testCases[selectedTestCase].input.trim() !== "" && (
                                           <>
                                               <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
-                                              <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                              <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                                         {decodeText(testCases[selectedTestCase].input)}
                                     </pre>
                                           </>
@@ -661,14 +661,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                                   <div>
                                       <button
                                           onClick={() => handleRunSingleTestCase(selectedTestCase)}
-                                          className="font-lexend mt-1 mb-2 px-3 py-1 text-xs border-2 border border-gray-800 rounded-md hover:bg-gray-500 text-white hover:text-white"
+                                          className="font-Pretendard mt-1 mb-2 px-3 py-1 text-xs border-2 border border-gray-800 rounded-md hover:bg-gray-500 text-white hover:text-white"
                                       >
                                           My Testcase RUN
                                       </button>
                                       <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
 
                                       <textarea
-                                          className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                                          className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                                           // value={testCases[selectedTestCase].input}
                                           value={testCases}
                                           onChange={(e) => handleTestCaseChange(selectedTestCase, "input", e.target.value)}
@@ -680,13 +680,13 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                           <div className="mt-1 mb-3">
                               <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                               {selectedTestCase < initialTestCases.length ? (
-                                  <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
+                                  <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
             {decodeText(testCases[selectedTestCase].output)}
         </pre>
                               ) : (
                                   <div>
             <textarea
-                className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
+                className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
                 // value={testCases[selectedTestCase].output}
                 value={testCases}
                 onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}
@@ -700,7 +700,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
                       <div className="mt-2 p-2 bg-black rounded-md">
 
                           {result?.testCases && (
-                              <div className="mb-2 text-sm text-gray-400 font-nanum font-semibold">
+                              <div className="mb-2 text-sm text-gray-400 font-NanumSquare font-semibold">
                                   {result.testCases.length}개 테스트 케이스 중
                                   <span className="font-bold mx-1 text-white">
                             {result.testCases.filter(tc => tc.actualOutput === "맞았습니다").length}개
@@ -711,19 +711,18 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
 
                           {result?.testCases?.map((testCase, index) => (
-                              <div key={index}>
-                                  <div className={`mt-2 p-2 rounded-md ${testCase.actualOutput === "맞았습니다" ? "bg-[#2A2A2A]" : "bg-[#2A2A2A]"}`}>
-                                      <h4 className="text-xs text-gray-400">Testcase {index + 1}</h4>
-                                      <pre className={`font-nanum font-semibold whitespace-pre-wrap ${testCase.actualOutput === "맞았습니다" ? "text-[#CAFF33]" : "text-white-400"}`}>
-        {testCase.actualOutput}
-      </pre>
-
+                                                                <div key={index}>
+                                                                    <div className={`mt-2 p-2 rounded-md ${testCase.actualOutput === "맞았습니다" ? "bg-[#2A2A2A]" : "bg-[#2A2A2A]"}`}>
+                                                                        <h4 className="text-xs text-gray-400">Testcase {index + 1}</h4>
+                                                                        <pre className={`font-JetBrain whitespace-pre-wrap ${testCase.actualOutput === "맞았습니다" ? "text-[#CAFF33]" : "text-white-400"}`}>
+                                      {testCase.actualOutput}
+                                    </pre>
                                   </div>
 
                                   {testCase.error?.trim() && (
                                       <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
                                           <h4 className="text-xs text-red-400">❌ Error : Testcase {index + 1}</h4>
-                                          <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">
+                                          <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">
                     {testCase.error}
                 </pre>
                                       </div>
@@ -736,9 +735,9 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
           </div>
 
 
-          {/*        /!* 결과 및 테스트 케이스 *!/*/}
+          {/*        /!* 결과 및 테스트 케이스 *!/*/} 
     {/*        <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">*/}
-    {/*            /!* 테스트 케이스 선택 바 *!/*/}
+    {/*            /!* 테스트 케이스 선택 바 *!/*/} 
     {/*            <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">*/}
     {/*                {testCases.map((_, index) => (*/}
     {/*                <div key={index} className="relative">*/}
@@ -797,7 +796,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
     {/*                    <div>*/}
     {/*                        <button*/}
     {/*                            onClick={() => handleRunSingleTestCase(selectedTestCase)}*/}
-    {/*                            className=" font-lexend mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"*/}
+    {/*                            className=" font-Pretendard mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"*/}
     {/*                        >*/}
     {/*                            My Testcase RUN*/}
     {/*                        </button>*/}
@@ -820,7 +819,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
 
     {/*                    <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
     {/*        {decodeText(testCases[selectedTestCase].output)}*/}
-    {/*    </pre>*/}
+    {/*</pre>*/}
     {/*                    ) : (*/}
     {/*                    <div>*/}
     {/*                    <textarea*/}
@@ -834,42 +833,42 @@ const CodeEditor: React.FC<CodeEditorProps> = ({  problemId ,testCases: initialT
     {/*                )}*/}
     {/*            </div>*/}
 
-    {/*/!*                {result?.result && (*!/*/}
-    {/*/!*                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*!/*/}
-    {/*/!*                    <h4 className="text-xs text-gray-400"> Result</h4>*!/*/}
-    {/*/!*                    <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">*!/*/}
-    {/*/!*                {result.result}*!/*/}
-    {/*/!*            </pre>*!/*/}
-    {/*/!*                </div>*!/*/}
-    {/*/!*                )}*!/*/}
+    {/*/!*                {result?.result && (*!/*/} 
+    {/*/!*                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*!/*/} 
+    {/*/!*                    <h4 className="text-xs text-gray-400"> Result</h4>*!/*/} 
+    {/*/!*                    <pre className="text-gray-300 font-JetBrain whitespace-pre-wrap">*!/*/} 
+    {/*/!*                {result.result}*!/*/} 
+    {/*/!*            </pre>*!/*/} 
+    {/*/!*                </div>*!/*/} 
+    {/*/!*                )}*!/*/} 
 
-    {/*/!*                {result?.error?.trim() && (*!/*/}
-    {/*/!*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*!/*/}
-    {/*/!*                    <h4 className="text-xs text-red-400">❌ Error</h4>*!/*/}
-    {/*/!*                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*!/*/}
-    {/*/!*    {result.error}*!/*/}
-    {/*/!*</pre>*!/*/}
-    {/*/!*                </div>*!/*/}
-    {/*/!*                )}*!/*/}
+    {/*/!*                {result?.error?.trim() && (*!/*/} 
+    {/*/!*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*!/*/} 
+    {/*/!*                    <h4 className="text-xs text-red-400">❌ Error</h4>*!/*/} 
+    {/*/!*                    <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">*!/*/} 
+    {/*/!*    {result.error}*!/*/} 
+    {/*/!*</pre>*!/*/} 
+    {/*/!*                </div>*!/*/} 
+    {/*/!*                )}*!/*/} 
 
 
-    {/*                /!*run 결과 *!/*/}
+    {/*                /!*run 결과 *!/*/} 
     {/*                {result?.testCases?.[selectedTestCase] && (*/}
     {/*                <>*/}
     {/*                    <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*/}
     {/*                        <h4 className="text-xs text-gray-400">Result</h4>*/}
-    {/*                        <pre className="text-gray-300 font-D2Coding whitespace-pre-wrap">*/}
+    {/*                        <pre className="text-gray-300 font-JetBrain whitespace-pre-wrap">*/}
     {/*        {result.testCases[selectedTestCase].actualOutput}*/}
     {/*    </pre>*/}
     {/*                    </div>*/}
-    {/*                </>*/}
+    {/*                </>
     {/*                )}*/}
 
     {/*            {Array.isArray(result?.testCases) &&*/}
     {/*            result.testCases[selectedTestCase]?.error?.trim() && (*/}
     {/*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*/}
     {/*                    <h4 className="text-xs text-red-400">❌ Error</h4>*/}
-    {/*                    <pre className="text-red-300 font-D2Coding whitespace-pre-wrap">*/}
+    {/*                    <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">*/}
     {/*    {result.testCases[selectedTestCase].error}*/}
     {/*</pre>*/}
     {/*                </div>*/}

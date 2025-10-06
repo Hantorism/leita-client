@@ -10,7 +10,7 @@ const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <header className="font-lexend">
+        <header className="font-Pretendard">
 
             <nav className="bg-white bg-opacity-30 p-3 md:p-4 rounded-full flex justify-between items-center mx-4 my-5 hidden md:flex">
                 <Link to="/">

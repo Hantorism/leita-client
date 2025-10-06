@@ -65,7 +65,7 @@ const CreateProblem = () => {
 
 
     return (
-        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-lexend">
+        <div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-Pretendard">
             <header className="pl-[10%] pr-[10%] w-full text-left">
                 <Header />
             </header>
@@ -120,7 +120,8 @@ const CreateProblem = () => {
                         <input
                             type="number"
                             value={limit.memory}
-                            onChange={(e) => setLimit({...limit, memory: Number(e.target.value)})}
+                            onChange={(e) => setLimit({...limit, memory: Number(e.target.value)})
+                            }
                             required
                             className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
@@ -131,7 +132,8 @@ const CreateProblem = () => {
                         <input
                             type="number"
                             value={limit.time}
-                            onChange={(e) => setLimit({...limit, time: Number(e.target.value)})}
+                            onChange={(e) => setLimit({...limit, time: Number(e.target.value)})
+                            }
                             required
                             className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
                         />
@@ -255,7 +257,7 @@ const CreateProblem = () => {
 
                 <button
                     type="submit"
-                    className="font-lexend mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
+                    className="font-Pretendard mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFF33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFF33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
                 >
                     Create Problem
                 </button>
