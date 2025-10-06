@@ -1,6 +1,6 @@
 import React from "react";
 import {Link} from "react-router-dom";
-import logo from "../../assets/Logo.png";
+import logo from "../../assets/images/Logo.png";
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 const Footer = () => {
     return (
