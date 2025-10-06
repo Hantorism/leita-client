@@ -1,19 +1,18 @@
-
-import { useEffect } from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
 interface PrivateRouteProps {
-    element: JSX.Element;
+	element: React.ReactNode;
 }
 
 export default function PrivateRoute({ element }: PrivateRouteProps) {
-    const isAuthenticated = !!localStorage.getItem("user");
+	const isAuthenticated = !!localStorage.getItem('user');
 
-    useEffect(() => {
-        if (!isAuthenticated) {
-            alert("🚨 로그인이 필요합니다.");
-        }
-    }, [isAuthenticated]);
+	useEffect(() => {
+		if (!isAuthenticated) {
+			alert('🚨 로그인이 필요합니다.');
+		}
+	}, [isAuthenticated]);
 
-    return isAuthenticated ? element : <Navigate to="/" replace />;
+	return isAuthenticated ? element : <Navigate to="/" replace/>;
 }
