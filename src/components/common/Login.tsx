@@ -1,64 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import { googleLogout, useGoogleLogin } from '@react-oauth/google';
+import React, { useEffect } from 'react';
+import { googleLogout, useGoogleLogin, TokenResponse } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-import axios from 'axios';
-
-import axiosInstance from './axiosInstance';
-import Logger from '../../utils/logger';
+import axios, { AxiosError } from 'axios';
+import { Logger, AxiosInstance } from '../../utils';
+import { User } from '@/types';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
-const Login = ({ user, setUser }) => {
+interface LoginProps {
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+}
+
+const Login: React.FC<LoginProps> = ({ user, setUser }) => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState(null);
-  const [logoutTimer, setLogoutTimer] = useState(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
 
+    const token = localStorage.getItem('token');
     if (token) {
-      axiosInstance.get(`${API_BASE_URL}/auth/info`, {
+      AxiosInstance.get(`${API_BASE_URL}/auth/info`, {
         headers: { Authorization: `Bearer ${token}` }
       }).then((res) => {
         setUser(res.data);
-      }).catch(() => {
-        logout(); // 토큰 만료 시 로그아웃
+      }).catch((err) => {
+        // 토큰 검증에 실패해도 자동으로 로그아웃하지 않음
+        Logger.error('Token validation failed:', err);
       });
-
-      startLogoutTimer();
     }
-  }, []);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    if (localStorage.getItem('token')) {
-      startLogoutTimer();
-    }
-  }, []);
-
-  const startLogoutTimer = () => {
-    // 15시간(54000초) 후 로그아웃
-    const timer = setTimeout(() => {
-      logout();
-    }, 54000 * 1000);
-    setLogoutTimer(timer);
-  };
+  }, [setUser]);
 
   const signInWithGoogle = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+    onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
       try {
-        // Logger.print(" Google OAuth Token:", tokenResponse.access_token);
-
-        const res = await axiosInstance.post(`${API_BASE_URL}/auth/oauth`, {
+        const res = await AxiosInstance.post(`${API_BASE_URL}/auth/oauth`, {
           accessToken: tokenResponse.access_token
         }, {
           headers: {
@@ -69,16 +49,14 @@ const Login = ({ user, setUser }) => {
         Logger.print(' Google Login Response:', res.data);
 
         const accessToken = res.data.data.accessToken;
-        Logger.print(' Google Login Response Data:', res.data);
         if (!accessToken) {
-
           return;
         }
 
         localStorage.setItem('token', accessToken);
         Cookies.set('accessToken', accessToken, { expires: 1 });
 
-        const userRes = await axiosInstance.get(`${API_BASE_URL}/auth/info`, {
+        const userRes = await AxiosInstance.get<User>(`${API_BASE_URL}/auth/info`, {
           headers: { Authorization: `Bearer ${accessToken}` }
         });
 
@@ -86,22 +64,22 @@ const Login = ({ user, setUser }) => {
 
         setUser(userRes.data);
         localStorage.setItem('user', JSON.stringify(userRes.data));
-        // 로그인 성공 후 이메일 저장
-        localStorage.setItem('email', userRes.email);
+        if (userRes.data.email) {
+          localStorage.setItem('email', userRes.data.email);
+        }
 
         navigate('/');
       } catch (error) {
-        console.error(' Google login failed:', error);
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
+        Logger.error(' Google login failed:', error);
+        if (axios.isAxiosError(error) && (error as AxiosError).response?.status === 401) {
           alert('🚨 @ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!');
         } else {
           alert('🚨 로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
         }
       }
     },
-    onError:   (error) => {
-      console.error(' Google login error:', error);
-
+    onError: (error) => {
+      Logger.error(' Google login error:', error);
     }
   });
 
@@ -109,9 +87,9 @@ const Login = ({ user, setUser }) => {
     googleLogout();
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     localStorage.removeItem('accessToken');
     Cookies.remove('accessToken');
-    localStorage.removeItem('token');
     Cookies.remove('refreshToken');
   };
 
@@ -125,25 +103,19 @@ const Login = ({ user, setUser }) => {
             onClick={logout}
           >
             Logout
-
           </button>
         </div>
       ) : (
         <div className="login-form">
           <button
             className="relative bg-[#303030] text-[#ededed] font-light px-5 py-1 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030]"
-            onClick={signInWithGoogle}
+            onClick={() => signInWithGoogle()}
           >
             Sign in with Google
-            {/*/!* Tooltip *!/*/}
-            {/*<div className="absolute left-1/2 -translate-x-1/2 top-[-40px] w-max px-3 py-2 text-xs text-white bg-gray-800 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50">*/}
-            {/*    @ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!*/}
-            {/*</div>*/}
           </button>
         </div>
       )}
     </div>
-
   );
 };
 

@@ -3,7 +3,7 @@ import ProblemDescriptionEditor from '../common/ProblemDescriptionEditor';
 import Header from '../common/Header';
 import axios from 'axios';
 import Footer from '../common/Footer';
-import Logger from '../../utils/logger';
+import { Logger } from '../../utils';
 
 const CreateProblem = () => {
 	const [title, setTitle] = useState('');
@@ -58,7 +58,7 @@ const CreateProblem = () => {
 			Logger.print(response.data.message);
 			alert('Problem created successfully!');
 		} catch (error) {
-			console.error('Error creating problem', error);
+			Logger.error('Error creating problem', error);
 			alert('Error creating problem.');
 		}
 	};

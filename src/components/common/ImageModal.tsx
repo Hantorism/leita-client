@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
-import Logger from '../../utils/logger';
-import { IconAdd, IconUpload, IconInsert } from '../../assets/images/export';
+import { Logger } from '../../utils';
+import { IconAdd, IconUpload, IconInsert } from '../../assets/images';
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -112,7 +112,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 		 alert('Failed to get image URL from response.');
 		 }
 		 } catch (error) {
-		 console.error('Image upload failed:', error);
+		 Logger.error('Image upload failed:', error);
 		 alert('Image upload failed.');
 		 }
 		 */

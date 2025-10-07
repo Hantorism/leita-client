@@ -3,6 +3,7 @@ import IconAdd from './icon-add.png';
 import IconUpload from './icon-upload.png';
 import IconInsert from './icon-insert.png';
 import Solved from './solved.svg';
+import Logo from './Logo.png';
 
 export {
   Icon,
@@ -10,4 +11,5 @@ export {
   IconUpload,
   IconInsert,
   Solved,
+  Logo,
 };
