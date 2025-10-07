@@ -3,7 +3,9 @@ import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
 import Header from '../components/Header';
 import axios from 'axios';
 import Footer from '../components/Footer';
-import { Logger } from '../utils';
+import { Logger, Environment, EncodeBase64 } from '../utils';
+
+const API_BASE_URL = Environment.API_BASE_URL;
 
 const CreateProblem = () => {
 	const [title, setTitle] = useState('');
@@ -16,24 +18,16 @@ const CreateProblem = () => {
 		memory: 0,
 		time:   0,
 	});
-	const [testCases, setTestCases] = useState([{ input: '', output: '' }]);
+	const [testCases, setTestCases] = useState([{input: '', output: '' }]);
 	const [source, setSource] = useState('');
 	const [category, setCategory] = useState(['']);
-	const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
-	const encodeBase64 = (str: string): string => {
-		const trimmed = str.replace(/[\n\t\s]+$/g, '');
-		const utf8Bytes = new TextEncoder().encode(trimmed);
-		const binary = Array.from(utf8Bytes)
-			.map(byte => String.fromCharCode(byte))
-			.join('');
-		return btoa(binary);
-	};
+
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
 		const encodedTestCases = testCases.map(tc => ({
-			input:  encodeBase64(tc.input),
-			output: encodeBase64(tc.output),
+			input:  EncodeBase64(tc.input),
+			output: EncodeBase64(tc.output),
 		}));
 		if (testCases.length < 5) {
 			alert('👽 테스트 케이스는 최소 5개 이상이어야 합니다!');
@@ -85,17 +79,17 @@ const CreateProblem = () => {
 					<div>
 						<label className="block text-lg font-medium text-white">Problem Description</label>
 						<ProblemDescriptionEditor
-							value={description.problem}
+							content={description.problem}
 							onChange={(content) => setDescription({ ...description, problem: content })}
 							className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
-							rows={4}
+							rows={3}
 						/>
 					</div>
 
 					<div>
 						<label className="block text-lg font-medium text-white">Input Description</label>
 						<ProblemDescriptionEditor
-							value={description.input}
+							content={description.input}
 							onChange={(content) => setDescription({ ...description, input: content })}
 							className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
 							rows={3}
