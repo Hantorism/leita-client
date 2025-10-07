@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../common/Header';
-import Footer from '../common/Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
-import { Icon } from '../../assets/images';
-import PopularProblems from '../common/PopularProblems';
+import { Icon } from '../assets/images';
+import PopularProblems from '../components/PopularProblems';
 import { motion } from 'framer-motion';
 
 const Home: React.FC = () => {

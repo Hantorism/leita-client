@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import Header from '../common/Header';
-import Footer from '../common/Footer';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 
 interface JudgeResponse {

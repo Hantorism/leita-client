@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import Login from './Login';
 import { FiMenu, FiX } from 'react-icons/fi';
-import { Logo } from '../../assets/images';
+import { Logo } from '../assets/images';
 import { User } from '@/types';
 
 const Header: React.FC = () => {
