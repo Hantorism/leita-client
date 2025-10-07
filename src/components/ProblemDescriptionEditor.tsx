@@ -129,6 +129,16 @@ const MenuBar = ({ editor, onInsertMath, onInsertImage }: MenuBarProps) => {
 const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly }: ProblemDescriptionEditorProps) => {
 	const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
+	const createMathClickHandler = (type: 'inline' | 'block') => (node: any, pos: number) => {
+		if (!editor) return;
+
+		const latex = prompt(`Enter ${type} math expression:`, node.attrs.latex);
+		if (!latex) return;
+
+		const command = (type === 'inline') ? 'updateInlineMath' : 'updateBlockMath';
+		return editor.chain().focus().setNodeSelection(pos)[command]({ latex }).run();
+	};
+
 	const editor = useEditor({
 		editable:    !readonly,
 		extensions:  [
@@ -143,20 +153,10 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 			}),
 			Mathematics.configure({
 				inlineOptions: {
-					onClick: (node, pos) => {
-						const latex = prompt('Enter inline math expression:', node.attrs.latex);
-						if (latex) {
-							editor.chain().setNodeSelection(pos).updateInlineMath({ latex }).focus().run();
-						}
-					},
+					onClick: createMathClickHandler('inline'),
 				},
 				blockOptions:  {
-					onClick: (node, pos) => {
-						const latex = prompt('Enter block math expression:', node.attrs.latex);
-						if (latex) {
-							editor.chain().setNodeSelection(pos).updateBlockMath({ latex }).focus().run();
-						}
-					},
+					onClick: createMathClickHandler('block'),
 				},
 			}),
 			Image,
@@ -186,8 +186,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 	const onInsertMath = useCallback((type: 'inline' | 'block') => {
 		if (!editor) return;
 
-		const command = type === 'inline' ? 'insertInlineMath' : 'insertBlockMath';
-		const promptMessage = `Enter ${type} math expression:`;
+		const command = (type === 'inline') ? 'insertInlineMath' : 'insertBlockMath';
 
 		const { selection } = editor.state;
 		if (!selection.empty) {
@@ -197,14 +196,14 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 			return editor.chain().focus().deleteSelection()[command]({ latex }).run();
 		}
 
-		const latex = prompt(promptMessage, '');
-		if (latex === null) return;
+		const latex = prompt(`Enter ${type} math expression:`);
+		if (!latex) return;
 		return editor.chain().focus()[command]({ latex }).run();
 	}, [editor]);
 
 	const onInsertImage = useCallback(() => {
 		setIsImageModalOpen(true);
-	}, [editor]);
+	}, []);
 
 	const handleInsertImage = useCallback((url: string) => {
 		if (!url || !editor) return;
@@ -220,7 +219,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 	}, [readonly, editor]);
 
 	useEffect(() => {
-		if (!editor || editor.getHTML() === (content)) return;
+		if (!editor || editor.getHTML() === content) return;
 
 		editor.commands.setContent(content || '');
 	}, [content, editor]);
