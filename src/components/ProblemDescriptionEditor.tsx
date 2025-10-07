@@ -8,19 +8,19 @@ import ImageModal from './ImageModal';
 import { Logger } from '../utils';
 
 interface MenuBarProps {
-  editor: Editor;
-  onInsertInlineMath: () => void;
-  onInsertBlockMath: () => void;
-  onInsertImage: () => void;
+	editor: Editor;
+	onInsertInlineMath: () => void;
+	onInsertBlockMath: () => void;
+	onInsertImage: () => void;
 }
 
 interface ProblemDescriptionEditorProps {
-  content?: string; // content 또는 value 중 하나를 사용할 수 있도록 선택적으로 변경
-  value?: string;
-  onChange: (content: string) => void;
-  className?: string;
-  rows?: number;
-  readonly?: boolean;
+	content?: string; // content 또는 value 중 하나를 사용할 수 있도록 선택적으로 변경
+	value?: string;
+	onChange: (content: string) => void;
+	className?: string;
+	rows?: number;
+	readonly?: boolean;
 }
 
 const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage }: MenuBarProps) => {
@@ -37,8 +37,8 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage 
 			isCode:          ctx.editor.isActive('code'),
 			canCode:         ctx.editor.can().chain().toggleCode().run(),
 			isCodeBlock:     ctx.editor.isActive('codeBlock'),
-			canCodeBlock:    ctx.editor.can().chain().toggleCodeBlock().run()
-		})
+			canCodeBlock:    ctx.editor.can().chain().toggleCodeBlock().run(),
+		}),
 	});
 
 	if (!editor || !editorState) {
@@ -133,7 +133,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 				heading:        false,
 				horizontalRule: false,
 				italic:         false,
-				strike:         false
+				strike:         false,
 			}),
 			Mathematics.configure({
 				inlineOptions: {
@@ -142,7 +142,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 						if (latex) {
 							editor.chain().setNodeSelection(pos).updateInlineMath({ latex }).focus().run();
 						}
-					}
+					},
 				},
 				blockOptions:  {
 					onClick: (node, pos) => {
@@ -150,10 +150,10 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 						if (latex) {
 							editor.chain().setNodeSelection(pos).updateBlockMath({ latex }).focus().run();
 						}
-					}
-				}
+					},
+				},
 			}),
-			Image
+			Image,
 		],
 		editorProps: {
 			handleKeyDown(view, event) {
@@ -164,7 +164,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 				}
 				// Let other keys pass through
 				return false;
-			}
+			},
 		},
 		content:     content || value,
 		onUpdate:    ({ editor }) => {
@@ -174,7 +174,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 		},
 		onCreate:    ({ editor: currentEditor }) => {
 			migrateMathStrings(currentEditor);
-		}
+		},
 	});
 
 	const onInsertInlineMath = useCallback(() => {

@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Environment } from '../utils';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+const API_BASE_URL = Environment.API_BASE_URL;
 
 interface StudyMember {
-  name: string;
-  email: string;
-  sub: string;
-  role: 'ADMIN' | 'USER';
-  profileImage?: string; // mock 데이터에 없지만, 실제 API 응답에 있을 수 있으므로 추가
+	name: string;
+	email: string;
+	sub: string;
+	role: 'ADMIN' | 'USER';
+	profileImage?: string; // mock 데이터에 없지만, 실제 API 응답에 있을 수 있으므로 추가
 }
 
 interface StudyData {
-  title: string;
-  description: string;
-  admins: StudyMember[];
-  members: StudyMember[];
+	title: string;
+	description: string;
+	admins: StudyMember[];
+	members: StudyMember[];
 }
 
 const StudyDetail = () => {
@@ -50,8 +51,8 @@ const StudyDetail = () => {
 						email: 'jang@study.com',
 						// profileImage: "https://via.placeholder.com/40",
 						sub:  'admin-1',
-						role: 'ADMIN'
-					}
+						role: 'ADMIN',
+					},
 				],
 				members:     [
 					{
@@ -59,16 +60,16 @@ const StudyDetail = () => {
 						email: 'lee@study.com',
 						// profileImage: "https://via.placeholder.com/40",
 						sub:  'member-1',
-						role: 'USER'
+						role: 'USER',
 					},
 					{
 						name:  '장원',
 						email: 'jangwon@study.com',
 						// profileImage: "https://via.placeholder.com/40",
 						sub:  'member-2',
-						role: 'USER'
-					}
-				]
+						role: 'USER',
+					},
+				],
 			};
 
 			setStudy(mockStudy);

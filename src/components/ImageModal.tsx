@@ -4,9 +4,9 @@ import { Logger } from '../utils';
 import { IconAdd, IconUpload, IconInsert } from '../assets/images';
 
 interface ImageModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onInsert: (url: string) => void;
+	isOpen: boolean;
+	onClose: () => void;
+	onInsert: (url: string) => void;
 }
 
 const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
@@ -43,7 +43,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 	const compressFile = async (file: File): Promise<File> => {
 		const options = {
 			maxSizeMB:    1,
-			useWebWorker: true
+			useWebWorker: true,
 		};
 		return await imageCompression(file, options);
 	};

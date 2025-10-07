@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io';
+import { FiChevronDown } from 'react-icons/fi';
 
-const CustomDropdown = ({ language, handleLanguageChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const languages = [
+interface LanguageOption {
+  value: string;
+  label: string;
+}
+
+interface CustomDropdownProps {
+  language: string;
+  handleLanguageChange: (value: string) => void;
+}
+
+const CustomDropdown = ({ language, handleLanguageChange }: CustomDropdownProps) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const languages: LanguageOption[] = [
     { value: 'python', label: 'Python' },
     { value: 'javascript', label: 'JavaScript' },
     { value: 'java', label: 'Java' },
@@ -11,25 +21,25 @@ const CustomDropdown = ({ language, handleLanguageChange }) => {
     { value: 'cpp', label: 'C++' },
     { value: 'go', label: 'Go' },
     { value: 'kotlin', label: 'Kotlin' },
-    { value: 'swift', label: 'Swift' }
+    { value: 'swift', label: 'Swift' },
   ];
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = (): void => setIsOpen(!isOpen);
 
   // 언어 선택 후 드롭다운을 자동으로 접기
-  const handleSelectLanguage = (value) => {
+  const handleSelectLanguage = (value: string): void => {
     handleLanguageChange(value); // 언어 변경
     setIsOpen(false); // 드롭다운 접기
   };
 
-  return (
+	return (
     <div className="relative z-10"> {/* z-10을 추가해 드롭다운을 다른 요소 위에 표시 */}
       <div
         className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-Pretendard text-[0.9rem] cursor-pointer w-[200px] flex items-center justify-between"
         onClick={toggleDropdown}
       >
         <span>{languages.find((lang) => lang.value === language)?.label || 'Select Language'}</span>
-        <IoIosArrowDown className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}/>
+        <FiChevronDown className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}/>
       </div>
 
       {isOpen && (

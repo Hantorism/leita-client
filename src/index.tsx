@@ -11,7 +11,7 @@ if (!container) {
 
 const root = ReactDOM.createRoot(container);
 root.render(
-  <BrowserRouter>
-    <App/>
-  </BrowserRouter>
+	<BrowserRouter>
+		<App/>
+	</BrowserRouter>,
 );
