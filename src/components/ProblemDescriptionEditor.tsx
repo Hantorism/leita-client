@@ -15,11 +15,10 @@ interface MenuBarProps {
 }
 
 interface ProblemDescriptionEditorProps {
-	content?: string; // content 또는 value 중 하나를 사용할 수 있도록 선택적으로 변경
-	value?: string;
+	content: string;
 	onChange: (content: string) => void;
-	className?: string;
-	rows?: number;
+	className: string;
+	rows: number;
 	readonly?: boolean;
 }
 
@@ -120,7 +119,7 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage 
 	);
 };
 
-const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly, value }: ProblemDescriptionEditorProps) => {
+const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly }: ProblemDescriptionEditorProps) => {
 	const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
 	const editor = useEditor({
@@ -166,7 +165,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 				return false;
 			},
 		},
-		content:     content || value,
+		content:     content,
 		onUpdate:    ({ editor }) => {
 			const content = editor.getHTML();
 			Logger.print(content);
@@ -227,9 +226,9 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 	}, [readonly, editor]);
 
 	useEffect(() => {
-		if (!editor || editor.getHTML() === (content || value)) return;
+		if (!editor || editor.getHTML() === (content)) return;
 
-		editor.commands.setContent(content || value || '');
+		editor.commands.setContent(content || '');
 	}, [content, editor]);
 
 	const minHeight = rows ? `${rows * 1.5}rem` : 'auto';

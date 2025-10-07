@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
+import { Environment } from 'utils';
+
+const API_BASE_URL = Environment.API_BASE_URL;
+const ITEMS_PER_PAGE = 15;
 
 interface JudgeResponse {
 	message: string;
@@ -25,9 +29,6 @@ interface JudgeData {
 	sizeOfCode: number;
 	type: string;
 }
-
-const API_BASE_URL = process.env.REACT_APP_API_URL;
-const ITEMS_PER_PAGE = 15;
 
 const JudgePage = () => {
 	const [allJudges, setAllJudges] = useState<JudgeData[]>([]);
