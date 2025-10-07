@@ -9,8 +9,7 @@ import { Logger } from '../utils';
 
 interface MenuBarProps {
 	editor: Editor;
-	onInsertInlineMath: () => void;
-	onInsertBlockMath: () => void;
+	onInsertMath: (type: 'inline' | 'block') => void;
 	onInsertImage: () => void;
 }
 
@@ -22,7 +21,30 @@ interface ProblemDescriptionEditorProps {
 	readonly?: boolean;
 }
 
-const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage }: MenuBarProps) => {
+interface MenuButtonProps {
+	onClick: () => void;
+	disabled?: boolean;
+	isActive?: boolean;
+	children: React.ReactNode;
+}
+
+const MenuButton = ({ onClick, disabled, isActive, children }: MenuButtonProps) => {
+	const baseClasses = 'px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]';
+	const activeClasses = 'bg-[#CAFF33] !text-black';
+
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			disabled={disabled}
+			className={`${baseClasses} ${isActive ? activeClasses : ''}`}
+		>
+			{children}
+		</button>
+	);
+};
+
+const MenuBar = ({ editor, onInsertMath, onInsertImage }: MenuBarProps) => {
 	const editorState = useEditorState({
 		editor,
 		selector: ctx => ({
@@ -40,81 +62,66 @@ const MenuBar = ({ editor, onInsertInlineMath, onInsertBlockMath, onInsertImage 
 		}),
 	});
 
-	if (!editor || !editorState) {
-		return null;
-	}
+	if (!editor || !editorState) return null;
 
 	return (
 		<div className="flex flex-wrap gap-2 mb-2">
-			<button
-				type="button"
+			<MenuButton
 				onClick={() => editor.chain().focus().toggleBold().run()}
 				disabled={!editorState.canBold}
-				className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBold ? 'bg-[#CAFF33] !text-black' : ''}`}
+				isActive={editorState.isBold}
 			>
 				Bold
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={() => editor.chain().focus().toggleBulletList().run()}
 				disabled={!editorState.canBulletList}
-				className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isBulletList ? 'bg-[#CAFF33] !text-black' : ''}`}
+				isActive={editorState.isBulletList}
 			>
 				Bullet List
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={() => editor.chain().focus().toggleOrderedList().run()}
 				disabled={!editorState.canOrderedList}
-				className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isOrderedList ? 'bg-[#CAFF33] !text-black' : ''}`}
+				isActive={editorState.isOrderedList}
 			>
 				Ordered List
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={() => editor.chain().focus().setHardBreak().run()}
 				disabled={!editorState.canSetHardBreak}
-				className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
 			>
 				Hard Break
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={() => editor.chain().focus().toggleCode().run()}
 				disabled={!editorState.canCode}
-				className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isCode ? 'bg-[#CAFF33] !text-black' : ''}`}
+				isActive={editorState.isCode}
 			>
 				Code
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={() => editor.chain().focus().toggleCodeBlock().run()}
 				disabled={!editorState.canCodeBlock}
-				className={`px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33] ${editorState.isCodeBlock ? 'bg-[#CAFF33] !text-black' : ''}`}
+				isActive={editorState.isCodeBlock}
 			>
 				Code Block
-			</button>
-			<button
-				type="button"
-				onClick={onInsertInlineMath}
-				className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
+			</MenuButton>
+			<MenuButton
+				onClick={() => onInsertMath('inline')}
 			>
 				Inline Math
-			</button>
-			<button
-				type="button"
-				onClick={onInsertBlockMath}
-				className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
+			</MenuButton>
+			<MenuButton
+				onClick={() => onInsertMath('block')}
 			>
 				Block Math
-			</button>
-			<button
-				type="button"
+			</MenuButton>
+			<MenuButton
 				onClick={onInsertImage}
-				className="px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFF33]"
 			>
 				Image
-			</button>
+			</MenuButton>
 		</div>
 	);
 };
@@ -176,41 +183,28 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 		},
 	});
 
-	const onInsertInlineMath = useCallback(() => {
+	const onInsertMath = useCallback((type: 'inline' | 'block') => {
 		if (!editor) return;
 
-		const hasSelection = !editor.state.selection.empty;
-		if (hasSelection) {
-			const { from, to } = editor.state.selection;
+		const command = type === 'inline' ? 'insertInlineMath' : 'insertBlockMath';
+		const promptMessage = `Enter ${type} math expression:`;
+
+		const { selection } = editor.state;
+		if (!selection.empty) {
+			const { from, to } = selection;
 			const latex = editor.state.doc.textBetween(from, to, ' ');
 			if (!latex) return;
-			return editor.chain().focus().deleteSelection().insertInlineMath({ latex }).run();
+			return editor.chain().focus().deleteSelection()[command]({ latex }).run();
 		}
 
-		const latex = prompt('Enter inline math expression:', '');
+		const latex = prompt(promptMessage, '');
 		if (latex === null) return;
-		return editor.chain().focus().insertInlineMath({ latex }).run();
-	}, [editor]);
-
-	const onInsertBlockMath = useCallback(() => {
-		if (!editor) return;
-
-		const hasSelection = !editor.state.selection.empty;
-		if (hasSelection) {
-			const { from, to } = editor.state.selection;
-			const latex = editor.state.doc.textBetween(from, to, ' ');
-			if (!latex) return;
-			return editor.chain().focus().deleteSelection().insertBlockMath({ latex }).run();
-		}
-
-		const latex = prompt('Enter block math expression:', '');
-		if (latex === null) return;
-		return editor.chain().focus().insertBlockMath({ latex }).run();
+		return editor.chain().focus()[command]({ latex }).run();
 	}, [editor]);
 
 	const onInsertImage = useCallback(() => {
 		setIsImageModalOpen(true);
-	}, []);
+	}, [editor]);
 
 	const handleInsertImage = useCallback((url: string) => {
 		if (!url || !editor) return;
@@ -233,9 +227,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 
 	const minHeight = rows ? `${rows * 1.5}rem` : 'auto';
 
-	if (!editor) {
-		return null;
-	}
+	if (!editor) return null;
 
 	return (
 		<div
@@ -245,8 +237,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 			{!readonly && (
 				<MenuBar
 					editor={editor}
-					onInsertInlineMath={onInsertInlineMath}
-					onInsertBlockMath={onInsertBlockMath}
+					onInsertMath={onInsertMath}
 					onInsertImage={onInsertImage}
 				/>
 			)}
