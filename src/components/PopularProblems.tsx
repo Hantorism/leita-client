@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Logger } from '../../utils'
+import { Logger } from '../utils'
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 

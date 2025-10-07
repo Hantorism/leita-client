@@ -3,7 +3,7 @@ import { googleLogout, useGoogleLogin, TokenResponse } from '@react-oauth/google
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios, { AxiosError } from 'axios';
-import { Logger, AxiosInstance } from '../../utils';
+import { Logger, AxiosInstance } from '../utils';
 import { User } from '@/types';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정

@@ -3,7 +3,7 @@ import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
 import CustomDropdown from './CustomDropdown';
-import { Logger } from '../../utils';
+import { Logger } from '../utils';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
