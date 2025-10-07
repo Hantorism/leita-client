@@ -1,9 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/images/Logo.png';
+import { Logo } from '../../assets/images';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <footer className="bg-white bg-opacity-10 text-white py-8 font-Pretendard mt-auto text-center">
       <div className="container mx-auto px-6 pt-4 w-[75%]">
@@ -12,7 +11,7 @@ const Footer = () => {
           {/* 왼쪽 */}
           <div className="mb-4 md:mb-0">
             <Link to="/">
-              <img src={logo} alt="LEITA Logo" className="h-8"/>
+              <img src={Logo} alt="LEITA Logo" className="h-8"/>
             </Link>
             <p className="text-sm text-gray-400 mt-2 font-Pretendard">
               아주대 코딩 연습 플랫폼
@@ -21,9 +20,6 @@ const Footer = () => {
 
           {/* 가운데 링크 */}
           <div className="flex flex-col md:flex-row gap-4">
-            {/*    <a href="/about" className="text-sm text-gray-400 hover:text-white">*/}
-            {/*        About Us*/}
-            {/*    </a>*/}
             <a href="/terms" className="text-sm  font-Pretendard text-gray-400 hover:text-white">
               이용약관
             </a>

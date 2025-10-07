@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IoIosArrowDown } from 'react-icons/io'; // 화살표 아이콘 추가
+import { IoIosArrowDown } from 'react-icons/io';
 
 const CustomDropdown = ({ language, handleLanguageChange }) => {
   const [isOpen, setIsOpen] = useState(false);

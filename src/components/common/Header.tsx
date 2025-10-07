@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import Login from './login';
+import Login from './Login';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { Logo } from '../../assets/images';
+import { User } from '@/types';
 
-import logo from '../../assets/images/Logo.png';
-
-const Header = () => {
-  const [user, setUser] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+const Header: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   return (
     <header className="font-Pretendard">
 
       <nav className="bg-white bg-opacity-30 p-3 md:p-4 rounded-full flex justify-between items-center mx-4 my-5 hidden md:flex">
         <Link to="/">
-          <img src={logo} alt="LEITA Logo" className="h-8"/>
+          <img src={Logo} alt="LEITA Logo" className="h-8"/>
         </Link>
 
         <ul className="flex flex-wrap items-stretch list-none p-0 m-0 font-light">
@@ -71,7 +71,7 @@ const Header = () => {
       <div className="flex md:hidden justify-between items-center bg-white bg-opacity-30 p-3 rounded-full mx-4 my-5">
         <div className="text-white text-xl font-sans font-extrabold">
           <Link to="/">
-            <img src={logo} alt="LEITA Logo" className="h-6"/>
+            <img src={Logo} alt="LEITA Logo" className="h-6"/>
           </Link>
         </div>
 
@@ -80,7 +80,7 @@ const Header = () => {
           className="text-white text-3xl focus:outline-none"
           onClick={() => setMenuOpen(true)}
         >
-          <FiMenu/>
+          {FiMenu({})}
         </button>
       </div>
 
@@ -92,7 +92,7 @@ const Header = () => {
             className="absolute top-5 right-5 text-white text-4xl focus:outline-none"
             onClick={() => setMenuOpen(false)}
           >
-            <FiX/>
+            {FiX({})}
           </button>
 
           <ul className="flex flex-col items-center text-white space-y-4 text-2xl">

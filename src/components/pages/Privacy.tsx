@@ -2,7 +2,7 @@ import React from 'react';
 import Footer from '../common/Footer';
 import Header from '../common/Header';
 
-export default function PrivacyPolicy() {
+const PrivacyPolicy = () => {
   return (
     <div className="flex flex-col items-start h-screen text-white  pt-[5%]">
 
@@ -65,3 +65,5 @@ export default function PrivacyPolicy() {
 
   );
 }
+
+export default PrivacyPolicy;

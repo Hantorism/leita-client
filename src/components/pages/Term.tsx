@@ -2,7 +2,7 @@ import Header from '../common/Header';
 import React from 'react';
 import Footer from '../common/Footer';
 
-export default function TermsOfService() {
+const TermsOfService = () => {
   return (
     <div className="flex flex-col items-start h-screen text-white  pt-[5%]">
 
@@ -58,3 +58,5 @@ export default function TermsOfService() {
     </div>
   );
 }
+
+export default TermsOfService;

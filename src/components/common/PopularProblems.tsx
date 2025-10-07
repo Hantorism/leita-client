@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Logger } from '../../utils'
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -31,7 +32,7 @@ const PopularProblems = () => {
 
 				setProblems(sortedProblems);
 			} catch (error) {
-				console.error('Failed to fetch problems:', error);
+				Logger.error('Failed to fetch problems:', error);
 			}
 		};
 

@@ -3,7 +3,7 @@ import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
 import CustomDropdown from './CustomDropdown';
-import Logger from '../../utils/logger';
+import { Logger } from '../../utils';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
 
@@ -243,7 +243,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				//     });
 			}
 		} catch (error) {
-			console.error('서버 요청 오류:', error);
+			Logger.error('서버 요청 오류:', error);
 			setResult({
 				message:  ' 서버 요청 중 오류 발생',
 				isSubmit: false,
