@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
-import { Logger } from '../../utils';
-import { IconAdd, IconUpload, IconInsert } from '../../assets/images';
+import { Logger } from '../utils';
+import { IconAdd, IconUpload, IconInsert } from '../assets/images';
 
 interface ImageModalProps {
   isOpen: boolean;

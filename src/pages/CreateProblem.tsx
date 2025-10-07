@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import ProblemDescriptionEditor from '../common/ProblemDescriptionEditor';
-import Header from '../common/Header';
+import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
+import Header from '../components/Header';
 import axios from 'axios';
-import Footer from '../common/Footer';
-import { Logger } from '../../utils';
+import Footer from '../components/Footer';
+import { Logger } from '../utils';
 
 const CreateProblem = () => {
 	const [title, setTitle] = useState('');

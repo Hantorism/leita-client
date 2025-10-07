@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../common/Header';
+import Header from '../components/Header';
 import axios from 'axios';
-import Footer from '../common/Footer';
-import { Solved } from '../../assets/images';
-import { Logger } from '../../utils';
+import Footer from '../components/Footer';
+import { Solved } from '../assets/images';
+import { Logger } from '../utils';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 

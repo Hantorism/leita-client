@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../common/Header';
-import Footer from '../common/Footer';
-import CreateStudyModal from '../common/CreateStudyModal';
-import { Logger } from '../../utils';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import CreateStudyModal from '../components/CreateStudyModal';
+import { Logger } from '../utils';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 

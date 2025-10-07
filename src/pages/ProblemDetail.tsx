@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import CodeEditor from '../common/CodeEditor';
-import { Logger } from '../../utils';
+import CodeEditor from '../components/CodeEditor';
+import { Logger } from '../utils';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 

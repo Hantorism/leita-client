@@ -1,6 +1,6 @@
-import Header from '../common/Header';
+import Header from '../components/Header';
 import React from 'react';
-import Footer from '../common/Footer';
+import Footer from '../components/Footer';
 
 const TermsOfService = () => {
   return (

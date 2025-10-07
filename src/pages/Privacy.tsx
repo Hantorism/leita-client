@@ -1,6 +1,6 @@
 import React from 'react';
-import Footer from '../common/Footer';
-import Header from '../common/Header';
+import Footer from '../components/Footer';
+import Header from '../components/Header';
 
 const PrivacyPolicy = () => {
   return (
