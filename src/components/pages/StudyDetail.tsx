@@ -34,7 +34,7 @@ const StudyDetail = () => {
 		 setLoading(false);
 		 })
 		 .catch((err) => {
-		 console.error("스터디 정보를 불러오는 데 실패했습니다:", err);
+		 Logger.error("스터디 정보를 불러오는 데 실패했습니다:", err);
 		 setError("스터디 정보를 불러올 수 없습니다.");
 		 setLoading(false);
 		 });
