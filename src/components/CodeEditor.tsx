@@ -3,22 +3,22 @@ import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
 import CustomDropdown from './CustomDropdown';
-import { Logger } from '../utils';
+import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+const API_BASE_URL = Environment.API_BASE_URL;
 
 interface TestResult {
-  actualOutput: string;
-  error?: string | null;
-  isPassed?: boolean;
+	actualOutput: string;
+	error?: string | null;
+	isPassed?: boolean;
 }
 
 interface ResultState {
-  message?: string;
-  isSubmit: boolean;
-  result?: string; // 제출 모드일 때의 단일 결과
-  error?: string | null; // 제출 모드일 때의 단일 에러
-  testCases?: TestResult[]; // 실행 모드일 때의 테스트 케이스 결과 배열
+	message?: string;
+	isSubmit: boolean;
+	result?: string; // 제출 모드일 때의 단일 결과
+	error?: string | null; // 제출 모드일 때의 단일 에러
+	testCases?: TestResult[]; // 실행 모드일 때의 테스트 케이스 결과 배열
 }
 
 interface CodeEditorProps {
@@ -28,7 +28,7 @@ interface CodeEditorProps {
 	testCases: { input: string; output: string }[];
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTestCases }) => {
+const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps) => {
 	// const [language, setLanguage] = useState("undefined");
 	const [isRunningCode, setIsRunningCode] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,7 +36,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 	const [result, setResult] = useState<ResultState | null>(null);
 	const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
 		line:   1,
-		column: 1
+		column: 1,
 	});
 	const [selectedTestCase, setSelectedTestCase] = useState(0);
 	const [outputHeight, setOutputHeight] = useState(200);
@@ -60,7 +60,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 		if (monacoInstance && language === 'javascript') {
 			monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 				noSemanticValidation: true,
-				noSyntaxValidation:   true
+				noSyntaxValidation:   true,
 			});
 		}
 	}, [language, monacoInstance]);
@@ -117,7 +117,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 		if (monacoInstance && newLanguage === 'javascript') {
 			monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 				noSemanticValidation: true,
-				noSyntaxValidation:   true
+				noSyntaxValidation:   true,
 			});
 		}
 	};
@@ -211,12 +211,12 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`
+					'Authorization': `Bearer ${token}`,
 				},
 				body:    JSON.stringify({
 					code:     encodeBase64(code),
-					language: language.toUpperCase()
-				})
+					language: language.toUpperCase(),
+				}),
 			});
 
 			const resultData = await response.json();
@@ -226,7 +226,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 					message:  resultData.message || '✅ 제출 성공!',
 					isSubmit: true,
 					result:   resultData.data?.result || '',
-					error:    resultData.data?.error || null
+					error:    resultData.data?.error || null,
 				});
 
 				//     const userConfirmed = window.confirm("🏁제출이 완료되었습니다! 내가 푼 문제 페이지로 이동할까요?");
@@ -248,7 +248,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				message:  ' 서버 요청 중 오류 발생',
 				isSubmit: false,
 				result:   '',
-				error:    '서버 오류'
+				error:    '서버 오류',
 			});
 		}
 
@@ -271,8 +271,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				method:  'GET',
 				headers: {
 					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`
-				}
+					'Authorization': `Bearer ${token}`,
+				},
 			});
 
 			if (!problemResponse.ok) {
@@ -282,7 +282,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 			const testCases = problemData?.data?.testCases || [];
 			const combinedTestCases = [
 				...initialTestCases,
-				...testCases.slice(initialTestCases.length) // 사용자가 추가한 테스트 케이스
+				...testCases.slice(initialTestCases.length), // 사용자가 추가한 테스트 케이스
 			];
 
 			if (testCases.length === 0) {
@@ -295,7 +295,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`
+					'Authorization': `Bearer ${token}`,
 				},
 				body:    JSON.stringify({
 					code:     encodeBase64(code),
@@ -306,11 +306,11 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 					// })),
 					testCases: combinedTestCases.map(({ input, output }) => ({
 						input:  input,
-						output: output
+						output: output,
 						// input: encodeBase64(input),
 						// output: encodeBase64(output),
-					}))
-				})
+					})),
+				}),
 			});
 
 			const resultData = await response.json();
@@ -321,22 +321,22 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 					testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
 						actualOutput: testResult.result,
 						error:        testResult.error || null,
-						isPassed:     testResult.result === testCases[index].output
+						isPassed:     testResult.result === testCases[index].output,
 					})),
-					isSubmit:  false
+					isSubmit:  false,
 				});
 			} else {
 				setResult({
 					error:    `❌ 실행 실패: ${resultData.message}`,
 					message:  resultData.message || '실행 중 오류 발생',
-					isSubmit: false
+					isSubmit: false,
 				});
 			}
 
 		} catch (error) {
 			setResult({
 				message:  '서버 요청 중 오류 발생',
-				isSubmit: false
+				isSubmit: false,
 			});
 		}
 
@@ -354,7 +354,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 		if (language === 'javascript') {
 			monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
 				noSemanticValidation: true,
-				noSyntaxValidation:   true
+				noSyntaxValidation:   true,
 			});
 		}
 
@@ -381,8 +381,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 	const handleTestCaseChange = (index: number, field: 'input' | 'output', value: string) => {
 		setTestCases((prevTestCases) =>
 			prevTestCases.map((testCase, i) =>
-				i === index ? { ...testCase, [field]: value } : testCase
-			)
+				i === index ? { ...testCase, [field]: value } : testCase,
+			),
 		);
 	};
 
@@ -403,7 +403,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`
+					'Authorization': `Bearer ${token}`,
 				},
 				body:    JSON.stringify({
 					code:      encodeBase64(code),
@@ -411,10 +411,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 					testCases: [
 						{
 							input:  encodeBase64(testCase.input),
-							output: encodeBase64(testCase.output)
-						}
-					]
-				})
+							output: encodeBase64(testCase.output),
+						},
+					],
+				}),
 			});
 
 			const resultData = await response.json();
@@ -424,21 +424,21 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 					message:   resultData.message || '🛠 실행 완료!',
 					testCases: resultData.data.map((item: any) => ({
 						actualOutput: item.result,
-						error:        item.error || null
+						error:        item.error || null,
 					})),
-					isSubmit:  false
+					isSubmit:  false,
 				});
 			} else {
 				setResult({
 					error:    `❌ 실행 실패: ${resultData.message}`,
 					message:  resultData.message || '실행 중 오류 발생',
-					isSubmit: false
+					isSubmit: false,
 				});
 			}
 		} catch (error) {
 			setResult({
 				message:  '서버 요청 중 오류 발생',
-				isSubmit: false
+				isSubmit: false,
 			});
 		}
 
@@ -564,7 +564,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 							fontSize:                   15,
 							suggestOnTriggerCharacters: autoComplete,
 							lineNumbers:                'on',
-							renderLineHighlight:        'all'
+							renderLineHighlight:        'all',
 						}}
 						onMount={handleEditorMount}
 					/>
@@ -601,10 +601,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ problemId, testCases: initialTe
 											onClick={(e) => {
 												e.stopPropagation();
 												setTestCases((prevTestCases) =>
-													prevTestCases.filter((_, i) => i !== index)
+													prevTestCases.filter((_, i) => i !== index),
 												);
 												setSelectedTestCase((prev) =>
-													prev === index ? 0 : Math.max(0, prev - 1)
+													prev === index ? 0 : Math.max(0, prev - 1),
 												);
 											}}
 											className="text-red-400 hover:text-white text-xs ml-1"

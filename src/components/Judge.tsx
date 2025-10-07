@@ -29,7 +29,7 @@ interface JudgeData {
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 const ITEMS_PER_PAGE = 15;
 
-export default function JudgePage() {
+const JudgePage = () => {
 	const [allJudges, setAllJudges] = useState<JudgeData[]>([]);
 	const [judges, setJudges] = useState<JudgeData[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -47,8 +47,8 @@ export default function JudgePage() {
 					method:  'GET',
 					headers: {
 						'Authorization': `Bearer ${token}`,
-						'Content-Type':  'application/json'
-					}
+						'Content-Type':  'application/json',
+					},
 				});
 
 				if (response.status === 401) {
@@ -87,7 +87,7 @@ export default function JudgePage() {
 			filtered = filtered.filter((judge) => judge.result === 'CORRECT');
 		} else if (filter === 'WRONG') {
 			filtered = filtered.filter((judge) =>
-				['WRONG', 'COMPILE_ERROR', 'RUNTIME_ERROR', 'TIME_OUT', 'MEMORY_OUT', 'UNKNOWN'].includes(judge.result)
+				['WRONG', 'COMPILE_ERROR', 'RUNTIME_ERROR', 'TIME_OUT', 'MEMORY_OUT', 'UNKNOWN'].includes(judge.result),
 			);
 		}
 
@@ -97,7 +97,7 @@ export default function JudgePage() {
 			filtered = filtered.filter(
 				(judge) =>
 					judge.problemTitle?.toLowerCase().includes(lowerQuery) ||
-					judge.problemId.toString().includes(lowerQuery)
+					judge.problemId.toString().includes(lowerQuery),
 			);
 		}
 
@@ -121,7 +121,7 @@ export default function JudgePage() {
 					{[
 						{ key: 'ALL', label: 'ALL' },
 						{ key: 'CORRECT', label: 'CORRECT' },
-						{ key: 'WRONG', label: 'WRONG' }
+						{ key: 'WRONG', label: 'WRONG' },
 					].map(({ key, label }) => (
 						<button
 							key={key}
@@ -233,4 +233,6 @@ export default function JudgePage() {
 			</footer>
 		</div>
 	);
-}
+};
+
+export default JudgePage;
