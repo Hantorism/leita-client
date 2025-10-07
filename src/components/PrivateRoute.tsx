@@ -2,18 +2,18 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 interface PrivateRouteProps {
-  element: React.ReactElement;
+	element: React.ReactElement;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
-  const isAuthenticated = !!localStorage.getItem('user');
+const PrivateRoute = ({ element }: PrivateRouteProps) => {
+	const isAuthenticated = !!localStorage.getItem('user');
 
-  if (!isAuthenticated) {
-    alert('🚨 로그인이 필요합니다.');
-    return <Navigate to="/" replace />;
-  }
+	if (!isAuthenticated) {
+		alert('🚨 로그인이 필요합니다.');
+		return <Navigate to="/" replace/>;
+	}
 
-  return element;
+	return element;
 };
 
 export default PrivateRoute;

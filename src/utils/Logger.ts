@@ -1,14 +1,18 @@
+import Environment from './Environment';
+
+const RUNTIME = Environment.RUNTIME;
+
 const Logger = {
-  print: (...args: any[]) => {
-    if (process.env.REACT_APP_ENV === 'local') {
-      console.log(...args);
-    }
-  },
-  error: (...args: any[]) => {
-    if (process.env.REACT_APP_ENV === 'local') {
-      console.error(...args);
-    }
-  }
+	print: (...args: any[]) => {
+		if (RUNTIME === 'local') {
+			console.log(...args);
+		}
+	},
+	error: (...args: any[]) => {
+		if (RUNTIME === 'local') {
+			console.error(...args);
+		}
+	},
 };
 
 export default Logger;

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { Environment } from '../utils';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+const API_BASE_URL = Environment.API_BASE_URL;
 
 interface CreateStudyModalProps {
-  onClose: () => void;
-  onCreated: () => void;
+	onClose: () => void;
+	onCreated: () => void;
 }
 
 const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
@@ -25,10 +26,10 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
 				method:      'POST',
 				headers:     {
 					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`
+					'Authorization': `Bearer ${token}`,
 				},
 				credentials: 'include',
-				body:        JSON.stringify({ title, description, requirement })
+				body:        JSON.stringify({ title, description, requirement }),
 			});
 
 			if (!response.ok) throw new Error('Failed to create study');

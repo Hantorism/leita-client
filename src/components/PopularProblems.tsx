@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Logger } from '../utils'
+import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL; // API 주소 설정
+const API_BASE_URL = Environment.API_BASE_URL;
 
 interface Problem {
 	problemId: number;

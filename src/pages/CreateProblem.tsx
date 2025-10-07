@@ -10,11 +10,11 @@ const CreateProblem = () => {
 	const [description, setDescription] = useState({
 		problem: '',
 		input:   '',
-		output:  ''
+		output:  '',
 	});
 	const [limit, setLimit] = useState({
 		memory: 0,
-		time:   0
+		time:   0,
 	});
 	const [testCases, setTestCases] = useState([{ input: '', output: '' }]);
 	const [source, setSource] = useState('');
@@ -33,7 +33,7 @@ const CreateProblem = () => {
 		const token = localStorage.getItem('token');
 		const encodedTestCases = testCases.map(tc => ({
 			input:  encodeBase64(tc.input),
-			output: encodeBase64(tc.output)
+			output: encodeBase64(tc.output),
 		}));
 		if (testCases.length < 5) {
 			alert('👽 테스트 케이스는 최소 5개 이상이어야 합니다!');
@@ -47,12 +47,12 @@ const CreateProblem = () => {
 				limit,
 				testCases: encodedTestCases,
 				source,
-				category
+				category,
 			}, {
 				headers: {
 					Authorization:  `Bearer ${token}`,
-					'Content-Type': 'application/json'
-				}
+					'Content-Type': 'application/json',
+				},
 			});
 
 			Logger.print(response.data.message);
@@ -153,7 +153,7 @@ const CreateProblem = () => {
 		                setTestCases([
 			                ...testCases.slice(0, index),
 			                { ...testCase, input: e.target.value },
-			                ...testCases.slice(index + 1)
+			                ...testCases.slice(index + 1),
 		                ])
 	                }
 	                className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
@@ -168,7 +168,7 @@ const CreateProblem = () => {
 		                setTestCases([
 			                ...testCases.slice(0, index),
 			                { ...testCase, output: e.target.value },
-			                ...testCases.slice(index + 1)
+			                ...testCases.slice(index + 1),
 		                ])
 	                }
 	                className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFF33]"
