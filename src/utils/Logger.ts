@@ -1,15 +1,13 @@
-import Environment from './Environment';
-
-const RUNTIME = Environment.RUNTIME;
+import Profile from './Profile';
 
 const Logger = {
 	print: (...args: any[]) => {
-		if (RUNTIME === 'local') {
+		if (Profile.isLocal() || Profile.isDev()) {
 			console.log(...args);
 		}
 	},
 	error: (...args: any[]) => {
-		if (RUNTIME === 'local') {
+		if (Profile.isLocal() || Profile.isDev()) {
 			console.error(...args);
 		}
 	},
