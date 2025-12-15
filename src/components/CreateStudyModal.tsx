@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface CreateStudyModalProps {
 	onClose: () => void;
@@ -22,7 +22,7 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
 		}
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/study-class`, {
+			const response = await fetch(`${API_URL}/study-class`, {
 				method:      'POST',
 				headers:     {
 					'Content-Type':  'application/json',

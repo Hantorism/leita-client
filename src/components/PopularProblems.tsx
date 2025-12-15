@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface Problem {
 	problemId: number;
@@ -19,7 +19,7 @@ const PopularProblems = () => {
 	useEffect(() => {
 		const fetchProblems = async () => {
 			try {
-				const response = await fetch(`${API_BASE_URL}/problem`);
+				const response = await fetch(`${API_URL}/problem`);
 				const data = await response.json();
 
 				if (!data?.data?.content) {

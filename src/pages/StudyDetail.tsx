@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface StudyMember {
 	name: string;
@@ -28,7 +28,7 @@ const StudyDetail = () => {
 	useEffect(() => {
 
 		/*
-		 axios.get(`${API_BASE_URL}/study/${id}`)
+		 axios.get(`${API_URL}/study/${id}`)
 		 .then((res) => {
 		 setStudy(res.data);
 		 document.title = `${res.data.title} | Leita`;

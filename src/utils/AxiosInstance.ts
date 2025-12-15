@@ -2,10 +2,10 @@ import axios, { AxiosError } from 'axios';
 import Cookies from 'js-cookie';
 import Environment from './Environment';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 const instance = axios.create({
-	baseURL: API_BASE_URL,
+	baseURL: API_URL,
 	headers: {
 		'Content-Type': 'application/json',
 	},

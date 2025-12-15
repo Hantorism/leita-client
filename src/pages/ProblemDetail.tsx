@@ -5,7 +5,7 @@ import CodeEditor from '../components/CodeEditor';
 import { Logger, Environment, Profile } from '../utils';
 import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface TestCase {
 	id?: number;
@@ -65,7 +65,7 @@ const ProblemDetail = () => {
 	useEffect(() => {
 		const fetchProblem = async () => {
 			try {
-				const res = await axios.get(`${API_BASE_URL}/problem/${id}`);
+				const res = await axios.get(`${API_URL}/problem/${id}`);
 				const data = res.data?.data;
 
 				if (!data) {

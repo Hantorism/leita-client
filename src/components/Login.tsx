@@ -6,7 +6,7 @@ import axios, { AxiosError } from 'axios';
 import { Logger, AxiosInstance, Environment } from '../utils';
 import { User } from '@/types';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface LoginProps {
 	user: User | null;
@@ -24,7 +24,7 @@ const Login = ({ user, setUser }: LoginProps) => {
 
 		const token = localStorage.getItem('token');
 		if (token) {
-			AxiosInstance.get(`${API_BASE_URL}/auth/info`, {
+			AxiosInstance.get(`${API_URL}/auth/info`, {
 				headers: { Authorization: `Bearer ${token}` },
 			}).then((res) => {
 				setUser(res.data);
@@ -38,7 +38,7 @@ const Login = ({ user, setUser }: LoginProps) => {
 	const signInWithGoogle = useGoogleLogin({
 		onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
 			try {
-				const res = await AxiosInstance.post(`${API_BASE_URL}/auth/oauth`, {
+				const res = await AxiosInstance.post(`${API_URL}/auth/oauth`, {
 					accessToken: tokenResponse.access_token,
 				}, {
 					headers: {
@@ -56,7 +56,7 @@ const Login = ({ user, setUser }: LoginProps) => {
 				localStorage.setItem('accessToken', accessToken);
 				Cookies.set('accessToken', accessToken, { expires: 1 });
 
-				const userRes = await AxiosInstance.get<User>(`${API_BASE_URL}/auth/info`, {
+				const userRes = await AxiosInstance.get<User>(`${API_URL}/auth/info`, {
 					headers: { Authorization: `Bearer ${accessToken}` },
 				});
 
