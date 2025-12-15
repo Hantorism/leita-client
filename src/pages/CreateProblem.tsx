@@ -5,7 +5,7 @@ import axios from 'axios';
 import Footer from '../components/Footer';
 import { Logger, Environment, EncodeBase64 } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 const CreateProblem = () => {
 	const [title, setTitle] = useState('');
@@ -35,7 +35,7 @@ const CreateProblem = () => {
 		}
 
 		try {
-			const response = await axios.post(`${API_BASE_URL}/problem`, {
+			const response = await axios.post(`${API_URL}/problem`, {
 				title,
 				description,
 				limit,

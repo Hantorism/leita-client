@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { Solved } from '../assets/images';
 import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface Problem {
 	problemId: number;
@@ -44,7 +44,7 @@ const Problems = () => {
 
 				const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
 
-				const res = await axios.get(`${API_BASE_URL}/problem`, {
+				const res = await axios.get(`${API_URL}/problem`, {
 					params,
 					headers,
 					withCredentials: true,
@@ -68,7 +68,7 @@ const Problems = () => {
 		const fetchJudgedProblems = async () => {
 			if (!token) return;
 			try {
-				const res = await axios.get(`${API_BASE_URL}/judge`, {
+				const res = await axios.get(`${API_URL}/judge`, {
 					headers: {
 						Authorization: `Bearer ${token}`,
 					},

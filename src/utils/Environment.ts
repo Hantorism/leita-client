@@ -8,7 +8,7 @@ const getEnvVar = (name: string): string => {
 
 const Environment = {
 	GOOGLE_AUTH_CLIENT_ID: getEnvVar('REACT_APP_GOOGLE_AUTH_CLIENT_ID'),
-	API_BASE_URL:          getEnvVar('REACT_APP_API_BASE_URL'),
+	API_URL:          getEnvVar('REACT_APP_API_URL'),
 	PROFILE:               getEnvVar('REACT_APP_PROFILE'),
 };
 

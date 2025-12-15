@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Environment } from 'utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 const ITEMS_PER_PAGE = 15;
 
 interface JudgeResponse {
@@ -44,7 +44,7 @@ const JudgePage = () => {
 		async function fetchJudges() {
 			try {
 				const token = localStorage.getItem('token');
-				const response = await fetch(`${API_BASE_URL}/judge`, {
+				const response = await fetch(`${API_URL}/judge`, {
 					method:  'GET',
 					headers: {
 						'Authorization': `Bearer ${token}`,

@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 import CreateStudyModal from '../components/CreateStudyModal';
 import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface User {
 	name: string;
@@ -35,7 +35,7 @@ const StudyPage = () => {
 		setLoading(true);
 		try {
 			const params = new URLSearchParams({ page: String(page), size: String(size) });
-			const response = await fetch(`${API_BASE_URL}/study-class?${params}`);
+			const response = await fetch(`${API_URL}/study-class?${params}`);
 			if (!response.ok) {
 				throw new Error(`Failed to fetch study groups: ${response.status}`);
 			}
@@ -52,7 +52,7 @@ const StudyPage = () => {
 
 	const fetchStudyDetails = async (studyId: number) => {
 		try {
-			const response = await fetch(`${API_BASE_URL}/study-class/${studyId}`, {
+			const response = await fetch(`${API_URL}/study-class/${studyId}`, {
 				credentials: 'include',
 			});
 			if (!response.ok) {

@@ -5,7 +5,7 @@ import * as monacoEditor from 'monaco-editor';
 import CustomDropdown from './CustomDropdown';
 import { Logger, Environment } from '../utils';
 
-const API_BASE_URL = Environment.API_BASE_URL;
+const API_URL = Environment.API_URL;
 
 interface TestResult {
 	actualOutput: string;
@@ -207,7 +207,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		setResult(null);
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/judge/submit/${problemId}`, {
+			const response = await fetch(`${API_URL}/judge/submit/${problemId}`, {
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
@@ -267,7 +267,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		setResult(null);
 		const token = localStorage.getItem('token');
 		try {
-			const problemResponse = await fetch(`${API_BASE_URL}/problem/${problemId}`, {
+			const problemResponse = await fetch(`${API_URL}/problem/${problemId}`, {
 				method:  'GET',
 				headers: {
 					'Content-Type':  'application/json',
@@ -291,7 +291,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 				return;
 			}
 
-			const response = await fetch(`${API_BASE_URL}/judge/run/${problemId}`, {
+			const response = await fetch(`${API_URL}/judge/run/${problemId}`, {
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
@@ -399,7 +399,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		const testCase = testCases[index];
 
 		try {
-			const response = await fetch(`${API_BASE_URL}/judge/run/${problemId}`, {
+			const response = await fetch(`${API_URL}/judge/run/${problemId}`, {
 				method:  'POST',
 				headers: {
 					'Content-Type':  'application/json',
