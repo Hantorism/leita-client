@@ -93,7 +93,6 @@ const CreateProblem = () => {
 							onChange={(content) => setDescription({ ...description, input: content })}
 							className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
 							rows={3}
-							readonly
 						/>
 					</div>
 

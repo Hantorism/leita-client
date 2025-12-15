@@ -15,7 +15,7 @@ interface MenuBarProps {
 
 interface ProblemDescriptionEditorProps {
 	content: string;
-	onChange: (content: string) => void;
+	onChange?: (content: string) => void;
 	className: string;
 	rows: number;
 	readonly?: boolean;
@@ -176,7 +176,9 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 		onUpdate:    ({ editor }) => {
 			const content = editor.getHTML();
 			Logger.print(content);
-			onChange(content);
+			if (onChange) {
+				onChange(content);
+			}
 		},
 		onCreate:    ({ editor: currentEditor }) => {
 			migrateMathStrings(currentEditor);
@@ -224,8 +226,6 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 		editor.commands.setContent(content || '');
 	}, [content, editor]);
 
-	const minHeight = rows ? `${rows * 1.5}rem` : 'auto';
-
 	if (!editor) return null;
 
 	return (
@@ -245,7 +245,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
 				onClose={() => setIsImageModalOpen(false)}
 				onInsert={handleInsertImage}
 			/>
-			<div style={{ minHeight }}>
+			<div>
 				<EditorContent editor={editor}/>
 			</div>
 		</div>

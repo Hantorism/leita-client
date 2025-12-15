@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import CodeEditor from '../components/CodeEditor';
-import { Logger, Environment } from '../utils';
+import { Logger, Environment, Profile } from '../utils';
+import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
 
 const API_BASE_URL = Environment.API_BASE_URL;
 
@@ -141,17 +142,36 @@ const ProblemDetail = () => {
 				<hr className="border-t border-gray-500 mt-2"/>
 
 				<div className="mt-6">
-					<h2 className="text-xl font-normal pb-2 pt-1 font-Pretendard">문제 설명</h2>
-					<pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretendard">{problem.description.problem}</pre>
+					<h2 className="text-lg font-normal pb-2 pt-1 font-Pretendard">문제 설명</h2>
+					{Profile.isNotProd() && <pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretendard">{problem.description.problem}</pre>}
+					<ProblemDescriptionEditor
+						content={problem.description.problem}
+						className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
+						rows={3}
+						readonly
+					/>
 				</div>
 
 				<div className="mt-4">
 					<h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">입력</h3>
-					<pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.input)}</pre>
+					{Profile.isNotProd() && <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.input)}</pre>}
+					<ProblemDescriptionEditor
+						content={problem.description.input}
+						className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
+						rows={3}
+						readonly
+					/>
 				</div>
+
 				<div className="mt-4">
 					<h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">출력</h3>
-					<pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.output)}</pre>
+					{Profile.isNotProd() && <pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretendard">{decodeText(problem.description.output)}</pre>}
+					<ProblemDescriptionEditor
+						content={problem.description.output}
+						className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFF33]"
+						rows={3}
+						readonly
+					/>
 				</div>
 
 				<div className="pt-6">
