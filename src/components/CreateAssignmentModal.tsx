@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { studyApi } from '../apis/Study';
-import { Logger } from '../utils';
+import { studyApi } from '@apis';
+import { Logger } from '@utils';
 
 interface CreateAssignmentModalProps {
   studyId: number;

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import CreateStudyModal from '../components/CreateStudyModal';
-import JoinStudyModal from '../components/JoinStudyModal';
-import { Logger, Environment } from '../utils';
+import { Header, Footer } from '@containers';
+import { CreateStudyModal, JoinStudyModal } from '@components';
+import { Logger, Environment } from '@utils';
 
 const API_URL = Environment.API_URL;
 

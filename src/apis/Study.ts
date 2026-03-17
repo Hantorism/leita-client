@@ -1,11 +1,11 @@
-import AxiosInstance from '../utils/AxiosInstance';
+import { instance as AxiosInstance } from '@utils';
 import {
   Study,
   StudySession,
   AttendanceCheck,
   Assignment,
   StudyProgress
-} from '../types/Study';
+} from '@/types';
 
 export const studyApi = {
   // 스터디 관련

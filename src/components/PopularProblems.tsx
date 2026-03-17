@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Logger, Environment } from '@utils';
 import { useNavigate } from 'react-router-dom';
-import { Logger, Environment } from '../utils';
 
 const API_URL = Environment.API_URL;
 

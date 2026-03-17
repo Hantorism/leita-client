@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
+import { Logger, instance as AxiosInstance, Environment } from '@utils';
+import { User } from '@types';
 import { googleLogout, useGoogleLogin, TokenResponse } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios, { AxiosError } from 'axios';
-import { Logger, AxiosInstance, Environment } from '../utils';
-import { User } from '../types/User';
 
 const API_URL = Environment.API_URL;
 
@@ -26,9 +26,9 @@ const Login = ({ user, setUser }: LoginProps) => {
 		if (token) {
 			AxiosInstance.get(`${API_URL}/auth/info`, {
 				headers: { Authorization: `Bearer ${token}` },
-			}).then((res) => {
+			}).then((res: any) => {
 				setUser(res.data);
-			}).catch((err) => {
+			}).catch((err: any) => {
 				// 토큰 검증에 실패해도 자동으로 로그아웃하지 않음
 				Logger.error('Token validation failed:', err);
 			});

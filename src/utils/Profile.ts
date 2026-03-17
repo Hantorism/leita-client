@@ -1,8 +1,7 @@
-import Environment from './Environment';
-
+import { Environment } from '@utils/Environment';
 const PROFILE = Environment.PROFILE;
 
-const Profile = {
+export const Profile = {
 	isLocal: () => {
 		if (PROFILE === 'local') {
 			return true;
@@ -24,5 +23,3 @@ const Profile = {
 		}
 	},
 }
-
-export default Profile;

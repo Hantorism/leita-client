@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../components/Header';
+import { Header, Footer } from '@containers';
+import { Solved } from '@assets/images';
+import { Logger, Environment } from '@utils';
 import axios from 'axios';
-import Footer from '../components/Footer';
-import { Solved } from '../assets/images';
-import { Logger, Environment } from '../utils';
 
 const API_URL = Environment.API_URL;
 

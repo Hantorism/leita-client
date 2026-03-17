@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Environment, Logger } from '../utils';
-import { studyApi } from '../apis/Study';
+import { Environment, Logger } from '@utils';
+import { studyApi } from '@apis';
 
 interface CreateStudyModalProps {
 	onClose: () => void;
