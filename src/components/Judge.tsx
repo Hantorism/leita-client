@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { Header, Footer } from '@containers';
+import { Environment } from '@utils';
+
 import { useNavigate } from 'react-router-dom';
-import { Environment } from 'utils';
 
 const API_URL = Environment.API_URL;
 const ITEMS_PER_PAGE = 15;

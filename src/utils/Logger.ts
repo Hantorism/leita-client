@@ -1,6 +1,5 @@
-import Profile from './Profile';
-
-const Logger = {
+import { Profile } from '@utils/Profile';
+export const Logger = {
 	print: (...args: any[]) => {
 		if (Profile.isNotProd()) {
 			console.log(...args);
@@ -12,5 +11,3 @@ const Logger = {
 		}
 	},
 };
-
-export default Logger;

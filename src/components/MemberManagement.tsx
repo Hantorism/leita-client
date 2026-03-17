@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { studyApi } from '../apis/Study';
-import { StudyUser } from '../types/Study';
-import { Logger } from '../utils';
+import { studyApi } from '@apis';
+import { StudyUser } from '@types';
+import { Logger } from '@utils';
 
 interface MemberManagementProps {
   studyId: number;

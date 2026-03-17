@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { CodeEditor, ProblemDescriptionEditor } from '@components';
+import { Logger, Environment, Profile } from '@utils';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import CodeEditor from '../components/CodeEditor';
-import { Logger, Environment, Profile } from '../utils';
-import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
 
 const API_URL = Environment.API_URL;
 

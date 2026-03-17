@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { ImageModal } from '@components';
+import { Logger } from '@utils';
 import { useEditor, EditorContent, useEditorState, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Mathematics, { migrateMathStrings } from '@tiptap/extension-mathematics';
 import Image from '@tiptap/extension-image';
 import 'katex/dist/katex.min.css';
-import ImageModal from './ImageModal';
-import { Logger } from '../utils';
 
 interface MenuBarProps {
 	editor: Editor;

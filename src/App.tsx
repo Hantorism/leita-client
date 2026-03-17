@@ -1,17 +1,9 @@
 import React from 'react';
+import { Home, Problems, Study, ProblemDetail, StudyDetail, Term as TermsOfService, Privacy as PrivacyPolicy, CreateProblem } from '@pages';
+import { Judge as JudgePage, PrivateRoute } from '@components';
+import { Environment } from '@utils';
 import { Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import Home from './pages/Home';
-import Problems from './pages/Problems';
-import Study from './pages/Study';
-import ProblemDetail from './pages/ProblemDetail';
-import StudyDetail from './pages/StudyDetail';
-import TermsOfService from './pages/Term';
-import PrivacyPolicy from './pages/Privacy';
-import JudgePage from './components/Judge';
-import PrivateRoute from './components/PrivateRoute';
-import CreateProblem from './pages/CreateProblem';
-import { Environment } from './utils';
 
 const clientId = Environment.GOOGLE_AUTH_CLIENT_ID;
 

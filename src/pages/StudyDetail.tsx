@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { Logger } from '@utils';
+import { studyApi } from '@apis';
+import { Study, StudyUser } from '@types';
+import { Header, Footer } from '@containers';
+import { StudySessionList, MemberManagement } from '@components';
 import { useParams } from 'react-router-dom';
-import { Logger } from '../utils';
-import { studyApi } from '../apis/Study';
-import { Study, StudyUser } from '../types/Study';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import StudySessionList from '../components/StudySessionList';
-import MemberManagement from '../components/MemberManagement';
 
 const StudyDetail = () => {
 	const { id } = useParams();

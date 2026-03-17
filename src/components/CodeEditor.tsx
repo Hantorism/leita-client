@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { CustomDropdown } from '@components';
+import { Logger, Environment } from '@utils';
 import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
-import CustomDropdown from './CustomDropdown';
-import { Logger, Environment } from '../utils';
 
 const API_URL = Environment.API_URL;
 
@@ -471,7 +471,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 					{/*    <p>Selected Language: {language}</p>*/}
 					{/*</div>*/}
 
-
 					<button
 						type="button"
 						onClick={handleRunCode}
@@ -580,7 +579,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 					<div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>
 				</div>
 			</div>
-
 
 			<div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
 				{/* 테스트 케이스 선택 바 */}
@@ -700,7 +698,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 								)}
 							</div>
 
-
 						</div>
 						<div className="mt-2 p-2 bg-black rounded-md">
 
@@ -713,7 +710,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 									                         맞았습니다.
 								</div>
 							)}
-
 
 							{result?.testCases?.map((testCase, index) => (
 								<div key={index}>
@@ -738,7 +734,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 					</>
 				)}
 			</div>
-
 
 			{/*        /!* 결과 및 테스트 케이스 *!/*/}
 			{/*        <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">*/}
@@ -783,7 +778,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 			{/*                </button>*/}
 			{/*            </div>*/}
 
-
 			{/*            <div className="mt-3 p-2 rounded bg-black">*/}
 			{/*                <div className="mt-1">*/}
 			{/*                    {selectedTestCase < initialTestCases.length ? (*/}
@@ -817,7 +811,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 			{/*                    )}*/}
 			{/*                </div>*/}
 
-
 			{/*                <div className="mt-1 mb-3">*/}
 			{/*                    <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>*/}
 			{/*                    {selectedTestCase < initialTestCases.length ? (*/}
@@ -832,7 +825,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 			{/*                        value={testCases[selectedTestCase].output}*/}
 			{/*                        onChange={(e) => handleTestCaseChange(selectedTestCase, "output", e.target.value)}*/}
 			{/*                    />*/}
-
 
 			{/*                </div>*/}
 			{/*                )}*/}
@@ -855,7 +847,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 			{/*/!*</pre>*!/*/}
 			{/*/!*                </div>*!/*/}
 			{/*/!*                )}*!/*/}
-
 
 			{/*                /!*run 결과 *!/*/}
 			{/*                {result?.testCases?.[selectedTestCase] && (*/}

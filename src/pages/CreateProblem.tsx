@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import ProblemDescriptionEditor from '../components/ProblemDescriptionEditor';
-import Header from '../components/Header';
+import { ProblemDescriptionEditor } from '@components';
+import { Header, Footer } from '@containers';
+import { Logger, Environment, EncodeBase64 } from '@utils';
 import axios from 'axios';
-import Footer from '../components/Footer';
-import { Logger, Environment, EncodeBase64 } from '../utils';
 
 const API_URL = Environment.API_URL;
 
@@ -194,7 +193,6 @@ const CreateProblem = () => {
 						</button>
 					</div>
 
-
 					<div>
 						<label className="block text-lg font-medium text-white">Source</label>
 						<input
@@ -245,7 +243,6 @@ const CreateProblem = () => {
 							Add Category (+)
 						</button>
 					</div>
-
 
 					<button
 						type="submit"

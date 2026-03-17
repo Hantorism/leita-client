@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { studyApi } from '../apis/Study';
-import { StudySession, Study } from '../types/Study';
-import { Logger } from '../utils';
-import CreateSessionModal from './CreateSessionModal';
-import AttendanceCheckModal from './AttendanceCheckModal';
-import CreateAssignmentModal from './CreateAssignmentModal';
+import { studyApi } from '@apis';
+import { StudySession, Study } from '@types';
+import { Logger } from '@utils';
+import { CreateSessionModal, AttendanceCheckModal, CreateAssignmentModal } from '@components';
 
 interface StudySessionListProps {
   study: Study;

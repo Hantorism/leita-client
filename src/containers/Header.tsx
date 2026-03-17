@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { Login } from '@components';
+import { Logo } from '@assets/images';
+import { User } from '@types';
 import { Link, NavLink } from 'react-router-dom';
-import Login from './Login';
+
 import { FiMenu, FiX } from 'react-icons/fi';
-import { Logo } from '../assets/images';
-import { User } from '../types/User';
 
 const Header = () => {
 	const [user, setUser] = useState<User | null>(null);
@@ -67,14 +68,12 @@ const Header = () => {
 				<Login user={user} setUser={setUser}/>
 			</nav>
 
-
 			<div className="flex md:hidden justify-between items-center bg-white bg-opacity-30 p-3 rounded-full mx-4 my-5">
 				<div className="text-white text-xl font-sans font-extrabold">
 					<Link to="/">
 						<img src={Logo} alt="LEITA Logo" className="h-6"/>
 					</Link>
 				</div>
-
 
 				<button
 					className="text-white text-3xl focus:outline-none"
@@ -83,7 +82,6 @@ const Header = () => {
 					<FiMenu />
 				</button>
 			</div>
-
 
 			{menuOpen && (
 				<div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex flex-col items-center justify-center space-y-6">
