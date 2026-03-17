@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import Login from './Login';
 import { FiMenu, FiX } from 'react-icons/fi';
 import { Logo } from '../assets/images';
-import { User } from '@/types';
+import { User } from '../types/User';
 
 const Header = () => {
 	const [user, setUser] = useState<User | null>(null);

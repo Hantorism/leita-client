@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import CreateStudyModal from '../components/CreateStudyModal';
+import JoinStudyModal from '../components/JoinStudyModal';
 import { Logger, Environment } from '../utils';
 
 const API_URL = Environment.API_URL;
@@ -35,7 +36,7 @@ const StudyPage = () => {
 		setLoading(true);
 		try {
 			const params = new URLSearchParams({ page: String(page), size: String(size) });
-			const response = await fetch(`${API_URL}/study-class?${params}`);
+			const response = await fetch(`${API_URL}/study?${params}`);
 			if (!response.ok) {
 				throw new Error(`Failed to fetch study groups: ${response.status}`);
 			}
@@ -52,7 +53,7 @@ const StudyPage = () => {
 
 	const fetchStudyDetails = async (studyId: number) => {
 		try {
-			const response = await fetch(`${API_URL}/study-class/${studyId}`, {
+			const response = await fetch(`${API_URL}/study/${studyId}`, {
 				credentials: 'include',
 			});
 			if (!response.ok) {
@@ -60,19 +61,23 @@ const StudyPage = () => {
 			}
 
 			const result = await response.json();
-			const studyData: Study = result.data;
+			const studyData = result.data; // backend returns StudyDetailResponse
 
 			const storedUser = localStorage.getItem('user');
 			const currentUser = storedUser ? JSON.parse(storedUser) : null;
 			const currentUserEmail = currentUser?.data?.email?.toLowerCase().trim();
 
-			if (currentUserEmail) {
+			if (currentUserEmail && studyData.members) {
 				Logger.print('Current Email:', currentUserEmail);
 
-				const isAdmin = studyData.admins.some(a => a.email.toLowerCase().trim() === currentUserEmail);
-				const isMember = studyData.members.some(m => m.email.toLowerCase().trim() === currentUserEmail);
+				const userInStudy = studyData.members.find(
+					(m: any) => m.email.toLowerCase().trim() === currentUserEmail
+				);
+				
+				const isAdmin = userInStudy?.role === 'ADMIN';
+				const isMember = userInStudy?.role === 'MEMBER';
 
-				if (isMember || isAdmin) {
+				if (isAdmin || isMember) {
 					window.open(`/study/${studyId}`, '_blank');
 					return;
 				}
@@ -140,14 +145,14 @@ const StudyPage = () => {
 									>
 										<td className="px-4 py-5 ">{study.title}</td>
 										<td className="px-4 py-5 ">
-											{study.description.length > 15
+											{study.description?.length > 15
 												? `${study.description.slice(0, 15)}...`
 												: study.description}
 										</td>
 										<td className="px-4 py-5 text-gray-300">
-											{study.admins.map(a => a.name).join(', ')}
+											{study.admins?.map(a => a.name).join(', ') || '-'}
 										</td>
-										<td className="px-4 py-5 text-gray-300">{study.members.length}명</td>
+										<td className="px-4 py-5 text-gray-300">{study.members?.length || 0}명</td>
 									</tr>
 								))}
 								</tbody>
@@ -173,32 +178,10 @@ const StudyPage = () => {
 
 			{showModal && <CreateStudyModal onClose={() => setShowModal(false)} onCreated={fetchStudies}/>}
 			{showStudyDetailModal && selectedStudy && (
-				<div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-					<div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg ">
-						<h2 className="text-xl font-extrabold mb-4 font-NanumSquare">{selectedStudy.title}</h2>
-						<p className="mb-3 font-bold text-gray-600 font-NanumSquare">{selectedStudy.description}</p>
-						<p className="mb-10 text-sm text-gray-600 font-NanumSquare">
-							모집 조건: {selectedStudy.requirement}
-						</p>
-						<div className="flex justify-end space-x-2">
-							<button
-								className="px-4 py-2 bg-gray-300  rounded-full hover:bg-gray-500"
-								onClick={() => setShowStudyDetailModal(false)}
-							>
-								close
-							</button>
-							<button
-								className="px-4 py-2  bg-gray-600 text-white rounded-full  hover:text-[#CAFF33]"
-								onClick={() => {
-									alert('🚀 가입 요청을 전송했습니다.');
-									setShowStudyDetailModal(false);
-								}}
-							>
-								Join
-							</button>
-						</div>
-					</div>
-				</div>
+				<JoinStudyModal
+					study={selectedStudy}
+					onClose={() => setShowStudyDetailModal(false)}
+				/>
 			)}
 
 			<footer className="w-full text-left mt-20">
