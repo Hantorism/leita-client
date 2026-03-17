@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios, { AxiosError } from 'axios';
 import { Logger, AxiosInstance, Environment } from '../utils';
-import { User } from '@/types';
+import { User } from '../types/User';
 
 const API_URL = Environment.API_URL;
 
