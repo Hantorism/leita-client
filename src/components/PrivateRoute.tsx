@@ -1,8 +1,8 @@
-import React from 'react';
+import { ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
 
 interface PrivateRouteProps {
-	element: React.ReactElement;
+	element: ReactElement;
 }
 
 const PrivateRoute = ({ element }: PrivateRouteProps) => {

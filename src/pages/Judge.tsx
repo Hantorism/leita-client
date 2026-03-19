@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Header, Footer } from '@containers';
+import { Header, Footer } from '@components';
 import { Environment } from '@utils';
-
 import { useNavigate } from 'react-router-dom';
 
 const API_URL = Environment.API_URL;

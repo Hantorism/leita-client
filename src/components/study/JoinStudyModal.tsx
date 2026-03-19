@@ -1,4 +1,3 @@
-import React from 'react';
 import { studyApi } from '@apis';
 
 // Using frontend's standard study format if possible, or an inline type if needed.

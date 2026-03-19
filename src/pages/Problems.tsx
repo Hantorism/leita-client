@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Header, Footer } from '@containers';
+import { useEffect, useState } from 'react';
+import { Header, Footer } from '@components';
 import { Solved } from '@assets/images';
 import { Logger, Environment } from '@utils';
 import axios from 'axios';

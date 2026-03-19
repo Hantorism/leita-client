@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Logger } from '@utils';
 
@@ -8,7 +8,7 @@ interface AttendanceCheckModalProps {
   onClose: () => void;
 }
 
-const AttendanceCheckModal: React.FC<AttendanceCheckModalProps> = ({ studyId, sessionId, onClose }) => {
+const AttendanceCheckModal = ({ studyId, sessionId, onClose }: AttendanceCheckModalProps) => {
   const [openTime, setOpenTime] = useState(new Date().toISOString().slice(0, 16));
   const [closeTime, setCloseTime] = useState('');
   const [lateThresholdMinutes, setLateThresholdMinutes] = useState<number | ''>('');

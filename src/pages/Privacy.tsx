@@ -1,7 +1,6 @@
-import React from 'react';
-import { Footer, Header } from '@containers';
+import { Footer, Header } from '@components';
 
-const PrivacyPolicy = () => {
+const Privacy = () => {
 	return (
 		<div className="flex flex-col items-start h-screen text-white  pt-[5%]">
 			<header className="w-full text-left pl-[10%] pr-[10%]">
@@ -63,4 +62,4 @@ const PrivacyPolicy = () => {
 	);
 };
 
-export default PrivacyPolicy;
+export default Privacy;

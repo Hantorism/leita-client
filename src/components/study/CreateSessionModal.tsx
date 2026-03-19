@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Logger } from '@utils';
 
@@ -8,7 +8,7 @@ interface CreateSessionModalProps {
   onCreated: () => void;
 }
 
-const CreateSessionModal: React.FC<CreateSessionModalProps> = ({ studyId, onClose, onCreated }) => {
+const CreateSessionModal = ({ studyId, onClose, onCreated }: CreateSessionModalProps) => {
   const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState('');
 

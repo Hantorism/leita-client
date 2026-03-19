@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Header, Footer } from '@containers';
+import { useState, useEffect } from 'react';
 import { Icon } from '@assets/images';
-import { PopularProblems } from '@components';
+import { Header, Footer, PopularProblems } from '@components';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 

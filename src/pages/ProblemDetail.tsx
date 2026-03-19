@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, MouseEvent as ReactMouseEvent } from 'react';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
 import { Logger, Environment, Profile } from '@utils';
 import { useParams } from 'react-router-dom';
@@ -88,7 +88,7 @@ const ProblemDetail = () => {
 		}
 	}, [problem]);
 
-	const startResizing = (e: React.MouseEvent) => {
+	const startResizing = (e: ReactMouseEvent) => {
 		e.preventDefault();
 		isDragging.current = true;
 		document.addEventListener('mousemove', handleResize);

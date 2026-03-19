@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Logger } from '@utils';
 
@@ -8,7 +8,7 @@ interface CreateAssignmentModalProps {
   onClose: () => void;
 }
 
-const CreateAssignmentModal: React.FC<CreateAssignmentModalProps> = ({ studyId, sessionId, onClose }) => {
+const CreateAssignmentModal = ({ studyId, sessionId, onClose }: CreateAssignmentModalProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [problemIdsInput, setProblemIdsInput] = useState('');

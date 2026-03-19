@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, MouseEvent as ReactMouseEvent } from 'react';
 import { CustomDropdown } from '@components';
 import { Logger, Environment } from '@utils';
 import MonacoEditor, { Monaco } from '@monaco-editor/react';
@@ -183,7 +183,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		};
 	}, [isResizing, editorHeight]);
 
-	const startResizing = (e: React.MouseEvent) => {
+	const startResizing = (e: ReactMouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 		setIsResizing(true);
