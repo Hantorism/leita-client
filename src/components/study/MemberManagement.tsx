@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { studyApi } from '@apis';
 import { StudyUser } from '@types';
 import { Logger } from '@utils';
 
 interface MemberManagementProps {
   studyId: number;
+  onMemberUpdated?: () => void;
 }
 
-const MemberManagement: React.FC<MemberManagementProps> = ({ studyId }) => {
+const MemberManagement = ({ studyId, onMemberUpdated }: MemberManagementProps) => {
   const [pendings, setPendings] = useState<StudyUser[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +36,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({ studyId }) => {
       await studyApi.approveMember(studyId, email);
       alert('멤버 가입을 승인했습니다.');
       fetchPendings(); // List refresh
+      if (onMemberUpdated) onMemberUpdated();
     } catch (err) {
       alert('승인 처리에 실패했습니다.');
     }
@@ -45,6 +47,7 @@ const MemberManagement: React.FC<MemberManagementProps> = ({ studyId }) => {
       await studyApi.denyMember(studyId, email);
       alert('멤버 가입을 거절했습니다.');
       fetchPendings(); // List refresh
+      if (onMemberUpdated) onMemberUpdated();
     } catch (err) {
       alert('거절 처리에 실패했습니다.');
     }

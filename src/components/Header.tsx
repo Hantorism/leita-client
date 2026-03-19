@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Login } from '@components';
 import { Logo } from '@assets/images';
 import { User } from '@types';
 import { Link, NavLink } from 'react-router-dom';
-
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Header = () => {

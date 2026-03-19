@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Logger, instance as AxiosInstance, Environment } from '@utils';
+import { useEffect, Dispatch, SetStateAction } from 'react';
+import { Logger, AxiosInstance, Environment } from '@utils';
 import { User } from '@types';
 import { googleLogout, useGoogleLogin, TokenResponse } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ const API_URL = Environment.API_URL;
 
 interface LoginProps {
 	user: User | null;
-	setUser: React.Dispatch<React.SetStateAction<User | null>>;
+	setUser: Dispatch<SetStateAction<User | null>>;
 }
 
 const Login = ({ user, setUser }: LoginProps) => {

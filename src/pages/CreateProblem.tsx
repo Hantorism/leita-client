@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { ProblemDescriptionEditor } from '@components';
-import { Header, Footer } from '@containers';
+import { useState, FormEvent } from 'react';
+import { ProblemDescriptionEditor, Header, Footer } from '@components';
 import { Logger, Environment, EncodeBase64 } from '@utils';
 import axios from 'axios';
 
@@ -21,7 +20,7 @@ const CreateProblem = () => {
 	const [source, setSource] = useState('');
 	const [category, setCategory] = useState(['']);
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const token = localStorage.getItem('token');
 		const encodedTestCases = testCases.map(tc => ({

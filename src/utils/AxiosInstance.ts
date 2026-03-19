@@ -4,14 +4,14 @@ import Cookies from 'js-cookie';
 
 const API_URL = Environment.API_URL;
 
-export const instance = axios.create({
+export const AxiosInstance = axios.create({
 	baseURL: API_URL,
 	headers: {
 		'Content-Type': 'application/json',
 	},
 });
 
-instance.interceptors.request.use(
+AxiosInstance.interceptors.request.use(
 	config => {
 		const accessToken = localStorage.getItem('accessToken');
 		if (accessToken) {
@@ -24,7 +24,7 @@ instance.interceptors.request.use(
 	},
 );
 
-instance.interceptors.response.use(
+AxiosInstance.interceptors.response.use(
 	res => res,
 	(err: AxiosError) => {
 		if (err.response?.status === 401) {

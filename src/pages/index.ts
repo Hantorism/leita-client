@@ -6,3 +6,4 @@ export { default as Problems } from './Problems';
 export { default as Study } from './Study';
 export { default as StudyDetail } from './StudyDetail';
 export { default as Term } from './Term';
+export { default as Judge } from './Judge';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { studyApi } from '@apis';
 import { StudySession, Study } from '@types';
 import { Logger } from '@utils';
@@ -10,30 +10,26 @@ interface StudySessionListProps {
   isAdmin: boolean;
 }
 
-const StudySessionList: React.FC<StudySessionListProps> = ({ study, isMember, isAdmin }) => {
+const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) => {
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAttendanceModal, setShowAttendanceModal] = useState<number | null>(null);
   const [showAssignmentModal, setShowAssignmentModal] = useState<number | null>(null);
 
+  const [error, setError] = useState<string | null>(null);
+
   const fetchSessions = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      // Temporary fallback as backend might not have this endpoint implemented yet
-      // const response = await studyApi.getStudySessions(study.id);
-      // setSessions(response.data);
-      setSessions([
-        {
-          id: 1,
-          studyId: study.id,
-          startDateTime: new Date(Date.now() + 86400000).toISOString(),
-          endDateTime: new Date(Date.now() + 93600000).toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-      ]);
-    } catch (err) {
+      const response = await studyApi.getStudySessions(study.id);
+      // 응답 구조에 따라 유연하게 처리
+      const data = response.data ?? response;
+      setSessions(Array.isArray(data) ? data : []);
+    } catch (err: any) {
       Logger.error('Failed to fetch sessions', err);
+      setError('세션 목록을 불러오지 못했습니다.');
     } finally {
       setLoading(false);
     }
@@ -43,16 +39,36 @@ const StudySessionList: React.FC<StudySessionListProps> = ({ study, isMember, is
     fetchSessions();
   }, [study.id]);
 
-  const handleAttend = async (sessionId: number) => {
+  const handleAttend = async (session: StudySession) => {
+    const now = new Date();
+    const startTime = new Date(session.startDateTime);
+    const endTime = new Date(session.endDateTime);
+
+    if (now < startTime || now > endTime) {
+      alert('출석 시간이 아닙니다.');
+      return;
+    }
+
     try {
-      await studyApi.attend(study.id, sessionId);
+      await studyApi.attend(study.id, session.id);
       alert('출석 처리가 완료되었습니다.');
     } catch (err) {
       alert('출석 처리에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
-  if (loading) return <div className="text-gray-400 mt-4">세션 목록을 불러오는 중...</div>;
+  if (loading) return <div className="text-gray-400 mt-4 pl-2">세션 목록을 불러오는 중...</div>;
+  if (error) return (
+    <div className="mt-4 pl-2">
+      <p className="text-red-400 text-sm">{error}</p>
+      <button
+        onClick={fetchSessions}
+        className="mt-2 text-xs text-gray-400 underline hover:text-white transition"
+      >
+        다시 시도
+      </button>
+    </div>
+  );
 
   return (
     <div className="w-full mt-6">
@@ -91,7 +107,7 @@ const StudySessionList: React.FC<StudySessionListProps> = ({ study, isMember, is
                     + Assignment
                   </button>
                 )}
-                {isAdmin && study.attendanceCheckRequired && (
+                {isAdmin && study.attendanceRequired && (
                   <button 
                     onClick={() => setShowAttendanceModal(session.id)}
                     className="px-3 py-1.5 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600"
@@ -99,9 +115,9 @@ const StudySessionList: React.FC<StudySessionListProps> = ({ study, isMember, is
                     Start Attendance
                   </button>
                 )}
-                {(isAdmin || isMember) && study.attendanceCheckRequired && (
+                {(isAdmin || isMember) && study.attendanceRequired && (
                   <button 
-                    onClick={() => handleAttend(session.id)}
+                    onClick={() => handleAttend(session)}
                     className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-500"
                   >
                     Attend

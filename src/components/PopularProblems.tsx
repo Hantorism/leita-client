@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Logger, Environment } from '@utils';
 import { useNavigate } from 'react-router-dom';
 

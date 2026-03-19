@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ChangeEvent } from 'react';
 import { Logger } from '@utils';
 import { IconAdd, IconUpload, IconInsert } from '@assets/images';
 import imageCompression from 'browser-image-compression';
@@ -48,7 +48,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 		return await imageCompression(file, options);
 	};
 
-	const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+	const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
 		const rawFile = event.target.files?.[0];
 		if (!rawFile) return;
 		Logger.print(rawFile);

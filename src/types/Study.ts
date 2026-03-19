@@ -13,10 +13,13 @@ export interface Study {
   id: number;
   title: string;
   description: string;
-  attendanceCheckRequired: boolean;
+  attendanceRequired: boolean;
   assignmentRequired: boolean;
   requiredAttendanceCount: number;
   requiredAssignmentCount: number;
+  requirement?: string;
+  startDate: string;
+  endDate: string;
   members: StudyUser[];
 }
 
@@ -69,9 +72,9 @@ export interface StudyProgressMember {
 export interface StudyProgress {
   studyId: number;
   completionRule: {
-    attendanceCheckRequired: boolean;
-    requiredAttendanceCount: number;
+    attendanceRequired: boolean;
     assignmentRequired: boolean;
+    requiredAttendanceCount: number;
     requiredAssignmentCount: number;
   };
   members: StudyProgressMember[];

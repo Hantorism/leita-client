@@ -1,7 +1,6 @@
-import React from 'react';
-import { Header, Footer } from '@containers';
+import { Header, Footer } from '@components';
 
-const TermsOfService = () => {
+const Term = () => {
 	return (
 		<div className="flex flex-col items-start h-screen text-white  pt-[5%]">
 			<header className="w-full text-left pl-[10%] pr-[10%] ">
@@ -58,4 +57,4 @@ const TermsOfService = () => {
 	);
 };
 
-export default TermsOfService;
+export default Term;

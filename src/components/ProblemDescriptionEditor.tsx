@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, ReactNode } from 'react';
 import { ImageModal } from '@components';
 import { Logger } from '@utils';
 import { useEditor, EditorContent, useEditorState, Editor } from '@tiptap/react';
@@ -25,7 +25,7 @@ interface MenuButtonProps {
 	onClick: () => void;
 	disabled?: boolean;
 	isActive?: boolean;
-	children: React.ReactNode;
+	children: ReactNode;
 }
 
 const MenuButton = ({ onClick, disabled, isActive, children }: MenuButtonProps) => {
