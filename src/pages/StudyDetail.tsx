@@ -2,25 +2,24 @@ import { useEffect, useState } from 'react';
 import { Logger } from '@utils';
 import { studyApi } from '@apis';
 import { Study } from '@types';
-import { StudySessionList, MemberManagement, Header, Footer } from '@components';
+import { StudySessionList, StudyMemberList, Header, Footer } from '@components';
 import { useParams } from 'react-router-dom';
 
-type Tab = 'info' | 'sessions' | 'members';
+type Tab = 'sessions' | 'members';
 
 const TAB_LABELS: { key: Tab; label: string }[] = [
-	{ key: 'info',     label: '스터디 정보' },
-	{ key: 'sessions', label: '세션 목록'   },
-	{ key: 'members',  label: '멤버 조회'   },
+	{ key: 'sessions', label: '세션 목록' },
+	{ key: 'members',  label: '멤버 조회' },
 ];
 
 const StudyDetail = () => {
 	const { id } = useParams();
-	const [study, setStudy]     = useState<Study | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [error, setError]     = useState<string | null>(null);
-	const [isMember, setIsMember] = useState(false);
-	const [isAdmin, setIsAdmin]   = useState(false);
-	const [activeTab, setActiveTab] = useState<Tab>('info');
+	const [study, setStudy]         = useState<Study | null>(null);
+	const [loading, setLoading]     = useState(true);
+	const [error, setError]         = useState<string | null>(null);
+	const [isMember, setIsMember]   = useState(false);
+	const [isAdmin, setIsAdmin]     = useState(false);
+	const [activeTab, setActiveTab] = useState<Tab>('sessions');
 
 	const fetchStudy = async () => {
 		if (!id) return;
@@ -63,10 +62,34 @@ const StudyDetail = () => {
 
 			<main className="flex-grow flex flex-col items-center py-10 px-5 max-w-5xl mx-auto w-full">
 
-				{/* 스터디 제목 */}
-				<div className="w-full mb-6">
-					<h1 className="text-3xl font-bold text-[#CAFF33]">{study.title}</h1>
-					<p className="text-gray-400 mt-2 text-sm">{study.description}</p>
+				{/* 스터디 제목 + 수료 조건 배지 */}
+				<div className="w-full flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+					<div>
+						<h1 className="text-3xl font-bold text-[#CAFF33]">{study.title}</h1>
+						<p className="text-gray-400 mt-2 text-sm">{study.description}</p>
+					</div>
+
+					{/* 수료 조건 배지 */}
+					<div className="flex flex-wrap gap-2 shrink-0 sm:mt-1">
+						{study.attendanceRequired ? (
+							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-blue-700 bg-blue-900 bg-opacity-30 text-blue-300 font-semibold whitespace-nowrap">
+								출석 {study.requiredAttendanceCount}회
+							</span>
+						) : (
+							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-gray-700 bg-black bg-opacity-20 text-gray-500 whitespace-nowrap">
+								출석 불필요
+							</span>
+						)}
+						{study.assignmentRequired ? (
+							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-purple-700 bg-purple-900 bg-opacity-30 text-purple-300 font-semibold whitespace-nowrap">
+								과제 {study.requiredAssignmentCount}개
+							</span>
+						) : (
+							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-gray-700 bg-black bg-opacity-20 text-gray-500 whitespace-nowrap">
+								과제 불필요
+							</span>
+						)}
+					</div>
 				</div>
 
 				{/* 탭 네비게이션 */}
@@ -86,114 +109,18 @@ const StudyDetail = () => {
 					))}
 				</div>
 
-				{/* ── 탭 1: 스터디 정보 ── */}
-				{activeTab === 'info' && (
-					<div className="w-full space-y-6 animate-fadeIn">
-						{/* 기본 정보 카드 */}
-						<div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 space-y-4">
-							<h2 className="text-xl font-semibold text-white">기본 정보</h2>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-								<div className="bg-black bg-opacity-30 rounded-lg p-4">
-									<span className="block text-gray-500 mb-1">시작일</span>
-									<span className="text-gray-200">{study.startDate ? new Date(study.startDate).toLocaleDateString() : '미정'}</span>
-								</div>
-								<div className="bg-black bg-opacity-30 rounded-lg p-4">
-									<span className="block text-gray-500 mb-1">종료일</span>
-									<span className="text-gray-200">{study.endDate ? new Date(study.endDate).toLocaleDateString() : '미정'}</span>
-								</div>
-								<div className="bg-black bg-opacity-30 rounded-lg p-4">
-									<span className="block text-gray-500 mb-1">요구 사항</span>
-									<span className="text-gray-200 whitespace-pre-wrap">{study.requirement || '없음'}</span>
-								</div>
-							</div>
-						</div>
-
-						{/* 수료 조건 카드 */}
-						<div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6">
-							<h2 className="text-xl font-semibold text-white mb-4">수료 조건</h2>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-								<div className={`rounded-lg p-4 border ${study.attendanceRequired ? 'border-blue-700 bg-blue-900 bg-opacity-20' : 'bg-black bg-opacity-20 border-gray-700'}`}>
-									<span className="block text-gray-400 mb-1">출석</span>
-									{study.attendanceRequired
-										? <span className="text-blue-300 font-semibold">{study.requiredAttendanceCount}회 필요</span>
-										: <span className="text-gray-500">필요 없음</span>
-									}
-								</div>
-								<div className={`rounded-lg p-4 border ${study.assignmentRequired ? 'border-purple-700 bg-purple-900 bg-opacity-20' : 'bg-black bg-opacity-20 border-gray-700'}`}>
-									<span className="block text-gray-400 mb-1">과제</span>
-									{study.assignmentRequired
-										? <span className="text-purple-300 font-semibold">{study.requiredAssignmentCount}개 필요</span>
-										: <span className="text-gray-500">필요 없음</span>
-									}
-								</div>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{/* ── 탭 2: 세션 목록 ── */}
+				{/* ── 탭 1: 세션 목록 ── */}
 				{activeTab === 'sessions' && (
 					<div className="w-full animate-fadeIn">
 						<StudySessionList study={study} isMember={isMember} isAdmin={isAdmin} />
 					</div>
 				)}
 
-				{/* ── 탭 3: 멤버 조회 ── */}
+				{/* ── 탭 2: 멤버 조회 ── */}
 				{activeTab === 'members' && (
-					<div className="w-full space-y-8 animate-fadeIn">
-						{/* 관리자 */}
-						<div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6">
-							<h2 className="text-xl font-semibold mb-4">관리자</h2>
-							<ul className="space-y-3">
-								{study.members?.filter((m: any) => m.role === 'ADMIN').map((admin: any, i: number) => (
-									<li key={i} className="flex items-center gap-4 bg-black bg-opacity-20 p-4 rounded-lg">
-										<div className="w-11 h-11 rounded-full border-2 border-[#CAFF33] bg-gray-700 flex items-center justify-center font-bold text-white uppercase">
-											{admin.name.charAt(0)}
-										</div>
-										<div>
-											<span className="block font-medium">{admin.name}</span>
-											<span className="block text-sm text-gray-400">{admin.email}</span>
-										</div>
-										<span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-[#CAFF33] bg-opacity-20 text-[#CAFF33]">Admin</span>
-									</li>
-								))}
-								{(!study.members || study.members.filter((m: any) => m.role === 'ADMIN').length === 0) && (
-									<li className="text-gray-500 text-sm pl-1">관리자가 없습니다.</li>
-								)}
-							</ul>
-						</div>
-
-						{/* 일반 멤버 */}
-						<div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6">
-							<h2 className="text-xl font-semibold mb-4">일반 멤버</h2>
-							<ul className="space-y-3">
-								{study.members?.filter((m: any) => m.role === 'MEMBER').map((member: any, i: number) => (
-									<li key={i} className="flex items-center gap-4 bg-black bg-opacity-20 p-4 rounded-lg">
-										<div className="w-11 h-11 rounded-full bg-gray-600 flex items-center justify-center font-bold text-gray-300 uppercase">
-											{member.name.charAt(0)}
-										</div>
-										<div>
-											<span className="block font-medium text-gray-200">{member.name}</span>
-											<span className="block text-sm text-gray-500">{member.email}</span>
-										</div>
-										<span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">Member</span>
-									</li>
-								))}
-								{(!study.members || study.members.filter((m: any) => m.role === 'MEMBER').length === 0) && (
-									<li className="text-gray-500 text-sm pl-1">일반 멤버가 없습니다.</li>
-								)}
-							</ul>
-						</div>
-
-						{/* 멤버 관리 (관리자 전용) */}
-						{isAdmin && (
-							<div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6">
-								<h2 className="text-xl font-semibold mb-4">멤버 관리 <span className="text-xs text-gray-400 font-normal ml-2">관리자 전용</span></h2>
-								<MemberManagement studyId={study.id} onMemberUpdated={fetchStudy} />
-							</div>
-						)}
-					</div>
+					<StudyMemberList study={study} isAdmin={isAdmin} onMemberUpdated={fetchStudy} />
 				)}
+
 			</main>
 
 			<footer className="w-full text-left mt-10">

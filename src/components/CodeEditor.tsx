@@ -4,6 +4,7 @@ import { Logger, Environment } from '@utils';
 import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
+import { useAlert } from '@contexts';
 
 const API_URL = Environment.API_URL;
 
@@ -29,6 +30,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps) => {
+	const { showAlert } = useAlert();
 	// const [language, setLanguage] = useState("undefined");
 	const [isRunningCode, setIsRunningCode] = useState(false);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +42,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 	});
 	const [selectedTestCase, setSelectedTestCase] = useState(0);
 	const [outputHeight, setOutputHeight] = useState(200);
-	const token = localStorage.getItem('token');
+	const token = localStorage.getItem('accessToken');
 	const navigate = useNavigate();
 	const [editorInstance, setEditorInstance] = useState<monacoEditor.editor.IStandaloneCodeEditor | null>(null);
 	const [monacoInstance, setMonacoInstance] = useState<Monaco | null>(null);
@@ -193,12 +195,12 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 	const handleSubmitCode = async () => {
 
 		if (language === 'undefined') {
-			alert('🚨 언어를 선택해주세요!');
+			showAlert('info', '언어를 선택해주세요!');
 			return;
 		}
 
 		if (!token) {
-			alert('로그인이 필요합니다.');
+			showAlert('error', '로그인이 필요합니다.');
 			setIsSubmitting(false);
 			return;
 		}
@@ -259,13 +261,13 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 	const handleRunCode = async () => {
 
 		if (language === 'undefined') {
-			alert('🚨언어를 선택해주세요!');
+			showAlert('info', '언어를 선택해주세요!');
 			return;
 		}
 		setIsRunningCode(true);
 		setIsSubmitMode(false);
 		setResult(null);
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		try {
 			const problemResponse = await fetch(`${API_URL}/problem/${problemId}`, {
 				method:  'GET',
@@ -388,14 +390,14 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
 	const handleRunSingleTestCase = async (index: number) => {
 		if (language === 'undefined') {
-			alert('🚨 언어를 선택해주세요!');
+			showAlert('info', '언어를 선택해주세요!');
 			return;
 		}
 
 		setIsRunningCode(true);
 		setResult(null);
 
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		const testCase = testCases[index];
 
 		try {

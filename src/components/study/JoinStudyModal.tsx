@@ -1,4 +1,5 @@
 import { studyApi } from '@apis';
+import { useAlert } from '@contexts';
 
 // Using frontend's standard study format if possible, or an inline type if needed.
 interface JoinStudyModalProps {
@@ -8,15 +9,16 @@ interface JoinStudyModalProps {
 
 const JoinStudyModal = ({ study, onClose }: JoinStudyModalProps) => {
 	if (!study) return null;
+	const { showAlert } = useAlert();
 
 	const handleJoin = async () => {
 		try {
 			await studyApi.joinStudy(study.id);
-			alert('🚀 가입 요청을 전송했습니다.');
+			showAlert('success', '가입 요청을 전송했습니다.');
 			onClose();
 		} catch (err: any) {
 			console.error('Failed to join study:', err);
-			alert('가입 요청 중 오류가 발생했습니다: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+			showAlert('error', '가입 요청 중 오류가 발생했습니다: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
 		}
 	};
 

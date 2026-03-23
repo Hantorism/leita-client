@@ -1,3 +1,4 @@
+export { default as AlertModal } from './AlertModal';
 export { default as CodeEditor } from './CodeEditor';
 export { default as CreateProblemButton } from './CreateProblemButton';
 export { default as CustomDropdown } from './CustomDropdown';

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Logger } from '@utils';
 import { studyApi } from '@apis';
+import { useAlert } from '@contexts';
 
 interface CreateStudyModalProps {
 	onClose: () => void;
@@ -8,6 +9,7 @@ interface CreateStudyModalProps {
 }
 
 const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
+	const { showAlert } = useAlert();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [requirement, setRequirement] = useState('');
@@ -22,22 +24,22 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
 
 	const handleSubmit = async () => {
 		if (!title.trim() || !description.trim() || !requirement.trim() || !startDate || !endDate) {
-			alert('👾 모든 필드를 입력해주세요.');
+			showAlert('info', '모든 필드를 입력해주세요.');
 			return;
 		}
 
 		if (new Date(startDate) >= new Date(endDate)) {
-			alert('👾 스터디 종료일은 시작일보다 늦어야 합니다.');
+			showAlert('info', '스터디 종료일은 시작일보다 늦어야 합니다.');
 			return;
 		}
 
 		if (attendanceRequired && requiredAttendanceCount === '') {
-			alert('👾 필수 출석 횟수를 입력해주세요.');
+			showAlert('info', '필수 출석 횟수를 입력해주세요.');
 			return;
 		}
 
 		if (assignmentRequired && requiredAssignmentCount === '') {
-			alert('👾 필수 과제 개수를 입력해주세요.');
+			showAlert('info', '필수 과제 개수를 입력해주세요.');
 			return;
 		}
 
@@ -56,12 +58,12 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
 		try {
 			await studyApi.createStudy(payload);
 
-			alert('👾 생성 완료되었습니다!');
+			showAlert('success', '생성 완료되었습니다!');
 			onClose();
 			onCreated();
 		} catch (err: any) {
 			Logger.error('API Error:', err);
-			alert('👾 생성 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+			showAlert('error', '생성 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
 		}
 	};
 

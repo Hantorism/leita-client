@@ -58,97 +58,95 @@ export const studyApi = {
   },
 
   // ── 세션 관련 ──────────────────────────────────────────────
-  // GET  /study-session/{studyId}?page=0&size=10
-  getStudySessions: async (studyId: number, page = 0, size = 10) => {
-    const response = await AxiosInstance.get(`/study-session/${studyId}`, { params: { page, size } });
+  // GET  /study-session?studyId={studyId}&page={page}&size={size}
+  getStudySessions: async (studyId: number, page?: number, size?: number) => {
+    const response = await AxiosInstance.get(`/study-session`, { params: { studyId, page, size } });
     return response.data;
   },
 
-  // GET  /study-session/{studyId}/{sessionId}
-  getStudySession: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studyId}/${sessionId}`);
+  // GET  /study-session/{studySessionId}
+  getStudySession: async (studySessionId: number) => {
+    const response = await AxiosInstance.get(`/study-session/${studySessionId}`);
     return response.data;
   },
 
-  // POST  /study-session/{studyId}   body: { startDateTime, endDateTime }
-  createSession: async (studyId: number, data: { startDateTime: string; endDateTime: string }) => {
-    const response = await AxiosInstance.post(`/study-session/${studyId}`, data);
+  // POST  /study-session   body: { studyId, startDateTime, endDateTime }
+  createSession: async (data: { studyId: number; startDateTime: string; endDateTime: string }) => {
+    const response = await AxiosInstance.post(`/study-session`, data);
     return response.data;
   },
 
-  // PUT  /study-session/{studyId}/{sessionId}   body: { startDateTime, endDateTime }
-  updateSession: async (studyId: number, sessionId: number, data: { startDateTime: string; endDateTime: string }) => {
-    const response = await AxiosInstance.put(`/study-session/${studyId}/${sessionId}`, data);
+  // PUT  /study-session/{studySessionId}   body: { startDateTime, endDateTime }
+  updateSession: async (studySessionId: number, data: { startDateTime: string; endDateTime: string }) => {
+    const response = await AxiosInstance.put(`/study-session/${studySessionId}`, data);
     return response.data;
   },
 
-  // DELETE  /study-session/{studyId}/{sessionId}
-  deleteSession: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.delete(`/study-session/${studyId}/${sessionId}`);
+  // DELETE  /study-session/{studySessionId}
+  deleteSession: async (studySessionId: number) => {
+    const response = await AxiosInstance.delete(`/study-session/${studySessionId}`);
     return response.data;
   },
 
   // ── 출석 관련 ──────────────────────────────────────────────
-  // GET  /study-session/{studyId}/{sessionId}/attendance
-  getAttendance: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studyId}/${sessionId}/attendance`);
+  // GET  /study-session/{studySessionId}/attendance
+  getAttendance: async (studySessionId: number) => {
+    const response = await AxiosInstance.get(`/study-session/${studySessionId}/attendance`);
     return response.data;
   },
 
-  // POST  /study-session/{studyId}/{sessionId}/attendance/open
+  // POST  /study-session/{studySessionId}/attendance/open
   //        body: { openTime?, closeTime?, lateThresholdMinutes? }
   startAttendanceCheck: async (
-    studyId: number,
-    sessionId: number,
+    studySessionId: number,
     data: { openTime?: string; closeTime?: string; lateThresholdMinutes?: number }
   ) => {
-    const response = await AxiosInstance.post(`/study-session/${studyId}/${sessionId}/attendance/open`, data);
+    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/open`, data);
     return response.data;
   },
 
-  // POST  /study-session/{studyId}/{sessionId}/attendance/attend
-  attend: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.post(`/study-session/${studyId}/${sessionId}/attendance/attend`);
+  // POST  /study-session/{studySessionId}/attendance/attend
+  attend: async (studySessionId: number) => {
+    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/attend`);
     return response.data;
   },
 
-  // POST  /study-session/{studyId}/{sessionId}/attendance/close
-  closeAttendance: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.post(`/study-session/${studyId}/${sessionId}/attendance/close`);
+  // POST  /study-session/{studySessionId}/attendance/close
+  closeAttendance: async (studySessionId: number) => {
+    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/close`);
     return response.data;
   },
 
   // ── 과제 관련 ──────────────────────────────────────────────
-  // GET  /study-session/{studyId}/{sessionId}/assignment
-  getAssignment: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studyId}/${sessionId}/assignment`);
+  // GET  /study-session/{studySessionId}/assignment
+  getAssignment: async (studySessionId: number) => {
+    const response = await AxiosInstance.get(`/study-session/${studySessionId}/assignment`);
     return response.data;
   },
 
-  // POST  /study-session/{studyId}/{sessionId}/assignment
+  // POST  /study-session/{studySessionId}/assignment
   //        body: { title, description?, problemIds }
   createAssignment: async (
-    studyId: number,
-    sessionId: number,
+    studySessionId: number,
     data: { title: string; description?: string; problemIds: number[] }
   ) => {
-    const response = await AxiosInstance.post(`/study-session/${studyId}/${sessionId}/assignment`, data);
+    const response = await AxiosInstance.post(`/study-session/${studySessionId}/assignment`, data);
     return response.data;
   },
 
-  // PUT  /study-session/{studyId}/{sessionId}/assignment
+  // PUT  /study-session/{studySessionId}/assignment
   updateAssignment: async (
-    studyId: number,
-    sessionId: number,
+    studySessionId: number,
     data: { title?: string; description?: string; problemIds?: number[] }
   ) => {
-    const response = await AxiosInstance.put(`/study-session/${studyId}/${sessionId}/assignment`, data);
+    const response = await AxiosInstance.put(`/study-session/${studySessionId}/assignment`, data);
     return response.data;
   },
 
-  // GET  /study-session/{studyId}/{sessionId}/assignment/submissions
-  getAssignmentSubmissions: async (studyId: number, sessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studyId}/${sessionId}/assignment/submissions`);
+  // GET  /study-session/{studySessionId}/assignment/submissions
+  getAssignmentSubmissions: async (studySessionId: number) => {
+    const response = await AxiosInstance.get(`/study-session/${studySessionId}/assignment/submissions`);
     return response.data;
   },
 };
+

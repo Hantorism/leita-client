@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Header, Footer } from '@components';
 import { Environment } from '@utils';
 import { useNavigate } from 'react-router-dom';
+import { useAlert } from '@contexts';
 
 const API_URL = Environment.API_URL;
 const ITEMS_PER_PAGE = 15;
@@ -38,11 +39,12 @@ const JudgePage = () => {
 	const [filter, setFilter] = useState<string>('ALL');
 	const [searchQuery, setSearchQuery] = useState('');
 	const navigate = useNavigate();
+	const { showAlert } = useAlert();
 
 	useEffect(() => {
 		async function fetchJudges() {
 			try {
-				const token = localStorage.getItem('token');
+				const token = localStorage.getItem('accessToken');
 				const response = await fetch(`${API_URL}/judge`, {
 					method:  'GET',
 					headers: {
@@ -52,8 +54,8 @@ const JudgePage = () => {
 				});
 
 				if (response.status === 401) {
-					localStorage.removeItem('token');
-					window.alert('로그인이 필요합니다.');
+					localStorage.removeItem('accessToken');
+					showAlert('error', '로그인이 필요합니다.');
 					navigate('/');
 					return;
 				}
@@ -66,7 +68,7 @@ const JudgePage = () => {
 				setAllJudges(result.data ?? []);
 				setJudges(result.data ?? []);
 			} catch (err) {
-				window.alert('로그인이 필요합니다.');
+				showAlert('error', '로그인이 필요합니다.');
 				navigate('/');
 				setAllJudges([]);
 				setJudges([]);
@@ -111,7 +113,7 @@ const JudgePage = () => {
 	const paginatedJudges = judges.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
 	return (
-		<div className="flex flex-col items-start min-h-screen text-gray-200 pt-[5%] bg-[#1A1A1A] font-Pretendard">
+		<div className="flex flex-col items-start min-h-screen text-gray-200 pt-8 bg-[#1A1A1A] font-Pretendard">
 			<header className="pl-[10%] pr-[10%] w-full text-left">
 				<Header/>
 			</header>

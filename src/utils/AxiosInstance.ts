@@ -1,6 +1,5 @@
-import { Environment } from '@utils/Environment';
+import { Environment } from './Environment';
 import axios, { AxiosError } from 'axios';
-import Cookies from 'js-cookie';
 
 const API_URL = Environment.API_URL;
 
@@ -30,8 +29,6 @@ AxiosInstance.interceptors.response.use(
 		if (err.response?.status === 401) {
 			localStorage.removeItem('user');
 			localStorage.removeItem('accessToken');
-			Cookies.remove('accessToken');
-			Cookies.remove('refreshToken');
 		}
 		return Promise.reject(err);
 	},

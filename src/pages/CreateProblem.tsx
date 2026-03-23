@@ -2,10 +2,12 @@ import { useState, FormEvent } from 'react';
 import { ProblemDescriptionEditor, Header, Footer } from '@components';
 import { Logger, Environment, EncodeBase64 } from '@utils';
 import axios from 'axios';
+import { useAlert } from '@contexts';
 
 const API_URL = Environment.API_URL;
 
 const CreateProblem = () => {
+	const { showAlert } = useAlert();
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState({
 		problem: '',
@@ -22,13 +24,13 @@ const CreateProblem = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		const token = localStorage.getItem('token');
+		const token = localStorage.getItem('accessToken');
 		const encodedTestCases = testCases.map(tc => ({
 			input:  EncodeBase64(tc.input),
 			output: EncodeBase64(tc.output),
 		}));
 		if (testCases.length < 5) {
-			alert('👽 테스트 케이스는 최소 5개 이상이어야 합니다!');
+			showAlert('info', '테스트 케이스는 최소 5개 이상이어야 합니다!');
 			return;
 		}
 
@@ -48,15 +50,15 @@ const CreateProblem = () => {
 			});
 
 			Logger.print(response.data.message);
-			alert('Problem created successfully!');
+			showAlert('success', '문제가 성공적으로 생성되었습니다!');
 		} catch (error) {
 			Logger.error('Error creating problem', error);
-			alert('Error creating problem.');
+			showAlert('error', '문제 생성에 실패했습니다.');
 		}
 	};
 
 	return (
-		<div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-Pretendard">
+		<div className="flex flex-col min-h-screen bg-[#1A1A1A] font-Pretendard pt-8">
 			<header className="pl-[10%] pr-[10%] w-full text-left">
 				<Header/>
 			</header>
