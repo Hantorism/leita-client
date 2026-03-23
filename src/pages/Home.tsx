@@ -21,7 +21,7 @@ const Home = () => {
 	};
 
 	return (
-		<div className="flex flex-col items-start h-screen text-white  pt-[5%]">
+		<div className="flex flex-col items-start h-full text-white pt-8 bg-[#1A1A1A] font-Pretendard">
 			<header className="w-full text-left pl-[10%] pr-[10%]">
 				<Header/>
 			</header>

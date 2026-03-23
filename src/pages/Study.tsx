@@ -3,6 +3,7 @@ import { CreateStudyModal, JoinStudyModal, UpdateStudyModal, DeleteStudyModal, H
 import { studyApi } from '@apis';
 import { Study, StudyUser } from '@types';
 import { Logger } from '@utils';
+import { useAlert } from '@contexts';
 
 interface StudyWithDetail extends Study {
 	adminNames: string[];
@@ -11,6 +12,7 @@ interface StudyWithDetail extends Study {
 }
 
 const StudyPage = () => {
+	const { showAlert } = useAlert();
 	const [studies, setStudies] = useState<Study[]>([]);
 	const [studyDetails, setStudyDetails] = useState<Record<number, StudyWithDetail>>({});
 	const [loading, setLoading] = useState<boolean>(true);
@@ -109,7 +111,7 @@ const StudyPage = () => {
 			fetchStudies();
 		} catch (err: any) {
 			Logger.error('Delete Error:', err);
-			alert('👾 삭제 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+			showAlert('error', '삭제 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
 		} finally {
 			setIsDeleting(false);
 		}

@@ -1,4 +1,5 @@
-import { Environment } from '@utils/Environment';
+import { Environment } from './Environment';
+
 const PROFILE = Environment.PROFILE;
 
 export const Profile = {

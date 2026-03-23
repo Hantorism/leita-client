@@ -3,6 +3,7 @@ import { Header, Footer } from '@components';
 import { Solved } from '@assets/images';
 import { Logger, Environment } from '@utils';
 import axios from 'axios';
+import { useAlert } from '@contexts';
 
 const API_URL = Environment.API_URL;
 
@@ -21,6 +22,7 @@ interface JudgedProblem {
 }
 
 const Problems = () => {
+	const { showAlert } = useAlert();
 	const [problems, setProblems] = useState<Problem[]>([]);
 	const [judgedProblems, setJudgedProblems] = useState<JudgedProblem[]>([]);
 	const [searchQuery, setSearchQuery] = useState('');
@@ -29,7 +31,7 @@ const Problems = () => {
 
 	const problemsPerPage = 10;
 	const [filter, setFilter] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
-	const token = localStorage.getItem('token');
+	const token = localStorage.getItem('accessToken');
 
 	useEffect(() => {
 		const fetchProblems = async () => {
@@ -108,7 +110,7 @@ const Problems = () => {
 	});
 
 	return (
-		<div className="flex flex-col items-start min-h-screen text-gray-900 pt-[5%] bg-[#1A1A1A] font-Pretendard">
+		<div className="flex flex-col items-start min-h-screen text-gray-900 pt-8 bg-[#1A1A1A] font-Pretendard">
 			<header className="pl-[10%] pr-[10%] w-full text-left">
 				<Header/>
 			</header>
@@ -160,7 +162,7 @@ const Problems = () => {
 									onClick={() => {
 										const token = localStorage.getItem('user');
 										if (!token) {
-											alert('🚨 로그인이 필요합니다.');
+											showAlert('error', '로그인이 필요합니다.');
 											return;
 										}
 

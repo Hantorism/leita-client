@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, ChangeEvent } from 'react';
 import { Logger } from '@utils';
 import { IconAdd, IconUpload, IconInsert } from '@assets/images';
 import imageCompression from 'browser-image-compression';
+import { useAlert } from '@contexts';
 
 interface ImageModalProps {
 	isOpen: boolean;
@@ -10,6 +11,7 @@ interface ImageModalProps {
 }
 
 const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
+	const { showAlert } = useAlert();
 	const [selectedImage, setSelectedImage] = useState<string | null>(null);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
@@ -55,7 +57,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 
 		const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
 		if (!allowedTypes.includes(rawFile.type)) {
-			alert('Only PNG, JPG, and JPEG files are allowed.');
+			showAlert('info', 'PNG, JPG, JPEG 파일만 업로드할 수 있습니다.');
 			return;
 		}
 
@@ -74,7 +76,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 			reader.readAsDataURL(file);
 		} catch (error) {
 			Logger.error('Image processing failed:', error);
-			alert('An error occurred while processing the image.');
+			showAlert('error', '이미지 처리 중 오류가 발생했습니다.');
 		} finally {
 			setIsCompressing(false);
 		}
@@ -119,7 +121,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 
 		setTimeout(() => {
 			setUploadedUrl('https://ecimg.cafe24img.com/pg725b28316328009/rediettkr/web/product/extra/small/20241224/083a51d8f6124e463274b4bc0e14b012.jpg');
-			alert('Image uploaded successfully!');
+			showAlert('success', '이미지가 성공적으로 업로드되었습니다!');
 		}, 1000);
 	};
 

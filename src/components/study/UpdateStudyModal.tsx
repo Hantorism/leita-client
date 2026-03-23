@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Logger } from '@utils';
 import { studyApi } from '@apis';
 import { Study } from '@types';
+import { useAlert } from '@contexts';
 
 interface UpdateStudyModalProps {
 	study: Study;
@@ -10,6 +11,7 @@ interface UpdateStudyModalProps {
 }
 
 const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) => {
+	const { showAlert } = useAlert();
 	const [title, setTitle] = useState(study.title);
 	const [description, setDescription] = useState(study.description);
 	const [requirement, setRequirement] = useState(study.requirement || '');
@@ -28,22 +30,22 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 
 	const handleSubmit = async () => {
 		if (!title.trim() || !description.trim() || !requirement.trim() || !startDate || !endDate) {
-			alert('👾 모든 필드를 입력해주세요.');
+			showAlert('info', '모든 필드를 입력해주세요.');
 			return;
 		}
 
 		if (new Date(startDate) >= new Date(endDate)) {
-			alert('👾 스터디 종료일은 시작일보다 늦어야 합니다.');
+			showAlert('info', '스터디 종료일은 시작일보다 늦어야 합니다.');
 			return;
 		}
 
 		if (attendanceRequired && requiredAttendanceCount === '') {
-			alert('👾 필수 출석 횟수를 입력해주세요.');
+			showAlert('info', '필수 출석 횟수를 입력해주세요.');
 			return;
 		}
 
 		if (assignmentRequired && requiredAssignmentCount === '') {
-			alert('👾 필수 과제 개수를 입력해주세요.');
+			showAlert('info', '필수 과제 개수를 입력해주세요.');
 			return;
 		}
 
@@ -61,12 +63,12 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 
 		try {
 			await studyApi.updateStudy(study.id, payload);
-			alert('👾 수정 완료되었습니다!');
+			showAlert('success', '수정 완료되었습니다!');
 			onClose();
 			onUpdated();
 		} catch (err: any) {
 			Logger.error('Update Error:', err);
-			alert('👾 수정 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+			showAlert('error', '수정 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
 		}
 	};
 
@@ -111,7 +113,7 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 						<div>
 							<label className="block text-sm font-bold text-gray-700 mb-1">스터디 시작일</label>
 							<input
-								type="datetime-local"
+								type="date"
 								className="w-full p-2 border rounded bg-white text-gray-900 text-sm"
 								value={startDate}
 								onChange={(e) => setStartDate(e.target.value)}
@@ -120,7 +122,7 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 						<div>
 							<label className="block text-sm font-bold text-gray-700 mb-1">스터디 종료일</label>
 							<input
-								type="datetime-local"
+								type="date"
 								className="w-full p-2 border rounded bg-white text-gray-900 text-sm"
 								value={endDate}
 								onChange={(e) => setEndDate(e.target.value)}

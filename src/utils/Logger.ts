@@ -1,4 +1,5 @@
-import { Profile } from '@utils/Profile';
+import { Profile } from './Profile';
+
 export const Logger = {
 	print: (...args: any[]) => {
 		if (Profile.isNotProd()) {

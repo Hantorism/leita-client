@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Logger } from '@utils';
+import { useAlert } from '@contexts';
 
 interface CreateSessionModalProps {
   studyId: number;
@@ -9,28 +10,29 @@ interface CreateSessionModalProps {
 }
 
 const CreateSessionModal = ({ studyId, onClose, onCreated }: CreateSessionModalProps) => {
+  const { showAlert } = useAlert();
   const [startDateTime, setStartDateTime] = useState('');
   const [endDateTime, setEndDateTime] = useState('');
 
   const handleSubmit = async () => {
     if (!startDateTime || !endDateTime) {
-      alert('시작 시간과 종료 시간을 모두 입력해주세요.');
+      showAlert('info', '시작 시간과 종료 시간을 모두 입력해주세요.');
       return;
     }
 
     if (new Date(startDateTime) >= new Date(endDateTime)) {
-      alert('종료 시간은 시작 시간보다 늦어야 합니다.');
+      showAlert('info', '종료 시간은 시작 시간보다 늦어야 합니다.');
       return;
     }
 
     try {
-      await studyApi.createSession(studyId, { startDateTime, endDateTime });
-      alert('세션이 성공적으로 생성되었습니다.');
+      await studyApi.createSession({ studyId, startDateTime, endDateTime });
+      showAlert('success', '세션이 성공적으로 생성되었습니다.');
       onCreated();
       onClose();
     } catch (err: any) {
       Logger.error('Failed to create session', err);
-      alert('세션 생성에 실패했습니다. (현재 백엔드 API 미완성일 수 있습니다)');
+      showAlert('error', '세션 생성에 실패했습니다.');
     }
   };
 
@@ -38,7 +40,7 @@ const CreateSessionModal = ({ studyId, onClose, onCreated }: CreateSessionModalP
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 font-NanumSquare text-black">
       <div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg">
         <h2 className="text-xl font-bold mb-4">새 세션 생성</h2>
-        
+
         <div className="mb-4">
           <label className="block text-sm font-bold text-gray-700 mb-2">시작 시간</label>
           <input

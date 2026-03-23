@@ -2,7 +2,7 @@ import { Footer, Header } from '@components';
 
 const Privacy = () => {
 	return (
-		<div className="flex flex-col items-start h-screen text-white  pt-[5%]">
+		<div className="flex flex-col items-start h-full bg-[#1A1A1A] font-Pretendard pt-8 text-white">
 			<header className="w-full text-left pl-[10%] pr-[10%]">
 				<Header/>
 			</header>

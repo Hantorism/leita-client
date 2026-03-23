@@ -12,7 +12,9 @@
 }
 
 html, body {
-	overflow: hidden auto;
+	overflow-x: auto;
+	overflow-y: auto;
+	min-width: 560px;
 }
 
 body {
@@ -166,6 +168,7 @@ body {
 body, html {
 	background-color: #1A1A1A;
 	color: white;
+	min-width: 560px;
 }
 
 .App {

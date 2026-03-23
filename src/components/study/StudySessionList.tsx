@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { studyApi } from '@apis';
 import { StudySession, Study } from '@types';
 import { Logger } from '@utils';
-import { CreateSessionModal, AttendanceCheckModal, CreateAssignmentModal } from '@components';
+import { CreateSessionModal, StartAttendanceModal, AddAssignmentModal } from '@components';
+import { useAlert } from '@contexts';
 
 interface StudySessionListProps {
   study: Study;
@@ -11,6 +12,7 @@ interface StudySessionListProps {
 }
 
 const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) => {
+  const { showAlert } = useAlert();
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -25,7 +27,7 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
     try {
       const response = await studyApi.getStudySessions(study.id);
       // 응답 구조에 따라 유연하게 처리
-      const data = response.data ?? response;
+      const data = response.data.content ?? response;
       setSessions(Array.isArray(data) ? data : []);
     } catch (err: any) {
       Logger.error('Failed to fetch sessions', err);
@@ -45,15 +47,15 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
     const endTime = new Date(session.endDateTime);
 
     if (now < startTime || now > endTime) {
-      alert('출석 시간이 아닙니다.');
+      showAlert('info', '출석 시간이 아닙니다.');
       return;
     }
 
     try {
-      await studyApi.attend(study.id, session.id);
-      alert('출석 처리가 완료되었습니다.');
+      await studyApi.attend(session.id);
+      showAlert('success', '출석 처리가 완료되었습니다.');
     } catch (err) {
-      alert('출석 처리에 실패했습니다. 다시 시도해주세요.');
+      showAlert('error', '출석 처리에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
@@ -75,7 +77,7 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
       <div className="flex justify-between items-center border-b border-gray-600 pb-3 pl-2">
         <h2 className="text-2xl font-semibold">스터디 세션</h2>
         {isAdmin && (
-          <button 
+          <button
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-1.5 bg-[#CAFF33] text-black text-sm font-bold rounded-full hover:bg-[#b0e82e]"
           >
@@ -93,30 +95,30 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
               <div>
                 <h3 className="text-lg font-medium text-[#CAFF33]">{index + 1}회차 세션</h3>
                 <p className="text-sm text-gray-400 mt-1">
-                  시작: {new Date(session.startDateTime).toLocaleString()} <br/>
+                  시작: {new Date(session.startDateTime).toLocaleString()} <br />
                   종료: {new Date(session.endDateTime).toLocaleString()}
                 </p>
               </div>
-              
+
               <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
-                {isAdmin && study.assignmentRequired && (
-                  <button 
+                {isAdmin && (
+                  <button
                     onClick={() => setShowAssignmentModal(session.id)}
                     className="px-3 py-1.5 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600"
                   >
                     + Assignment
                   </button>
                 )}
-                {isAdmin && study.attendanceRequired && (
-                  <button 
+                {isAdmin && (
+                  <button
                     onClick={() => setShowAttendanceModal(session.id)}
                     className="px-3 py-1.5 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600"
                   >
                     Start Attendance
                   </button>
                 )}
-                {(isAdmin || isMember) && study.attendanceRequired && (
-                  <button 
+                {(isAdmin || isMember) && (
+                  <button
                     onClick={() => handleAttend(session)}
                     className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-500"
                   >
@@ -130,26 +132,31 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
       </div>
 
       {showCreateModal && (
-        <CreateSessionModal 
-          studyId={study.id} 
-          onClose={() => setShowCreateModal(false)} 
-          onCreated={fetchSessions} 
+        <CreateSessionModal
+          studyId={study.id}
+          onClose={() => setShowCreateModal(false)}
+          onCreated={fetchSessions}
         />
       )}
 
-      {showAttendanceModal !== null && (
-        <AttendanceCheckModal 
-          studyId={study.id} 
-          sessionId={showAttendanceModal}
-          onClose={() => setShowAttendanceModal(null)} 
-        />
-      )}
+      {showAttendanceModal !== null && (() => {
+        const currentSession = sessions.find(s => s.id === showAttendanceModal);
+        return (
+          <StartAttendanceModal
+            studyId={study.id}
+            sessionId={showAttendanceModal}
+            initialOpenTime={currentSession?.startDateTime || ''}
+            initialCloseTime={currentSession?.endDateTime || ''}
+            onClose={() => setShowAttendanceModal(null)}
+          />
+        );
+      })()}
 
       {showAssignmentModal !== null && (
-        <CreateAssignmentModal 
-          studyId={study.id} 
+        <AddAssignmentModal
+          studyId={study.id}
           sessionId={showAssignmentModal}
-          onClose={() => setShowAssignmentModal(null)} 
+          onClose={() => setShowAssignmentModal(null)}
         />
       )}
     </div>
