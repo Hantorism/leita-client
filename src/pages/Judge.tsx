@@ -1,16 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Header, Footer } from '@components';
-import { Environment } from '@utils';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '@contexts';
+import { judgeApi } from '@apis';
 
-const API_URL = Environment.API_URL;
 const ITEMS_PER_PAGE = 15;
-
-interface JudgeResponse {
-	message: string;
-	data: JudgeData[];
-}
 
 interface JudgeData {
 	problemId: number;
@@ -44,32 +38,17 @@ const JudgePage = () => {
 	useEffect(() => {
 		async function fetchJudges() {
 			try {
-				const token = localStorage.getItem('accessToken');
-				const response = await fetch(`${API_URL}/judge`, {
-					method:  'GET',
-					headers: {
-						'Authorization': `Bearer ${token}`,
-						'Content-Type':  'application/json',
-					},
-				});
-
-				if (response.status === 401) {
-					localStorage.removeItem('accessToken');
+				const result = await judgeApi.getJudges();
+				const data = result.data ?? result ?? [];
+				setAllJudges(data);
+				setJudges(data);
+			} catch (err: any) {
+				if (err.response?.status === 401) {
 					showAlert('error', '로그인이 필요합니다.');
 					navigate('/');
-					return;
+				} else {
+					setError('데이터를 가져오는 중 오류가 발생했습니다.');
 				}
-
-				if (!response.ok) {
-					throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
-				}
-
-				const result: JudgeResponse = await response.json();
-				setAllJudges(result.data ?? []);
-				setJudges(result.data ?? []);
-			} catch (err) {
-				showAlert('error', '로그인이 필요합니다.');
-				navigate('/');
 				setAllJudges([]);
 				setJudges([]);
 			} finally {
@@ -78,7 +57,7 @@ const JudgePage = () => {
 		}
 
 		fetchJudges();
-	}, []);
+	}, [navigate, showAlert]);
 
 	useEffect(() => {
 		setCurrentPage(1);

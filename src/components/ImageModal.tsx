@@ -89,35 +89,6 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 	};
 
 	const handleUpload = async () => {
-		/*
-		 if (!selectedFile) {
-		 alert('Please select an image first.');
-		 return;
-		 }
-
-		 const formData = new FormData();
-		 formData.append('image', selectedFile);
-
-		 try {
-		 // '/upload/image'는 실제 서버의 엔드포인트로 수정해야 합니다.
-		 const response = await axiosInstance.post('/upload/image', formData, {
-		 headers: {
-		 'Content-Type': 'multipart/form-data',
-		 },
-		 });
-
-		 const imageUrl = response.data.url;
-		 if (imageUrl) {
-		 setUploadedUrl(imageUrl);
-		 alert('Image uploaded successfully!');
-		 } else {
-		 alert('Failed to get image URL from response.');
-		 }
-		 } catch (error) {
-		 Logger.error('Image upload failed:', error);
-		 alert('Image upload failed.');
-		 }
-		 */
 
 		setTimeout(() => {
 			setUploadedUrl('https://ecimg.cafe24img.com/pg725b28316328009/rediettkr/web/product/extra/small/20241224/083a51d8f6124e463274b4bc0e14b012.jpg');

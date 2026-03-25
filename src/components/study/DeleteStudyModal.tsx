@@ -35,7 +35,7 @@ const DeleteStudyModal = ({ study, isDeleting, onConfirm, onClose }: DeleteStudy
 
 				<p className="text-gray-400 text-xs mb-6">
 					정말 삭제하시겠습니까?<br />
-					<span className="text-red-400 font-semibold underline">되돌릴 수 없습니다.</span>
+					<span className="text-red-400 font-semibold">되돌릴 수 없습니다.</span>
 				</p>
 
 				<div className="flex gap-3 justify-center">
@@ -48,11 +48,10 @@ const DeleteStudyModal = ({ study, isDeleting, onConfirm, onClose }: DeleteStudy
 					<button
 						onClick={onConfirm}
 						disabled={!isMatched || isDeleting}
-						className={`flex-1 px-4 py-2 text-white rounded-full transition ${
-							isMatched && !isDeleting
+						className={`flex-1 px-4 py-2 text-white rounded-full transition ${isMatched && !isDeleting
 								? 'bg-red-600 hover:bg-red-500 shadow-lg shadow-red-900/20'
 								: 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
-						}`}
+							}`}
 					>
 						{isDeleting ? '삭제 중...' : '삭제'}
 					</button>

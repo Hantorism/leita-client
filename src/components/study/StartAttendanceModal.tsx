@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { studyApi } from '@apis';
+import { studyApi, studySessionApi } from '@apis';
 import { Logger } from '@utils';
 import { useAlert } from '@contexts';
 
@@ -11,12 +11,12 @@ interface StartAttendanceModalProps {
   onClose: () => void;
 }
 
-const StartAttendanceModal = ({ 
-  studyId, 
-  sessionId, 
-  initialOpenTime, 
-  initialCloseTime, 
-  onClose 
+const StartAttendanceModal = ({
+  studyId,
+  sessionId,
+  initialOpenTime,
+  initialCloseTime,
+  onClose
 }: StartAttendanceModalProps) => {
   const { showAlert } = useAlert();
   // datetime-local input requires YYYY-MM-DDTHH:mm format
@@ -44,10 +44,10 @@ const StartAttendanceModal = ({
     }
 
     try {
-      await studyApi.startAttendanceCheck(sessionId, {
+      await studySessionApi.openAttendance(sessionId, {
         openTime: new Date(openTime).toISOString(),
         closeTime: new Date(closeTime).toISOString(),
-        lateThresholdMinutes: lateThresholdMinutes === undefined ? undefined : Number(lateThresholdMinutes),
+        lateThresholdMinutes,
       });
       showAlert('success', '출석 체크가 시작되었습니다.');
       onClose();
@@ -95,7 +95,6 @@ const StartAttendanceModal = ({
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">분</span>
             </div>
-            <p className="mt-1 text-[11px] text-gray-500">※ 입력하지 않으면 모든 사용자가 정상 출석으로 처리됩니다.</p>
           </div>
         </div>
 

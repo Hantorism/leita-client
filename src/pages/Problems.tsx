@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Header, Footer } from '@components';
 import { Solved } from '@assets/images';
-import { Logger, Environment } from '@utils';
-import axios from 'axios';
+import { Logger } from '@utils';
+import { problemApi, judgeApi } from '@apis';
 import { useAlert } from '@contexts';
-
-const API_URL = Environment.API_URL;
 
 interface Problem {
 	problemId: number;
@@ -31,28 +29,21 @@ const Problems = () => {
 
 	const problemsPerPage = 10;
 	const [filter, setFilter] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
-	const token = localStorage.getItem('accessToken');
 
 	useEffect(() => {
 		const fetchProblems = async () => {
 			try {
-				const params = {
-					page:   currentPage,
-					size:   problemsPerPage,
-					search: searchQuery,
-					filter: filter !== 'ALL' ? filter : undefined,
-				};
+				const filterValue = filter !== 'ALL' ? filter : undefined;
 
-				const headers = token ? { Authorization: `Bearer ${token}` } : undefined;
+				const res = await problemApi.getProblems(
+					currentPage,
+					problemsPerPage,
+					searchQuery,
+					filterValue as any
+				);
 
-				const res = await axios.get(`${API_URL}/problem`, {
-					params,
-					headers,
-					withCredentials: true,
-				});
-
-				const content = res.data?.data?.content ?? [];
-				const total = res.data?.data?.totalPages ?? 1;
+				const content = res.data?.content ?? res.content ?? [];
+				const total = res.data?.totalPages ?? res.totalPages ?? 1;
 
 				if (!Array.isArray(content)) {
 					throw new Error('Invalid response format');
@@ -67,14 +58,9 @@ const Problems = () => {
 		};
 
 		const fetchJudgedProblems = async () => {
-			if (!token) return;
 			try {
-				const res = await axios.get(`${API_URL}/judge`, {
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				});
-				const judgedData = res.data?.data ?? [];
+				const res = await judgeApi.getJudges();
+				const judgedData = res.data ?? res ?? [];
 				setJudgedProblems(judgedData.filter((judge: JudgedProblem) => judge.result === 'CORRECT'));
 			} catch (error) {
 				Logger.error('Failed to fetch judged problems:', error);
@@ -83,7 +69,7 @@ const Problems = () => {
 
 		fetchProblems();
 		fetchJudgedProblems();
-	}, [currentPage, searchQuery, filter, token]);
+	}, [currentPage, searchQuery, filter]);
 
 	const handlePageChange = (page: number) => {
 		if (page >= 0 && page < totalPages) {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { studyApi } from '@apis';
+import { studyApi, studySessionApi } from '@apis';
 import { StudySession, Study } from '@types';
 import { Logger } from '@utils';
 import { CreateSessionModal, StartAttendanceModal, AddAssignmentModal } from '@components';
@@ -25,7 +25,7 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
     setLoading(true);
     setError(null);
     try {
-      const response = await studyApi.getStudySessions(study.id);
+      const response = await studySessionApi.getStudySessions(study.id);
       // 응답 구조에 따라 유연하게 처리
       const data = response.data.content ?? response;
       setSessions(Array.isArray(data) ? data : []);
@@ -52,7 +52,7 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
     }
 
     try {
-      await studyApi.attend(session.id);
+      await studySessionApi.attend(session.id);
       showAlert('success', '출석 처리가 완료되었습니다.');
     } catch (err) {
       showAlert('error', '출석 처리에 실패했습니다. 다시 시도해주세요.');

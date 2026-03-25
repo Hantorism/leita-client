@@ -7,3 +7,4 @@ export { default as JoinStudyModal } from './JoinStudyModal';
 export { default as StudyMemberList } from './StudyMemberList';
 export { default as StudySessionList } from './StudySessionList';
 export { default as UpdateStudyModal } from './UpdateStudyModal';
+export { default as MemberStatusModal } from './MemberStatusModal';

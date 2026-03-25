@@ -1,10 +1,8 @@
 import { useState, FormEvent } from 'react';
 import { ProblemDescriptionEditor, Header, Footer } from '@components';
-import { Logger, Environment, EncodeBase64 } from '@utils';
-import axios from 'axios';
+import { Logger, EncodeBase64 } from '@utils';
+import { problemApi } from '@apis';
 import { useAlert } from '@contexts';
-
-const API_URL = Environment.API_URL;
 
 const CreateProblem = () => {
 	const { showAlert } = useAlert();
@@ -24,7 +22,6 @@ const CreateProblem = () => {
 
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
-		const token = localStorage.getItem('accessToken');
 		const encodedTestCases = testCases.map(tc => ({
 			input:  EncodeBase64(tc.input),
 			output: EncodeBase64(tc.output),
@@ -35,21 +32,15 @@ const CreateProblem = () => {
 		}
 
 		try {
-			const response = await axios.post(`${API_URL}/problem`, {
+			await problemApi.createProblem({
 				title,
 				description,
 				limit,
 				testCases: encodedTestCases,
 				source,
 				category,
-			}, {
-				headers: {
-					Authorization:  `Bearer ${token}`,
-					'Content-Type': 'application/json',
-				},
 			});
 
-			Logger.print(response.data.message);
 			showAlert('success', '문제가 성공적으로 생성되었습니다!');
 		} catch (error) {
 			Logger.error('Error creating problem', error);

@@ -47,7 +47,7 @@ const StudyPage = () => {
 			const detailEntries = await Promise.all(
 				content.map(async (study: Study) => {
 					try {
-						const detail = await studyApi.getStudyById(study.id);
+						const detail = await studyApi.getStudy(study.id);
 						const detailData = detail.data || detail;
 						const members: StudyUser[] = detailData.members || [];
 						const admins = members.filter((m) => m.role === 'ADMIN');
@@ -164,49 +164,35 @@ const StudyPage = () => {
 									<div className="flex justify-between items-start">
 										<h2 className="text-lg font-bold text-white leading-tight">{study.title}</h2>
 										{detail?.isCurrentUserAdmin && (
-										<div className="flex items-center gap-1 ml-3 shrink-0">
-											<button
-												onClick={(e) => {
-													e.stopPropagation();
-													setUpdateTargetStudy(detail as unknown as Study);
-													setShowUpdateModal(true);
-												}}
-												className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-[#CAFF33] hover:text-black transition"
-											>
-												수정
-											</button>
-											<button
-												onClick={(e) => {
-													e.stopPropagation();
-													setDeleteTargetStudy(detail as unknown as Study);
-													setShowDeleteModal(true);
-												}}
-												className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-red-600 hover:text-white transition"
-											>
-												삭제
-											</button>
-										</div>
-									)}
+											<div className="flex items-center gap-1 ml-3 shrink-0">
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														setUpdateTargetStudy(detail as unknown as Study);
+														setShowUpdateModal(true);
+													}}
+													className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-[#CAFF33] hover:text-black transition"
+												>
+													수정
+												</button>
+												<button
+													onClick={(e) => {
+														e.stopPropagation();
+														setDeleteTargetStudy(detail as unknown as Study);
+														setShowDeleteModal(true);
+													}}
+													className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-red-600 hover:text-white transition"
+												>
+													삭제
+												</button>
+											</div>
+										)}
 									</div>
 
 									{/* 설명 */}
 									<p className="text-gray-400 text-sm leading-relaxed line-clamp-2">
 										{study.description || '설명이 없습니다.'}
 									</p>
-
-									{/* 태그 - 수료 조건 */}
-									<div className="flex flex-wrap gap-2 mt-1">
-										{(detail?.attendanceRequired ?? study.attendanceRequired) && (
-											<span className="text-xs bg-blue-900 text-blue-300 px-2 py-0.5 rounded-full">
-												출석 {detail?.requiredAttendanceCount ?? study.requiredAttendanceCount}회 필요
-											</span>
-										)}
-										{(detail?.assignmentRequired ?? study.assignmentRequired) && (
-											<span className="text-xs bg-purple-900 text-purple-300 px-2 py-0.5 rounded-full">
-												과제 {detail?.requiredAssignmentCount ?? study.requiredAssignmentCount}개 필요
-											</span>
-										)}
-									</div>
 
 									{/* 하단 - 관리자 / 멤버수 */}
 									<div className="flex justify-between items-center mt-auto pt-3 border-t border-gray-700 text-sm">
@@ -246,9 +232,8 @@ const StudyPage = () => {
 							<button
 								key={i}
 								onClick={() => setPage(i)}
-								className={`px-3 py-1.5 rounded-full transition ${
-									page === i ? 'bg-[#CAFF33] text-black font-bold' : 'bg-gray-700 text-white hover:bg-gray-600'
-								}`}
+								className={`px-3 py-1.5 rounded-full transition ${page === i ? 'bg-[#CAFF33] text-black font-bold' : 'bg-gray-700 text-white hover:bg-gray-600'
+									}`}
 							>
 								{i + 1}
 							</button>

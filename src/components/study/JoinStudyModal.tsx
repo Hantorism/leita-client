@@ -23,25 +23,28 @@ const JoinStudyModal = ({ study, onClose }: JoinStudyModalProps) => {
 	};
 
 	return (
-		<div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
-			<div className="bg-gray-100 rounded-xl p-8 w-full max-w-md shadow-lg ">
-				<h2 className="text-xl font-extrabold mb-4 font-NanumSquare">{study.title}</h2>
-				<p className="mb-3 font-bold text-gray-600 font-NanumSquare">{study.description}</p>
-				<p className="mb-10 text-sm text-gray-600 font-NanumSquare">
-					모집 조건: {study.requirement || '없음'}
-				</p>
-				<div className="flex justify-end space-x-2">
+		<div className="fixed inset-0 z-50 bg-black bg-opacity-60 flex justify-center items-center backdrop-blur-sm p-4 animate-fadeIn">
+			<div className="bg-[#1f1f1f] border border-gray-700/50 rounded-2xl p-8 w-full max-w-sm shadow-2xl text-white text-center">
+				<h2 className="text-xl font-bold mb-2 font-NanumSquare">{study.title}</h2>
+				<p className="text-gray-400 text-sm mb-4 leading-relaxed line-clamp-2">{study.description}</p>
+
+				<div className="bg-[#2a2a2a] rounded-xl p-4 mb-8 text-left">
+					<p className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-bold">모집 조건</p>
+					<p className="text-sm text-gray-200">{study.requirement || '제한 없음'}</p>
+				</div>
+
+				<div className="flex flex-col gap-3">
 					<button
-						className="px-4 py-2 bg-gray-300  rounded-full hover:bg-gray-500"
-						onClick={onClose}
-					>
-						Close
-					</button>
-					<button
-						className="px-4 py-2  bg-gray-600 text-white rounded-full  hover:text-[#CAFF33]"
+						className="w-full px-4 py-2.5 bg-[#CAFF33] text-black rounded-full font-bold hover:bg-[#b0e82e] transition shadow-lg shadow-[#CAFF33]/10"
 						onClick={handleJoin}
 					>
-						Join
+						가입 신청하기
+					</button>
+					<button
+						className="w-full px-4 py-2.5 bg-gray-800 text-gray-400 rounded-full font-bold hover:bg-gray-700 hover:text-white transition border border-gray-700"
+						onClick={onClose}
+					>
+						닫기
 					</button>
 				</div>
 			</div>
