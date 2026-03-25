@@ -5,13 +5,13 @@ import { Logger } from '@utils';
 import { CreateSessionModal, StartAttendanceModal, AddAssignmentModal } from '@components';
 import { useAlert } from '@contexts';
 
-interface StudySessionListProps {
+interface StudySessionTabProps {
   study: Study;
   isMember: boolean;
   isAdmin: boolean;
 }
 
-const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) => {
+const StudySessionTab = ({ study, isMember, isAdmin }: StudySessionTabProps) => {
   const { showAlert } = useAlert();
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,4 +163,4 @@ const StudySessionList = ({ study, isMember, isAdmin }: StudySessionListProps) =
   );
 };
 
-export default StudySessionList;
+export default StudySessionTab;

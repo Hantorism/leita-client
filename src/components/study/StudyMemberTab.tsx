@@ -1,31 +1,23 @@
-import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Study, StudyUser } from '@types';
 import { useAlert } from '@contexts';
-import { MemberStatusModal } from './index';
 
-interface StudyMemberListProps {
+interface StudyMemberTabProps {
 	study: Study;
 	isAdmin: boolean;
 	onMemberUpdated: () => void;
+	onOpenProgressModal: (member: StudyUser) => void;
 }
 
-const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListProps) => {
+const StudyMemberTab = ({ study, isAdmin, onMemberUpdated, onOpenProgressModal }: StudyMemberTabProps) => {
 	const { showAlert } = useAlert();
+
 	const admins = study.members?.filter((m: any) => m.role === 'ADMIN') || [];
 	const members = study.members?.filter((m: any) => m.role === 'MEMBER') || [];
 	const pendings = study.members?.filter((m: any) => m.role === 'PENDING') || [];
 
-	const [selectedMember, setSelectedMember] = useState<StudyUser | null>(null);
-	const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
-
 	const storedUser = localStorage.getItem('user');
 	const currentUserEmail = storedUser ? (JSON.parse(storedUser).email || JSON.parse(storedUser).data?.email) : null;
-
-	const handleOpenStatusModal = (member: StudyUser) => {
-		setSelectedMember(member);
-		setIsStatusModalOpen(true);
-	};
 
 	const handleApprove = async (email: string) => {
 		try {
@@ -64,10 +56,10 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 							</div>
 							{(isAdmin || admin.email === currentUserEmail) && (
 								<button
-									onClick={() => handleOpenStatusModal(admin)}
+									onClick={() => onOpenProgressModal(admin)}
 									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
 								>
-									과제/출석 확인
+									출석/과제
 								</button>
 							)}
 						</li>
@@ -93,10 +85,10 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 							</div>
 							{(isAdmin || member.email === currentUserEmail) && (
 								<button
-									onClick={() => handleOpenStatusModal(member)}
+									onClick={() => onOpenProgressModal(member)}
 									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
 								>
-									과제/출석 확인
+									출석/과제
 								</button>
 							)}
 						</li>
@@ -148,17 +140,8 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 					</ul>
 				</div>
 			)}
-
-			{/* 현황 모달 */}
-			{isStatusModalOpen && selectedMember && (
-				<MemberStatusModal
-					studyId={study.id}
-					member={selectedMember}
-					onClose={() => setIsStatusModalOpen(false)}
-				/>
-			)}
 		</div>
 	);
 };
 
-export default StudyMemberList;
+export default StudyMemberTab;

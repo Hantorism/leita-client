@@ -24,6 +24,8 @@ export interface StudySession {
   studyId: number;
   startDateTime: string;
   endDateTime: string;
+  attendanceStatus?: 'BEFORE' | 'OPEN' | 'CLOSED';
+  assignmentCreated?: boolean;
   createdAt: string;
   updatedAt: string;
 }
