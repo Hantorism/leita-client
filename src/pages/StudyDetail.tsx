@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 import { Logger } from '@utils';
 import { studyApi } from '@apis';
 import { Study } from '@types';
-import { StudySessionList, StudyMemberList, Header, Footer } from '@components';
+import { StudySessionTab, StudyMemberTab, StudyProgressTab, StudyProgressModal, Header, Footer } from '@components';
 import { useParams } from 'react-router-dom';
 
-type Tab = 'sessions' | 'members';
+type Tab = 'sessions' | 'members' | 'progress';
 
 const TAB_LABELS: { key: Tab; label: string }[] = [
 	{ key: 'sessions', label: '세션 목록' },
 	{ key: 'members',  label: '멤버 조회' },
+	{ key: 'progress', label: '출석/과제 현황' },
 ];
 
 const StudyDetail = () => {
@@ -20,6 +21,17 @@ const StudyDetail = () => {
 	const [isMember, setIsMember]   = useState(false);
 	const [isAdmin, setIsAdmin]     = useState(false);
 	const [activeTab, setActiveTab] = useState<Tab>('sessions');
+
+	// --- 통합 현황 모달 상태 ---
+	const [isProgressModalOpen, setIsProgressModalOpen] = useState(false);
+	const [progressModalMember, setProgressModalMember] = useState<any>(null);
+	const [progressModalInitialSessionId, setProgressModalInitialSessionId] = useState<number | undefined>(undefined);
+
+	const handleOpenProgressModal = (member: any, sessionId?: number) => {
+		setProgressModalMember(member);
+		setProgressModalInitialSessionId(sessionId);
+		setIsProgressModalOpen(true);
+	};
 
 	const fetchStudy = async () => {
 		if (!id) return;
@@ -91,13 +103,36 @@ const StudyDetail = () => {
 				{/* ── 탭 1: 세션 목록 ── */}
 				{activeTab === 'sessions' && (
 					<div className="w-full animate-fadeIn">
-						<StudySessionList study={study} isMember={isMember} isAdmin={isAdmin} />
+						<StudySessionTab study={study} isMember={isMember} isAdmin={isAdmin} />
 					</div>
 				)}
 
 				{/* ── 탭 2: 멤버 조회 ── */}
 				{activeTab === 'members' && (
-					<StudyMemberList study={study} isAdmin={isAdmin} onMemberUpdated={fetchStudy} />
+					<StudyMemberTab 
+						study={study} 
+						isAdmin={isAdmin} 
+						onMemberUpdated={fetchStudy} 
+						onOpenProgressModal={handleOpenProgressModal}
+					/>
+				)}
+
+				{/* ── 탭 3: 출석/과제 현황 ── */}
+				{activeTab === 'progress' && (
+					<StudyProgressTab 
+						study={study} 
+						onOpenProgressModal={handleOpenProgressModal}
+					/>
+				)}
+
+				{/* 통합 현황 모달 렌더링 (최상위 레벨) */}
+				{isProgressModalOpen && progressModalMember && (
+					<StudyProgressModal
+						study={study}
+						member={progressModalMember}
+						initialSessionId={progressModalInitialSessionId}
+						onClose={() => setIsProgressModalOpen(false)}
+					/>
 				)}
 
 			</main>
