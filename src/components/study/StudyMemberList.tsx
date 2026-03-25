@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { studyApi } from '@apis';
 import { Study, StudyUser } from '@types';
 import { useAlert } from '@contexts';
+import { MemberStatusModal } from './index';
 
 interface StudyMemberListProps {
 	study: Study;
@@ -13,6 +15,17 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 	const admins = study.members?.filter((m: any) => m.role === 'ADMIN') || [];
 	const members = study.members?.filter((m: any) => m.role === 'MEMBER') || [];
 	const pendings = study.members?.filter((m: any) => m.role === 'PENDING') || [];
+
+	const [selectedMember, setSelectedMember] = useState<StudyUser | null>(null);
+	const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
+
+	const storedUser = localStorage.getItem('user');
+	const currentUserEmail = storedUser ? (JSON.parse(storedUser).email || JSON.parse(storedUser).data?.email) : null;
+
+	const handleOpenStatusModal = (member: StudyUser) => {
+		setSelectedMember(member);
+		setIsStatusModalOpen(true);
+	};
 
 	const handleApprove = async (email: string) => {
 		try {
@@ -49,7 +62,14 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 								<span className="block font-medium text-lg truncate text-gray-100">{admin.name}</span>
 								<span className="block text-sm text-gray-400 truncate">{admin.email}</span>
 							</div>
-							<span className="ml-auto shrink-0 text-xs px-2 py-0.5 rounded-full bg-[#CAFF33] bg-opacity-20 text-[#CAFF33] border border-[#CAFF33] border-opacity-30">Admin</span>
+							{(isAdmin || admin.email === currentUserEmail) && (
+								<button
+									onClick={() => handleOpenStatusModal(admin)}
+									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
+								>
+									과제/출석 확인
+								</button>
+							)}
 						</li>
 					))}
 					{admins.length === 0 && (
@@ -71,7 +91,14 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 								<span className="block font-medium text-lg truncate text-gray-100">{member.name}</span>
 								<span className="block text-sm text-gray-400 truncate">{member.email}</span>
 							</div>
-							<span className="ml-auto shrink-0 text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300 border border-gray-600">Member</span>
+							{(isAdmin || member.email === currentUserEmail) && (
+								<button
+									onClick={() => handleOpenStatusModal(member)}
+									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
+								>
+									과제/출석 확인
+								</button>
+							)}
 						</li>
 					))}
 					{members.length === 0 && (
@@ -120,6 +147,15 @@ const StudyMemberList = ({ study, isAdmin, onMemberUpdated }: StudyMemberListPro
 						)}
 					</ul>
 				</div>
+			)}
+
+			{/* 현황 모달 */}
+			{isStatusModalOpen && selectedMember && (
+				<MemberStatusModal
+					studyId={study.id}
+					member={selectedMember}
+					onClose={() => setIsStatusModalOpen(false)}
+				/>
 			)}
 		</div>
 	);

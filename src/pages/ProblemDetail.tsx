@@ -1,10 +1,8 @@
 import { useEffect, useState, useRef, MouseEvent as ReactMouseEvent } from 'react';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
-import { Logger, Environment, Profile } from '@utils';
+import { Logger, Profile } from '@utils';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-const API_URL = Environment.API_URL;
+import { problemApi } from '@apis';
 
 interface TestCase {
 	id?: number;
@@ -52,20 +50,12 @@ const ProblemDetail = () => {
 		}
 	};
 
-	useEffect(() => {
-		const queryParams = new URLSearchParams(window.location.search);
-		const token = queryParams.get('token');
-
-		if (token) {
-			localStorage.setItem('accessToken', token);
-		}
-	}, []);
 
 	useEffect(() => {
 		const fetchProblem = async () => {
 			try {
-				const res = await axios.get(`${API_URL}/problem/${id}`);
-				const data = res.data?.data;
+				const res = await problemApi.getProblem(Number(id));
+				const data = res.data || res;
 
 				if (!data) {
 					throw new Error('Invalid response format');

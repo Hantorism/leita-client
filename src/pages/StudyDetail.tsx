@@ -24,7 +24,7 @@ const StudyDetail = () => {
 	const fetchStudy = async () => {
 		if (!id) return;
 		try {
-			const result    = await studyApi.getStudyById(parseInt(id, 10));
+			const result    = await studyApi.getStudy(parseInt(id, 10));
 			const studyData = result.data || result;
 			setStudy(studyData);
 			document.title = `${studyData.title} | Leita`;
@@ -69,27 +69,6 @@ const StudyDetail = () => {
 						<p className="text-gray-400 mt-2 text-sm">{study.description}</p>
 					</div>
 
-					{/* 수료 조건 배지 */}
-					<div className="flex flex-wrap gap-2 shrink-0 sm:mt-1">
-						{study.attendanceRequired ? (
-							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-blue-700 bg-blue-900 bg-opacity-30 text-blue-300 font-semibold whitespace-nowrap">
-								출석 {study.requiredAttendanceCount}회
-							</span>
-						) : (
-							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-gray-700 bg-black bg-opacity-20 text-gray-500 whitespace-nowrap">
-								출석 불필요
-							</span>
-						)}
-						{study.assignmentRequired ? (
-							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-purple-700 bg-purple-900 bg-opacity-30 text-purple-300 font-semibold whitespace-nowrap">
-								과제 {study.requiredAssignmentCount}개
-							</span>
-						) : (
-							<span className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-full border border-gray-700 bg-black bg-opacity-20 text-gray-500 whitespace-nowrap">
-								과제 불필요
-							</span>
-						)}
-					</div>
 				</div>
 
 				{/* 탭 네비게이션 */}

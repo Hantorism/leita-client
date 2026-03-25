@@ -1,12 +1,10 @@
 import { useEffect, Dispatch, SetStateAction } from 'react';
-import { Logger, AxiosInstance, Environment } from '@utils';
+import { Logger } from '@utils';
 import { User } from '@types';
 import { googleLogout, useGoogleLogin, TokenResponse } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
 import { useAlert } from '@contexts';
-
-const API_URL = Environment.API_URL;
+import { authApi } from '@apis';
 
 interface LoginProps {
 	user: User | null;
@@ -22,7 +20,6 @@ const Login = ({ user, setUser }: LoginProps) => {
 		const storedUser = localStorage.getItem('user');
 
 		if (!token) {
-			// 토큰이 없는데 유저 데이터가 남아있으면 즉시 초기화
 			if (storedUser) {
 				localStorage.removeItem('user');
 			}
@@ -30,20 +27,16 @@ const Login = ({ user, setUser }: LoginProps) => {
 			return;
 		}
 
-		// 토큰이 있을 때만 기존 유저 데이터 로드
 		if (storedUser) {
 			setUser(JSON.parse(storedUser));
 		}
 
-		// 서버를 통해 현재 토큰이 유효한지 검증 (동시에 최신 유저 정보 갱신)
-		AxiosInstance.get(`${API_URL}/auth/info`, {
-			headers: { Authorization: `Bearer ${token}` },
-		}).then((res: any) => {
-			setUser(res.data);
-			localStorage.setItem('user', JSON.stringify(res.data));
+		// Use authApi to validate token and refresh user info
+		authApi.getAuthInfo().then((res: any) => {
+			setUser(res);
+			localStorage.setItem('user', JSON.stringify(res));
 		}).catch((err: any) => {
 			Logger.error('Token validation failed:', err);
-			// 토큰 만료 등 권한 에러 발생 시 로그아웃 처리
 			if (err.response?.status === 401) {
 				setUser(null);
 				localStorage.removeItem('user');
@@ -55,36 +48,26 @@ const Login = ({ user, setUser }: LoginProps) => {
 	const signInWithGoogle = useGoogleLogin({
 		onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
 			try {
-				const res = await AxiosInstance.post(`${API_URL}/auth/oauth`, {
-					accessToken: tokenResponse.access_token,
-				}, {
-					headers: {
-						'Content-Type': 'application/json',
-					},
-				});
+				const res = await authApi.oauthRegister(tokenResponse.access_token);
+				Logger.print(' Google Login Response:', res);
 
-				Logger.print(' Google Login Response:', res.data);
-
-				const accessToken = res.data.data.accessToken;
+				const accessToken = res.data?.accessToken || res.accessToken;
 				if (!accessToken) {
 					return;
 				}
 
 				localStorage.setItem('accessToken', accessToken);
 
-				const userRes = await AxiosInstance.get<User>(`${API_URL}/auth/info`, {
-					headers: { Authorization: `Bearer ${accessToken}` },
-				});
+				const userRes = await authApi.getAuthInfo();
+				Logger.print(' User Info Response:', userRes);
 
-				Logger.print(' User Info Response:', userRes.data);
-
-				setUser(userRes.data);
-				localStorage.setItem('user', JSON.stringify(userRes.data));
+				setUser(userRes);
+				localStorage.setItem('user', JSON.stringify(userRes));
 
 				navigate('/');
-			} catch (error) {
+			} catch (error: any) {
 				Logger.error(' Google login failed:', error);
-				if (axios.isAxiosError(error) && (error as AxiosError).response?.status === 401) {
+				if (error.response?.status === 401) {
 					showAlert('error', '@ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!');
 				} else {
 					showAlert('error', '로그인 중 문제가 발생했습니다. 다시 시도해주세요.');

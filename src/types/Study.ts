@@ -13,11 +13,7 @@ export interface Study {
   id: number;
   title: string;
   description: string;
-  attendanceRequired: boolean;
-  assignmentRequired: boolean;
-  requiredAttendanceCount: number;
-  requiredAssignmentCount: number;
-  requirement?: string;
+  requirement: string;
   startDate: string;
   endDate: string;
   members: StudyUser[];

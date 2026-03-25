@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { studyApi } from '@apis';
+import { studyApi, studySessionApi } from '@apis';
 import { Logger } from '@utils';
 import { useAlert } from '@contexts';
 
@@ -26,7 +26,7 @@ const CreateSessionModal = ({ studyId, onClose, onCreated }: CreateSessionModalP
     }
 
     try {
-      await studyApi.createSession({ studyId, startDateTime, endDateTime });
+      await studySessionApi.createStudySession({ studyId, startDateTime, endDateTime });
       showAlert('success', '세션이 성공적으로 생성되었습니다.');
       onCreated();
       onClose();

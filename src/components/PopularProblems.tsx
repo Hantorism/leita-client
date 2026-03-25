@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Logger, Environment } from '@utils';
-import { useNavigate } from 'react-router-dom';
-
-const API_URL = Environment.API_URL;
+import { Logger } from '@utils';
+import { problemApi } from '@apis';
 
 interface Problem {
 	problemId: number;
@@ -15,19 +13,15 @@ interface Problem {
 
 const PopularProblems = () => {
 	const [problems, setProblems] = useState<Problem[]>([]);
-	const navigate = useNavigate();
+
 	useEffect(() => {
 		const fetchProblems = async () => {
 			try {
-				const response = await fetch(`${API_URL}/problem`);
-				const data = await response.json();
+				const res = await problemApi.getProblems(0, 20);
+				const content = res.data?.content || res.content || [];
 
-				if (!data?.data?.content) {
-					throw new Error('Invalid response format');
-				}
-
-				const sortedProblems = [...data.data.content]
-					.sort((a: Problem, b: Problem) => b.solved.totalCount - a.solved.totalCount)
+				const sortedProblems = [...content]
+					.sort((a: Problem, b: Problem) => (b.solved?.totalCount || 0) - (a.solved?.totalCount || 0))
 					.slice(0, 5);
 
 				setProblems(sortedProblems);

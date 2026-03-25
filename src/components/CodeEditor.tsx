@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect, MouseEvent as ReactMouseEvent } from 'react';
 import { CustomDropdown } from '@components';
-import { Logger, Environment } from '@utils';
+import { Logger } from '@utils';
 import MonacoEditor, { Monaco } from '@monaco-editor/react';
 import { useNavigate } from 'react-router-dom';
 import * as monacoEditor from 'monaco-editor';
 import { useAlert } from '@contexts';
-
-const API_URL = Environment.API_URL;
+import { problemApi, judgeApi } from '@apis';
 
 interface TestResult {
 	actualOutput: string;
@@ -193,57 +192,27 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 	};
 
 	const handleSubmitCode = async () => {
-
 		if (language === 'undefined') {
 			showAlert('info', '언어를 선택해주세요!');
 			return;
 		}
 
-		if (!token) {
-			showAlert('error', '로그인이 필요합니다.');
-			setIsSubmitting(false);
-			return;
-		}
 		setIsSubmitting(true);
 		setIsSubmitMode(true);
 		setResult(null);
 
 		try {
-			const response = await fetch(`${API_URL}/judge/submit/${problemId}`, {
-				method:  'POST',
-				headers: {
-					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
-				body:    JSON.stringify({
-					code:     encodeBase64(code),
-					language: language.toUpperCase(),
-				}),
+			const resultData = await judgeApi.submitCode(Number(problemId), {
+				code:     encodeBase64(code),
+				language: language.toUpperCase(),
 			});
 
-			const resultData = await response.json();
-
-			if (response.ok) {
-				setResult({
-					message:  resultData.message || '✅ 제출 성공!',
-					isSubmit: true,
-					result:   resultData.data?.result || '',
-					error:    resultData.data?.error || null,
-				});
-
-				//     const userConfirmed = window.confirm("🏁제출이 완료되었습니다! 내가 푼 문제 페이지로 이동할까요?");
-				//     if (userConfirmed) {
-				//         navigate("/judge");
-				//     }
-				// } else {
-				//
-				//     setResult({
-				//         message: `❌ 제출 실패: ${resultData.message}`,
-				//         isSubmit: false,
-				//         result: "",
-				//         error: resultData.data?.error || "알 수 없는 오류 발생"
-				//     });
-			}
+			setResult({
+				message:  resultData.message || '✅ 제출 성공!',
+				isSubmit: true,
+				result:   resultData.data?.result || resultData.result || '',
+				error:    resultData.data?.error || resultData.error || null,
+			});
 		} catch (error) {
 			Logger.error('서버 요청 오류:', error);
 			setResult({
@@ -255,11 +224,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		}
 
 		setIsSubmitting(false);
-
 	};
 
 	const handleRunCode = async () => {
-
 		if (language === 'undefined') {
 			showAlert('info', '언어를 선택해주세요!');
 			return;
@@ -267,25 +234,11 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		setIsRunningCode(true);
 		setIsSubmitMode(false);
 		setResult(null);
-		const token = localStorage.getItem('accessToken');
-		try {
-			const problemResponse = await fetch(`${API_URL}/problem/${problemId}`, {
-				method:  'GET',
-				headers: {
-					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
-			});
 
-			if (!problemResponse.ok) {
-				throw new Error('문제 정보를 가져오는 데 실패했습니다.');
-			}
-			const problemData = await problemResponse.json();
-			const testCases = problemData?.data?.testCases || [];
-			const combinedTestCases = [
-				...initialTestCases,
-				...testCases.slice(initialTestCases.length), // 사용자가 추가한 테스트 케이스
-			];
+		try {
+			const problemRes = await problemApi.getProblem(Number(problemId));
+			const problemData = problemRes.data || problemRes;
+			const testCases = problemData?.testCases || [];
 
 			if (testCases.length === 0) {
 				setResult({ message: '테스트 케이스가 없습니다.', isSubmit: false });
@@ -293,55 +246,37 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 				return;
 			}
 
-			const response = await fetch(`${API_URL}/judge/run/${problemId}`, {
-				method:  'POST',
-				headers: {
-					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
-				body:    JSON.stringify({
-					code:     encodeBase64(code),
-					language: language.toUpperCase(),
-					// testCases: testCases.map(({ input, output }) => ({
-					//     input: encodeBase64(input),
-					//     output: encodeBase64(output),
-					// })),
-					testCases: combinedTestCases.map(({ input, output }) => ({
-						input:  input,
-						output: output,
-						// input: encodeBase64(input),
-						// output: encodeBase64(output),
-					})),
-				}),
+			const combinedTestCases = [
+				...initialTestCases,
+				...testCases.slice(initialTestCases.length),
+			];
+
+			const resultData = await judgeApi.runCode(Number(problemId), {
+				code:      encodeBase64(code),
+				language:  language.toUpperCase(),
+				testCases: combinedTestCases.map(({ input, output }) => ({
+					input,
+					output,
+				})),
 			});
 
-			const resultData = await response.json();
-
-			if (response.ok) {
-				setResult({
-					message:   resultData.message || '🛠 실행 완료!',
-					testCases: resultData.data.map((testResult: { result: string; error?: string }, index: number) => ({
-						actualOutput: testResult.result,
-						error:        testResult.error || null,
-						isPassed:     testResult.result === testCases[index].output,
-					})),
-					isSubmit:  false,
-				});
-			} else {
-				setResult({
-					error:    `❌ 실행 실패: ${resultData.message}`,
-					message:  resultData.message || '실행 중 오류 발생',
-					isSubmit: false,
-				});
-			}
-
-		} catch (error) {
 			setResult({
-				message:  '서버 요청 중 오류 발생',
+				message:   resultData.message || '🛠 실행 완료!',
+				isSubmit:  false,
+				testCases: resultData.data?.map((testResult: any, index: number) => ({
+					actualOutput: testResult.result || '',
+					error:        testResult.error || null,
+					isPassed:     testResult.result === combinedTestCases[index].output,
+				})) || [],
+			});
+		} catch (error) {
+			Logger.error('코드 실행 오류:', error);
+			setResult({
+				message:  ' 실행 중 오류 발생',
 				isSubmit: false,
+				error:    '서버 요청 실패',
 			});
 		}
-
 		setIsRunningCode(false);
 	};
 
@@ -397,50 +332,35 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 		setIsRunningCode(true);
 		setResult(null);
 
-		const token = localStorage.getItem('accessToken');
 		const testCase = testCases[index];
 
 		try {
-			const response = await fetch(`${API_URL}/judge/run/${problemId}`, {
-				method:  'POST',
-				headers: {
-					'Content-Type':  'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
-				body:    JSON.stringify({
-					code:      encodeBase64(code),
-					language:  language.toUpperCase(),
-					testCases: [
-						{
-							input:  encodeBase64(testCase.input),
-							output: encodeBase64(testCase.output),
-						},
-					],
-				}),
+			const resultData = await judgeApi.runCode(Number(problemId), {
+				code:      encodeBase64(code),
+				language:  language.toUpperCase(),
+				testCases: [
+					{
+						input:  testCase.input,
+						output: testCase.output,
+					},
+				],
 			});
 
-			const resultData = await response.json();
-
-			if (response.ok) {
-				setResult({
-					message:   resultData.message || '🛠 실행 완료!',
-					testCases: resultData.data.map((item: any) => ({
-						actualOutput: item.result,
-						error:        item.error || null,
-					})),
-					isSubmit:  false,
-				});
-			} else {
-				setResult({
-					error:    `❌ 실행 실패: ${resultData.message}`,
-					message:  resultData.message || '실행 중 오류 발생',
-					isSubmit: false,
-				});
-			}
-		} catch (error) {
 			setResult({
-				message:  '서버 요청 중 오류 발생',
+				message:   resultData.message || '🛠 실행 완료!',
+				isSubmit:  false,
+				testCases: resultData.data?.map((item: any) => ({
+					actualOutput: item.result || '',
+					error:        item.error || null,
+					isPassed:     item.status === 'CORRECT',
+				})) || [],
+			});
+		} catch (error) {
+			Logger.error('코드 실행 오류:', error);
+			setResult({
+				message:  ' 실행 중 오류 발생',
 				isSubmit: false,
+				error:    '서버 요청 실패',
 			});
 		}
 
