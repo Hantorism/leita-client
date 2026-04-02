@@ -1,4 +1,4 @@
-import { Home, Problems, Study, ProblemDetail, StudyDetail, Term, Privacy, Judge, CreateProblem } from '@pages';
+import { Home, Problems, Study, ProblemDetail, StudyDetail, StudySessionDetail, Term, Privacy, Judge, CreateProblem } from '@pages';
 import { PrivateRoute } from '@components';
 import { Environment } from '@utils';
 import { Routes, Route } from 'react-router-dom';
@@ -22,6 +22,7 @@ const App = () => {
 				<Route path="/create-problem" element={<PrivateRoute element={<CreateProblem/>}/>}/>
 				<Route path="/study" element={<PrivateRoute element={<Study/>}/>}/>
 				<Route path="/study/:id" element={<PrivateRoute element={<StudyDetail/>}/>}/>
+				<Route path="/study/:id/session/:sessionId" element={<PrivateRoute element={<StudySessionDetail/>}/>}/>
 			</Routes>
 		</GoogleOAuthProvider>
 	);

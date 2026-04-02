@@ -125,10 +125,14 @@ const StudyProgressTab = ({ study, onOpenProgressModal }: StudyProgressTabProps)
 							<tbody>
 								{sortedMembers.map((member) => (
 									<tr key={member.userId} className="h-[64px]">
-										<td className="px-4 border-b border-gray-700/50">
-											<div className="flex flex-col justify-center min-w-0">
-												<span className="text-white font-medium text-sm truncate leading-tight">{member.name}</span>
-												<span className="text-gray-500 text-[10px] truncate leading-tight mt-0.5">{member.email}</span>
+										<td className="px-3 border-b border-gray-700/50 max-w-[128px]">
+											<div className="flex flex-col justify-center w-full min-w-0">
+												<span className="block text-white font-medium text-sm truncate leading-tight w-full" title={member.name}>
+													{member.name}
+												</span>
+												<span className="block text-gray-400 text-[10px] truncate leading-tight mt-0.5 w-full" title={member.email}>
+													{member.email}
+												</span>
 											</div>
 										</td>
 									</tr>

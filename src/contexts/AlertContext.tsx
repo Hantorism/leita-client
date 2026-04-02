@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { AlertModal } from '@components';
+import { Alert } from '@components';
 
 export type AlertType = 'success' | 'error' | 'info';
 
@@ -45,7 +45,7 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
     <AlertContext.Provider value={{ showAlert }}>
       {children}
       {alert && (
-        <AlertModal
+        <Alert
           type={alert.type}
           message={alert.message}
           onClose={closeAlert}

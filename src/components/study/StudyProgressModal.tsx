@@ -3,6 +3,7 @@ import { FiX } from 'react-icons/fi';
 import { studySessionApi, problemApi } from '@apis';
 import { StudySession, Study, StudyUser } from '@types';
 import { useAlert } from '@contexts';
+import { Button } from '@components';
 
 interface StudyProgressModalProps {
 	study: Study;
@@ -108,7 +109,7 @@ const StudyProgressModal = ({ study, member: initialMember, initialSessionId, on
 			}
 		};
 		fetchSessions();
-	}, [study.id, showAlert]);
+	}, [study.id, showAlert, initialSessionId]);
 
 	useEffect(() => {
 		if (selectedSessionId === '') return;
@@ -234,20 +235,21 @@ const StudyProgressModal = ({ study, member: initialMember, initialSessionId, on
 					</div>
 
 					{/* Close Button (X) */}
-					<button 
+					<Button 
+						variant="ghost"
 						onClick={onClose}
-						className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+						className="absolute right-6 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors !px-0 !py-0 shadow-none border-none hover:bg-transparent"
 						aria-label="Close"
 					>
 						<FiX size={24} />
-					</button>
+					</Button>
 				</div>
 
 				{/* ── Content Body ── */}
-				<div className="flex-1 overflow-hidden flex flex-col lg:flex-row p-6 gap-6 bg-[#171717]">
+				<div className="flex-1 overflow-hidden flex flex-row p-6 gap-6 bg-[#171717]">
 					
 					{/* Left Panel: Attendance */}
-					<div className="flex-1 bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar">
+					<div className="bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar w-80 shrink-0">
 						<h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-200">
 							<span className="text-xl">⏱️</span> 출석 정보
 						</h3>
@@ -292,24 +294,24 @@ const StudyProgressModal = ({ study, member: initialMember, initialSessionId, on
 									<div className="pt-4 border-t border-gray-700/50 mt-auto">
 										<h4 className="text-sm font-semibold text-[#CAFF33] mb-3">🛠️ [관리자] 출석 상태 변경</h4>
 										<div className="flex gap-2">
-											<button 
-												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'PRESENT' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
+											<Button 
+												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'PRESENT' ? 'bg-green-500 text-black border-green-500 hover:bg-green-400' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
 												onClick={() => handleUpdateAttendance('PRESENT')}
 											>
 												출석
-											</button>
-											<button 
-												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'LATE' ? 'bg-yellow-400 text-black border-yellow-400' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
+											</Button>
+											<Button 
+												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'LATE' ? 'bg-yellow-400 text-black border-yellow-400 hover:bg-yellow-300' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
 												onClick={() => handleUpdateAttendance('LATE')}
 											>
 												지각
-											</button>
-											<button 
-												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'ABSENT' || (!userAttRecord && sessionDetail?.attendanceStatus !== 'BEFORE') ? 'bg-red-500 text-white border-red-500' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
+											</Button>
+											<Button 
+												className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'ABSENT' || (!userAttRecord && sessionDetail?.attendanceStatus !== 'BEFORE') ? 'bg-red-500 text-white border-red-500 hover:bg-red-400' : 'bg-gray-800 text-gray-400 hover:bg-gray-700 border-gray-700'}`}
 												onClick={() => handleUpdateAttendance('ABSENT')}
 											>
 												결석
-											</button>
+											</Button>
 										</div>
 									</div>
 								) : (
@@ -320,7 +322,7 @@ const StudyProgressModal = ({ study, member: initialMember, initialSessionId, on
 					</div>
 
 					{/* Right Panel: Assignment */}
-					<div className="flex-1 bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar lg:max-w-md">
+					<div className="flex-1 bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar">
 						<h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-200">
 							<span className="text-xl">📚</span> 과제 현황
 						</h3>
@@ -370,18 +372,18 @@ const StudyProgressModal = ({ study, member: initialMember, initialSessionId, on
 									<div className="pt-4 border-t border-gray-700/50 mt-auto shrink-0">
 										<h4 className="text-sm font-semibold text-[#CAFF33] mb-3">🛠️ [관리자] 과제 결과 부여</h4>
 										<div className="flex gap-2">
-											<button 
-												className="flex-1 py-2.5 text-sm font-bold rounded-lg bg-[#2a2a2a] text-gray-300 hover:bg-green-500/20 hover:text-green-400 border border-gray-600/50 hover:border-green-500/50 transition-all shadow-sm"
+											<Button 
+												className="flex-1 py-2.5 text-sm rounded-lg bg-[#2a2a2a] text-gray-300 hover:bg-green-500/20 hover:text-green-400 border border-gray-600/50 hover:border-green-500/50 transition-all shadow-sm"
 												onClick={() => handleUpdateAssignmentPass(true)}
 											>
 												✅ Pass
-											</button>
-											<button 
-												className="flex-1 py-2.5 text-sm font-bold rounded-lg bg-[#2a2a2a] text-gray-300 hover:bg-red-500/20 hover:text-red-400 border border-gray-600/50 hover:border-red-500/50 transition-all shadow-sm"
+											</Button>
+											<Button 
+												className="flex-1 py-2.5 text-sm rounded-lg bg-[#2a2a2a] text-gray-300 hover:bg-red-500/20 hover:text-red-400 border border-gray-600/50 hover:border-red-500/50 transition-all shadow-sm"
 												onClick={() => handleUpdateAssignmentPass(false)}
 											>
 												❌ Fail
-											</button>
+											</Button>
 										</div>
 									</div>
 								) : (
