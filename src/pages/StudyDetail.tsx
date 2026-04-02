@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Logger } from '@utils';
 import { studyApi } from '@apis';
 import { Study } from '@types';
-import { StudySessionTab, StudyMemberTab, StudyProgressTab, StudyProgressModal, Header, Footer } from '@components';
+import { StudySessionTab, StudyMemberTab, StudyProgressTab, StudyProgressModal, Header, Footer, Button } from '@components';
 import { useParams } from 'react-router-dom';
 
 type Tab = 'sessions' | 'members' | 'progress';
@@ -86,17 +86,18 @@ const StudyDetail = () => {
 				{/* 탭 네비게이션 */}
 				<div className="w-full flex border-b border-gray-700 mb-8">
 					{TAB_LABELS.map(({ key, label }) => (
-						<button
+						<Button
 							key={key}
+							variant="ghost"
 							onClick={() => setActiveTab(key)}
-							className={`px-6 py-3 text-sm font-semibold transition-all duration-200 border-b-2 -mb-[2px] ${
+							className={`!px-6 !py-3 font-semibold border-b-2 -mb-[2px] !rounded-none ${
 								activeTab === key
-									? 'border-[#CAFF33] text-[#CAFF33]'
-									: 'border-transparent text-gray-400 hover:text-white'
+									? 'border-[#CAFF33] !text-[#CAFF33]'
+									: 'border-transparent hover:text-white'
 							}`}
 						>
 							{label}
-						</button>
+						</Button>
 					))}
 				</div>
 
@@ -113,7 +114,6 @@ const StudyDetail = () => {
 						study={study} 
 						isAdmin={isAdmin} 
 						onMemberUpdated={fetchStudy} 
-						onOpenProgressModal={handleOpenProgressModal}
 					/>
 				)}
 

@@ -1,15 +1,15 @@
 import { studyApi } from '@apis';
 import { Study, StudyUser } from '@types';
 import { useAlert } from '@contexts';
+import { Button } from '@components';
 
 interface StudyMemberTabProps {
 	study: Study;
 	isAdmin: boolean;
 	onMemberUpdated: () => void;
-	onOpenProgressModal: (member: StudyUser) => void;
 }
 
-const StudyMemberTab = ({ study, isAdmin, onMemberUpdated, onOpenProgressModal }: StudyMemberTabProps) => {
+const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps) => {
 	const { showAlert } = useAlert();
 
 	const admins = study.members?.filter((m: any) => m.role === 'ADMIN') || [];
@@ -54,14 +54,6 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated, onOpenProgressModal }
 								<span className="block font-medium text-lg truncate text-gray-100">{admin.name}</span>
 								<span className="block text-sm text-gray-400 truncate">{admin.email}</span>
 							</div>
-							{(isAdmin || admin.email === currentUserEmail) && (
-								<button
-									onClick={() => onOpenProgressModal(admin)}
-									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
-								>
-									출석/과제
-								</button>
-							)}
 						</li>
 					))}
 					{admins.length === 0 && (
@@ -83,14 +75,6 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated, onOpenProgressModal }
 								<span className="block font-medium text-lg truncate text-gray-100">{member.name}</span>
 								<span className="block text-sm text-gray-400 truncate">{member.email}</span>
 							</div>
-							{(isAdmin || member.email === currentUserEmail) && (
-								<button
-									onClick={() => onOpenProgressModal(member)}
-									className="ml-auto shrink-0 px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
-								>
-									출석/과제
-								</button>
-							)}
 						</li>
 					))}
 					{members.length === 0 && (
@@ -119,18 +103,20 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated, onOpenProgressModal }
 								</div>
 
 								<div className="flex gap-2 shrink-0">
-									<button
+									<Button
+										size="sm"
 										onClick={() => handleDeny(user.email)}
-										className="px-3 py-1.5 bg-gray-700 text-white text-xs rounded-md hover:bg-red-500 transition-colors"
+										className="hover:bg-red-500"
 									>
 										거절
-									</button>
-									<button
+									</Button>
+									<Button
+										variant="primary"
+										size="sm"
 										onClick={() => handleApprove(user.email)}
-										className="px-3 py-1.5 bg-[#CAFF33] text-black text-xs font-bold rounded-md hover:bg-[#b0e82e] transition-colors"
 									>
 										승인
-									</button>
+									</Button>
 								</div>
 							</li>
 						))}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { CreateStudyModal, JoinStudyModal, UpdateStudyModal, DeleteStudyModal, Header, Footer } from '@components';
+import { CreateStudyModal, JoinStudyModal, UpdateStudyModal, DeleteStudyModal, Header, Footer, Button } from '@components';
 import { studyApi } from '@apis';
 import { Study, StudyUser } from '@types';
 import { Logger } from '@utils';
@@ -130,12 +130,13 @@ const StudyPage = () => {
 						<h1 className="text-3xl font-bold text-white">스터디 그룹</h1>
 						<p className="text-gray-400 mt-1 text-sm">참여할 스터디를 선택하거나 직접 스터디를 만들어 보세요.</p>
 					</div>
-					<button
+					<Button
+						variant="primary"
 						onClick={() => setShowCreateModal(true)}
-						className="bg-[#CAFF33] text-black px-5 py-2 rounded-full font-bold hover:bg-[#b0e82e] transition"
+						className="rounded-full !px-5"
 					>
-						+ Create Study
-					</button>
+						+ 스터디 생성
+					</Button>
 				</div>
 
 				{/* 로딩 / 에러 / 빈 상태 */}
@@ -165,26 +166,28 @@ const StudyPage = () => {
 										<h2 className="text-lg font-bold text-white leading-tight">{study.title}</h2>
 										{detail?.isCurrentUserAdmin && (
 											<div className="flex items-center gap-1 ml-3 shrink-0">
-												<button
+												<Button
+													variant="secondary"
 													onClick={(e) => {
 														e.stopPropagation();
 														setUpdateTargetStudy(detail as unknown as Study);
 														setShowUpdateModal(true);
 													}}
-													className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-[#CAFF33] hover:text-black transition"
+													className="text-xs !px-3 !py-1 rounded-full hover:bg-[#CAFF33] hover:text-black"
 												>
 													수정
-												</button>
-												<button
+												</Button>
+												<Button
+													variant="secondary"
 													onClick={(e) => {
 														e.stopPropagation();
 														setDeleteTargetStudy(detail as unknown as Study);
 														setShowDeleteModal(true);
 													}}
-													className="text-xs px-3 py-1 bg-gray-700 text-gray-300 rounded-full hover:bg-red-600 hover:text-white transition"
+													className="text-xs !px-3 !py-1 rounded-full hover:bg-red-600 hover:text-white"
 												>
 													삭제
-												</button>
+												</Button>
 											</div>
 										)}
 									</div>
@@ -221,30 +224,35 @@ const StudyPage = () => {
 				{/* 페이지네이션 */}
 				{totalPages > 1 && (
 					<div className="flex justify-center mt-10 gap-2">
-						<button
+						<Button
+							variant="secondary"
+							size="sm"
 							onClick={() => setPage((p) => Math.max(p - 1, 0))}
 							disabled={page === 0}
-							className="px-3 py-1.5 rounded-full bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-40 transition"
+							className="rounded-full"
 						>
 							이전
-						</button>
+						</Button>
 						{Array.from({ length: totalPages }, (_, i) => (
-							<button
+							<Button
 								key={i}
+								size="sm"
+								variant={page === i ? 'primary' : 'secondary'}
 								onClick={() => setPage(i)}
-								className={`px-3 py-1.5 rounded-full transition ${page === i ? 'bg-[#CAFF33] text-black font-bold' : 'bg-gray-700 text-white hover:bg-gray-600'
-									}`}
+								className="rounded-full"
 							>
 								{i + 1}
-							</button>
+							</Button>
 						))}
-						<button
+						<Button
+							variant="secondary"
+							size="sm"
 							onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
 							disabled={page === totalPages - 1}
-							className="px-3 py-1.5 rounded-full bg-gray-700 text-white hover:bg-gray-600 disabled:opacity-40 transition"
+							className="rounded-full"
 						>
 							다음
-						</button>
+						</Button>
 					</div>
 				)}
 			</main>
