@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { studySessionApi } from '@apis';
-import { Logger } from '@utils';
-import { useAlert } from '@contexts';
 import { Modal } from '@components';
+import { useAlert } from '@contexts';
+import { Logger } from '@utils';
+import { useState } from 'react';
 
 interface CreateStudySessionModalProps {
   studyId: number;
@@ -57,7 +57,7 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
           <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">시작 시간</label>
           <input
             type="datetime-local"
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFF33]/50 transition [color-scheme:dark]"
+            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition [color-scheme:dark]"
             value={startDateTime}
             onChange={(e) => setStartDateTime(e.target.value)}
           />
@@ -67,7 +67,7 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
           <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">종료 시간</label>
           <input
             type="datetime-local"
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFF33]/50 transition [color-scheme:dark]"
+            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition [color-scheme:dark]"
             value={endDateTime}
             onChange={(e) => setEndDateTime(e.target.value)}
           />

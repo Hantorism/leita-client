@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { studyApi, studySessionApi, problemApi } from '@apis';
-import { Logger } from '@utils';
+import { problemApi, studyApi, studySessionApi } from '@apis';
+import { Button, Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Modal, Button } from '@components';
+import { Logger } from '@utils';
+import { useEffect, useState } from 'react';
 
 interface Problem {
   problemId: number;
@@ -53,13 +53,13 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
   }, [searchQuery]);
 
   const handleSelectProblem = (problem: Problem) => {
-    if (!selectedProblems.some(p => p.problemId === problem.problemId)) {
+    if (!selectedProblems.some((p) => p.problemId === problem.problemId)) {
       setSelectedProblems([...selectedProblems, problem]);
     }
   };
 
   const handleRemoveProblem = (problemId: number) => {
-    setSelectedProblems(selectedProblems.filter(p => p.problemId !== problemId));
+    setSelectedProblems(selectedProblems.filter((p) => p.problemId !== problemId));
   };
 
   const handleSubmit = async () => {
@@ -68,13 +68,13 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
       return;
     }
 
-    const problemIds = selectedProblems.map(p => p.problemId);
+    const problemIds = selectedProblems.map((p) => p.problemId);
 
     try {
       await studySessionApi.createAssignment(sessionId, {
         title,
         description,
-        problemIds
+        problemIds,
       });
       showAlert('success', '과제가 성공적으로 등록되었습니다.');
       onClose();
@@ -98,7 +98,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
           <label className="block text-sm font-medium text-gray-400 mb-2">과제 제목</label>
           <input
             type="text"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors"
             placeholder="예: 1주차 기본 알고리즘"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -108,7 +108,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
         <div>
           <label className="block text-sm font-medium text-gray-400 mb-2">설명</label>
           <textarea
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors min-h-[80px]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors min-h-[80px]"
             placeholder="상세 설명 (선택 사항)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -122,9 +122,18 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
               <span className="text-gray-500 text-sm">선택된 문제가 없습니다. 아래에서 검색하여 추가해주세요.</span>
             )}
             {selectedProblems.map((p) => (
-              <div key={p.problemId} className="flex items-center gap-2 px-3 py-1.5 bg-[#CAFF33] text-black rounded-full text-sm font-semibold max-w-full">
-                <span className="truncate">{p.problemId}. {p.title}</span>
-                <Button variant="ghost" onClick={() => handleRemoveProblem(p.problemId)} className="!px-0 !py-0 text-black/60 hover:text-black hover:bg-transparent ml-1 shrink-0 bg-transparent shadow-none border-none">
+              <div
+                key={p.problemId}
+                className="flex items-center gap-2 px-3 py-1.5 bg-[#CAFE33] text-black rounded-full text-sm font-semibold max-w-full"
+              >
+                <span className="truncate">
+                  {p.problemId}. {p.title}
+                </span>
+                <Button
+                  variant="ghost"
+                  onClick={() => handleRemoveProblem(p.problemId)}
+                  className="!px-0 !py-0 text-black/60 hover:text-black hover:bg-transparent ml-1 shrink-0 bg-transparent shadow-none border-none"
+                >
                   ✕
                 </Button>
               </div>
@@ -137,7 +146,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
           <input
             type="text"
             placeholder="문제 번호 또는 제목으로 검색..."
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors mb-2"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors mb-2"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -149,19 +158,29 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
               <div className="p-3 text-gray-400 text-center">검색 결과가 없습니다.</div>
             ) : (
               problems.map((p) => {
-                const isSelected = selectedProblems.some(selected => selected.problemId === p.problemId);
+                const isSelected = selectedProblems.some((selected) => selected.problemId === p.problemId);
                 return (
                   <div
                     key={p.problemId}
-                    className={`p-3 border-b border-white/5 flex justify-between items-center transition-colors ${isSelected ? 'bg-white/10 text-gray-300 cursor-default' : 'hover:bg-white/5 cursor-pointer text-white'
-                      }`}
+                    className={`p-3 border-b border-white/5 flex justify-between items-center transition-colors ${
+                      isSelected
+                        ? 'bg-white/10 text-gray-300 cursor-default'
+                        : 'hover:bg-white/5 cursor-pointer text-white'
+                    }`}
                     onClick={() => !isSelected && handleSelectProblem(p)}
                   >
-                    <span className="truncate pr-4 font-NanumSquare">{p.problemId}. {p.title}</span>
+                    <span className="truncate pr-4 font-NanumSquare">
+                      {p.problemId}. {p.title}
+                    </span>
                     {isSelected ? (
                       <span className="text-xs text-gray-500 font-semibold shrink-0">선택됨</span>
                     ) : (
-                      <Button variant="ghost" className="!px-0 !py-0 text-[#CAFF33] hover:text-[#CAFF33] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none">추가</Button>
+                      <Button
+                        variant="ghost"
+                        className="!px-0 !py-0 text-[#CAFE33] hover:text-[#CAFE33] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none"
+                      >
+                        추가
+                      </Button>
                     )}
                   </div>
                 );
