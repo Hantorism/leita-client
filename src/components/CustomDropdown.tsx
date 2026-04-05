@@ -32,16 +32,17 @@ const CustomDropdown = ({ language, handleLanguageChange }: CustomDropdownProps)
     setIsOpen(false); // 드롭다운 접기
   };
 
-	return (
-    <div className="relative z-10"> {/* z-10을 추가해 드롭다운을 다른 요소 위에 표시 */}
+  return (
+    <div className="relative z-10">
+      {' '}
+      {/* z-10을 추가해 드롭다운을 다른 요소 위에 표시 */}
       <div
         className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-Pretendard text-[0.9rem] cursor-pointer w-[200px] flex items-center justify-between"
         onClick={toggleDropdown}
       >
         <span>{languages.find((lang) => lang.value === language)?.label || 'Select Language'}</span>
-        <FiChevronDown className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`}/>
+        <FiChevronDown className={`transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
       </div>
-
       {isOpen && (
         <ul className="absolute left-0 mt-1 w-[200px] bg-[#3E3E3E] rounded-md shadow-lg z-20">
           {languages.map(({ value, label }) => (

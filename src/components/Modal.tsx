@@ -1,7 +1,7 @@
-import { useEffect, ReactNode } from 'react';
-import { createPortal } from 'react-dom';
 import { Button } from '@components';
 import type { ComponentProps } from 'react';
+import { type ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   title: string;
@@ -9,7 +9,6 @@ interface ModalProps {
   onClose: () => void;
   buttons?: (Omit<ComponentProps<typeof Button>, 'children'> & { text: string })[];
 }
-
 
 const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
   // ESC 키를 누르면 모달 닫기
@@ -32,7 +31,7 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
       >
         {/* 헤더 */}
         <div className="flex items-center justify-between px-8 pt-8 pb-2">
-          <h2 className="text-xl font-bold text-[#CAFF33]">{title}</h2>
+          <h2 className="text-xl font-bold text-[#CAFE33]">{title}</h2>
           <Button
             variant="ghost"
             onClick={onClose}
@@ -52,14 +51,7 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
             {buttons.map((btn, idx) => {
               const { text, ...props } = btn;
               return (
-                <Button
-                  key={idx}
-                  size="lg"
-                  fullWidth
-                  className="rounded-full"
-                  variant="secondary"
-                  {...props}
-                >
+                <Button key={idx} size="lg" fullWidth className="rounded-full" variant="secondary" {...props}>
                   {text}
                 </Button>
               );

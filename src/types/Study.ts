@@ -37,7 +37,7 @@ export interface Attendance {
   userId: number;
   userName: string;
   userEmail: string;
-  status: "PRESENT" | "LATE" | "ABSENT";
+  status: 'PRESENT' | 'LATE' | 'ABSENT';
   attendedAt: string | null;
 }
 
@@ -47,7 +47,7 @@ export interface AttendanceCheck {
   openTime: string;
   closeTime: string;
   lateThresholdMinutes: number;
-  status: "OPEN" | "CLOSED";
+  status: 'OPEN' | 'CLOSED';
   attendances: Attendance[];
 }
 

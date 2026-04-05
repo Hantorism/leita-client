@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
 type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -11,14 +11,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary:
-    'bg-[#CAFF33] text-black font-bold hover:bg-[#b0e82e] shadow-lg shadow-[#CAFF33]/10',
-  secondary:
-    'bg-gray-700 text-white font-bold hover:bg-gray-600',
-  danger:
-    'bg-red-600 text-white font-bold hover:bg-red-500 shadow-lg shadow-red-900/20',
-  ghost:
-    'bg-transparent text-gray-400 hover:text-white',
+  primary: 'bg-[#CAFE33] text-black font-bold hover:bg-[#b0e82e] shadow-lg shadow-[#CAFE33]/10',
+  secondary: 'bg-gray-700 text-white font-bold hover:bg-gray-600',
+  danger: 'bg-red-600 text-white font-bold hover:bg-red-500 shadow-lg shadow-red-900/20',
+  ghost: 'bg-transparent text-gray-400 hover:text-white',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -45,7 +41,9 @@ const Button = ({
         fullWidth ? 'w-full' : '',
         disabled ? 'opacity-40 cursor-not-allowed' : '',
         className,
-      ].filter(Boolean).join(' ')}
+      ]
+        .filter(Boolean)
+        .join(' ')}
       disabled={disabled}
       {...props}
     >

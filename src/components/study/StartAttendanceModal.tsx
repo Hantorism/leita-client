@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
 import { studySessionApi } from '@apis';
-import { Logger } from '@utils';
-import { useAlert } from '@contexts';
 import { Modal } from '@components';
+import { useAlert } from '@contexts';
+import { Logger } from '@utils';
+import { useEffect, useState } from 'react';
 
 interface StartAttendanceModalProps {
   studyId: number;
@@ -17,7 +17,7 @@ const StartAttendanceModal = ({
   sessionId,
   initialOpenTime,
   initialCloseTime,
-  onClose
+  onClose,
 }: StartAttendanceModalProps) => {
   const { showAlert } = useAlert();
 
@@ -79,7 +79,7 @@ const StartAttendanceModal = ({
           <label className="block text-sm font-medium text-gray-400 mb-2">출석 시작 시간</label>
           <input
             type="datetime-local"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors [color-scheme:dark]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors [color-scheme:dark]"
             value={openTime}
             onChange={(e) => setOpenTime(e.target.value)}
           />
@@ -89,7 +89,7 @@ const StartAttendanceModal = ({
           <label className="block text-sm font-medium text-gray-400 mb-2">출석 마감 시간</label>
           <input
             type="datetime-local"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors [color-scheme:dark]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors [color-scheme:dark]"
             value={closeTime}
             onChange={(e) => setCloseTime(e.target.value)}
           />
@@ -101,7 +101,7 @@ const StartAttendanceModal = ({
             <input
               type="number"
               min="0"
-              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFF33] transition-colors pr-10"
+              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors pr-10"
               value={lateThresholdMinutes}
               onChange={(e) => setLateThresholdMinutes(e.target.value ? Number(e.target.value) : 0)}
             />

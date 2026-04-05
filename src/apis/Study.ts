@@ -1,5 +1,5 @@
+import type { Study } from '@types';
 import { AxiosInstance } from '@utils';
-import { Study } from '@types';
 
 export const studyApi = {
   // GET /study
@@ -62,4 +62,3 @@ export const studyApi = {
     return response.data;
   },
 };
-
