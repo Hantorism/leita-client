@@ -6,6 +6,7 @@ import {
   PrivacyPage,
   ProblemDetailPage,
   ProblemsPage,
+  SourcePage,
   StudyDetailPage,
   StudyPage,
   StudySessionDetailPage,
@@ -47,6 +48,10 @@ const App = () => {
         <Route
           path="/judge"
           element={<PrivateRoute element={<JudgePage />} />}
+        />
+        <Route
+          path="/source"
+          element={<PrivateRoute element={<SourcePage />} />}
         />
         <Route
           path="/create-problem"
