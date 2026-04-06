@@ -1,10 +1,10 @@
-import { Icon } from '@assets/images';
+import { Tabs } from '@assets/images';
 import { Footer, Header, PopularProblems } from '@components';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Home = () => {
+const HomePage = () => {
   const navigate = useNavigate();
   const [startAnimation, setStartAnimation] = useState<boolean>(false);
 
@@ -26,59 +26,71 @@ const Home = () => {
         <Header />
       </header>
 
-      <div className="flex flex-col items-start justify-center w-[90%] max-w-[900px] p-5 pl-[13%] pt-[8%]">
-        <div className="inline-flex items-center gap-1 bg-white bg-opacity-10 px-3 py-2 rounded-[60px] w-fit mb-5">
-          <img src={Icon} className="w-[24px] h-[24px]" alt="icon" />
-          <a className="font-Pretendard text-sm font-light text-[#E0E0E0] leading-[1.5]">
-            다양한 프로그래밍 문제를 풀고, 실시간 온라인 채점을 통해 실력을 확인하세요.
-          </a>
-        </div>
+      <div className="flex flex-col lg:flex-row items-center justify-between w-full max-w-[1280px] mx-auto px-10 pt-12 pb-8 gap-12">
+        {/* Left Column: Text Content */}
+        <div className="flex flex-col items-start flex-1 max-w-[650px]">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 shadow-sm backdrop-blur-sm"
+          >
+            <div className="bg-[#CAFE33] rounded-full p-0.5">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="black"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <span className="font-Pretendard text-sm font-medium text-[#E0E0E0] leading-none">
+              다양한 프로그래밍 문제를 풀고, 실시간 온라인 채점을 통해 실력을 확인하세요.
+            </span>
+          </motion.div>
 
-        <motion.div
-          className="text-left"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 1.5,
-            ease: 'easeOut',
-          }}
-        >
-          <div className="text-left">
-            <h1 className="text-[2.5rem] font-sans font-extrabold leading-[1.3] uppercase text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          >
+            <h1 className="text-[3rem] lg:text-[4rem] font-sans font-extrabold leading-[1.1] uppercase text-white mb-10 tracking-tight">
               START <br />
-              YOUR CODING JOURNEY
-              <br />
+              YOUR CODING JOURNEY <br />
               WITH LEITA! 🚀
             </h1>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Right Column: Image Preview */}
         <motion.div
-          className="text-left"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 3,
-            ease: 'easeOut',
-          }}
+          className="flex-1 w-full max-w-[600px]"
+          initial={{ opacity: 0, x: 40, rotate: 2 }}
+          animate={{ opacity: 1, x: 0, rotate: 0 }}
+          transition={{ duration: 1.5, ease: 'easeOut' }}
         >
-          <button
-            onClick={handleClick}
-            className="font-Pretendard mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFE33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFE33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
-          >
-            Let's solve problems!
-          </button>
+          <img
+            src={Tabs}
+            alt="Dashboard Preview"
+            className="w-full transform transition duration-500 hover:scale-[1.02]"
+          />
         </motion.div>
-        <div className="mt-20"></div>
       </div>
 
-      <div className="  pl-[10%]  pr-[10%] p-10 pt-3 w-full text-left">
+      <div className="pl-[10%] pr-[10%] w-full text-left">
         <PopularProblems />
       </div>
-      <footer className="w-full text-left">
+
+      <footer className="w-full text-left mt-10">
         <Footer />
       </footer>
     </div>
   );
 };
 
-export default Home;
+export default HomePage;

@@ -17,7 +17,12 @@ const PrivateRoute = ({ element }: PrivateRouteProps) => {
   }, [isAuthenticated]);
 
   if (!isAuthenticated) {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate
+        to="/"
+        replace
+      />
+    );
   }
 
   return element;

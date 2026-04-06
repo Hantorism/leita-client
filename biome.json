@@ -14,10 +14,20 @@
     "indentStyle": "space",
     "lineWidth": 120
   },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
       "recommended": true,
+      "correctness": {
+        "noUnusedImports": "error"
+      },
       "style": {
         "useSingleVarDeclarator": "off"
       }
@@ -25,10 +35,15 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
+      "arrowParentheses": "always",
+      "attributePosition": "multiline",
+      "bracketSameLine": false,
+      "bracketSpacing": true,
       "jsxQuoteStyle": "double",
+      "quoteProperties": "preserve",
+      "quoteStyle": "single",
       "semicolons": "always",
-      "trailingCommas": "es5"
+      "trailingCommas": "all"
     }
   }
 }

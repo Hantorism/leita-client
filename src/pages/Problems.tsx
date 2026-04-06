@@ -2,7 +2,7 @@ import { judgeApi, problemApi } from '@apis';
 import { Solved } from '@assets/images';
 import { Footer, Header } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { getCurrentUserEmail, Logger } from '@utils';
 import { useEffect, useState } from 'react';
 
 interface Problem {
@@ -19,7 +19,7 @@ interface JudgedProblem {
   result: string;
 }
 
-const Problems = () => {
+const ProblemsPage = () => {
   const { showAlert } = useAlert();
   const [problems, setProblems] = useState<Problem[]>([]);
   const [judgedProblems, setJudgedProblems] = useState<JudgedProblem[]>([]);
@@ -123,7 +123,7 @@ const Problems = () => {
         />
       </div>
 
-      <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5">
+      <div className="flex-grow max-w-3xl mx-auto w-full pt-9 lg:text-sm pl-5 pr-5">
         <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
           <table className=" w-full text-left ">
             <thead>
@@ -139,8 +139,8 @@ const Problems = () => {
                   <tr
                     key={problem.problemId}
                     onClick={() => {
-                      const token = localStorage.getItem('user');
-                      if (!token) {
+                      const email = getCurrentUserEmail();
+                      if (!email) {
                         showAlert('error', '로그인이 필요합니다.');
                         return;
                       }
@@ -156,11 +156,18 @@ const Problems = () => {
                     <td className="p-3 font-Pretendard">
                       {problem.title || '제목 없음'}
                       {isProblemSolved(problem.problemId) && (
-                        <img src={Solved} alt="solved" className="ml-2 w-3 h-3 mb-1 inline-block" />
+                        <img
+                          src={Solved}
+                          alt="solved"
+                          className="ml-2 w-3 h-3 mb-1 inline-block"
+                        />
                       )}
                       <div className="flex flex-wrap gap-2 mt-1">
                         {problem.category?.map((cat, i) => (
-                          <span key={i} className="px-2 py-1 text-xs text-gray-200 border border-gray-500 rounded-full">
+                          <span
+                            key={i}
+                            className="px-2 py-1 text-xs text-gray-200 border border-gray-500 rounded-full"
+                          >
                             {cat}
                           </span>
                         )) || <span className="text-xs text-gray-400">없음</span>}
@@ -173,7 +180,10 @@ const Problems = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={3} className="p-3 text-center text-gray-400">
+                  <td
+                    colSpan={3}
+                    className="p-3 text-center text-gray-400"
+                  >
                     👾 해당 조건에 맞는 문제가 없습니다.
                   </td>
                 </tr>
@@ -204,4 +214,4 @@ const Problems = () => {
   );
 };
 
-export default Problems;
+export default ProblemsPage;

@@ -314,7 +314,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
   const handleTestCaseChange = (index: number, field: 'input' | 'output', value: string) => {
     setTestCases((prevTestCases) =>
-      prevTestCases.map((testCase, i) => (i === index ? { ...testCase, [field]: value } : testCase))
+      prevTestCases.map((testCase, i) => (i === index ? { ...testCase, [field]: value } : testCase)),
     );
   };
 
@@ -383,7 +383,10 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           {/*    <option value="kotlin">Kotlin</option>*/}
           {/*    <option value="swift">Swift</option>*/}
           {/*</select>*/}
-          <CustomDropdown language={language} handleLanguageChange={handleLanguageChange} />
+          <CustomDropdown
+            language={language}
+            handleLanguageChange={handleLanguageChange}
+          />
 
           {/*<div className="mt-4">*/}
           {/*    <p>Selected Language: {language}</p>*/}
@@ -403,8 +406,19 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
                 </svg>
                 RUNNING
               </>
@@ -427,8 +441,19 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                   fill="none"
                   viewBox="0 0 24 24"
                 >
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
                 </svg>
                 Submitting
               </>
@@ -481,7 +506,10 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         {isSubmitMode ? null : (
           <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
             {testCases.map((_, index) => (
-              <div key={index} className="relative">
+              <div
+                key={index}
+                className="relative"
+              >
                 <button
                   onClick={() => setSelectedTestCase(index)}
                   className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${

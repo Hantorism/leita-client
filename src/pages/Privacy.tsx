@@ -1,6 +1,6 @@
 import { Footer, Header } from '@components';
 
-const Privacy = () => {
+const PrivacyPage = () => {
   return (
     <div className="flex flex-col items-start h-full bg-[#1A1A1A] font-Pretendard pt-8 text-white">
       <header className="w-full text-left pl-[10%] pr-[10%]">
@@ -73,4 +73,4 @@ const Privacy = () => {
   );
 };
 
-export default Privacy;
+export default PrivacyPage;

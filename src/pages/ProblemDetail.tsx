@@ -32,7 +32,7 @@ interface ProblemDetailType {
   authorName: string;
 }
 
-const ProblemDetail = () => {
+const ProblemDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const [problem, setProblem] = useState<ProblemDetailType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -119,7 +119,10 @@ const ProblemDetail = () => {
 
         <div className="mt-3 flex flex-wrap gap-2">
           {problem.category?.map((cat, i) => (
-            <span key={i} className="px-2 py-1 text-xs text-gray-200 border border-gray-500 rounded-full">
+            <span
+              key={i}
+              className="px-2 py-1 text-xs text-gray-200 border border-gray-500 rounded-full"
+            >
               {cat}
             </span>
           ))}
@@ -177,7 +180,10 @@ const ProblemDetail = () => {
         <div className="pt-6">
           <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
           {problem.testCases.map((testCase, index) => (
-            <div key={testCase.id || index} className="mt-1 p-3 bg-black rounded-lg">
+            <div
+              key={testCase.id || index}
+              className="mt-1 p-3 bg-black rounded-lg"
+            >
               {testCase.input.trim() !== '' && (
                 <>
                   <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
@@ -221,10 +227,15 @@ const ProblemDetail = () => {
       </div>
 
       <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full">
-        <CodeEditor code={code} setCode={setCode} problemId={String(problem.problemId)} testCases={problem.testCases} />
+        <CodeEditor
+          code={code}
+          setCode={setCode}
+          problemId={String(problem.problemId)}
+          testCases={problem.testCases}
+        />
       </div>
     </div>
   );
 };
 
-export default ProblemDetail;
+export default ProblemDetailPage;

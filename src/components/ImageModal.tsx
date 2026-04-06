@@ -1,5 +1,6 @@
-import { IconAdd, IconInsert, IconUpload } from '@assets/images';
+import { Modal } from '@components';
 import { useAlert } from '@contexts';
+import { Icon } from '@iconify/react';
 import { Logger } from '@utils';
 import imageCompression from 'browser-image-compression';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
@@ -22,25 +23,10 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
     if (!isOpen) {
       setSelectedImage(null);
       setUploadedUrl(null);
-      return;
     }
+  }, [isOpen]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, onClose]);
-
-  if (!isOpen) {
-    return null;
-  }
+  if (!isOpen) return null;
 
   const compressFile = async (file: File): Promise<File> => {
     const options = {
@@ -91,58 +77,81 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
   const handleUpload = async () => {
     setTimeout(() => {
       setUploadedUrl(
-        'https://ecimg.cafe24img.com/pg725b28316328009/rediettkr/web/product/extra/small/20241224/083a51d8f6124e463274b4bc0e14b012.jpg'
+        'https://ecimg.cafe24img.com/pg725b28316328009/rediettkr/web/product/extra/small/20241224/083a51d8f6124e463274b4bc0e14b012.jpg',
       );
       showAlert('success', '이미지가 성공적으로 업로드되었습니다!');
     }, 1000);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#1E1E1E] rounded-lg p-6 w-full max-w-md">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-white text-lg">Insert Image</h2>
-          <button onClick={onClose} className="text-white">
-            &times;
-          </button>
-        </div>
-        <div className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-500 rounded-lg mb-4">
+    <Modal
+      title="Insert Image"
+      onClose={onClose}
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-500 rounded-lg min-h-[100px] overflow-hidden">
           {selectedImage ? (
-            <img src={selectedImage} alt="Preview" className="w-full max-w-full max-h-96 object-contain" />
+            <img
+              src={selectedImage}
+              alt="Preview"
+              className="w-full max-w-full max-h-96 object-contain"
+            />
           ) : isCompressing ? (
             <div className="flex items-center justify-center h-24">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
             </div>
           ) : (
-            <button onClick={handlePlusButtonClick} className="flex items-center gap-2">
-              <img src={IconAdd} alt="Add image" className="w-6 h-6 invert" />
+            <button
+              onClick={handlePlusButtonClick}
+              className="flex items-center gap-2 p-8 text-gray-400 hover:text-white transition"
+              type="button"
+            >
+              <Icon
+                icon="material-symbols-light:add-circle-outline"
+                className="w-6 h-6"
+              />
               <span>Add</span>
             </button>
           )}
-          <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" accept="image/*" />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            className="hidden"
+            accept="image/*"
+          />
         </div>
+
         <div className="flex justify-end gap-2">
           {selectedImage && !uploadedUrl && (
             <button
               onClick={handleUpload}
-              className="flex items-center justify-center gap-2 px-4 py-1 bg-gray-600 text-white rounded-md w-32"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-md w-32 hover:bg-gray-500 transition"
+              type="button"
             >
-              <img src={IconUpload} alt="Upload image" className="w-6 h-6 invert" />
+              <Icon
+                icon="material-symbols-light:upload-rounded"
+                className="w-6 h-6"
+              />
               <span>Upload</span>
             </button>
           )}
           {uploadedUrl && (
             <button
               onClick={() => onInsert(uploadedUrl)}
-              className="flex items-center justify-center gap-2 px-4 py-1 bg-[#CAFE33] text-black rounded-md w-32"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-[#CAFE33] text-black rounded-md w-32 hover:bg-[#d8ff5b] transition"
+              type="button"
             >
-              <img src={IconInsert} alt="Insert image" className="w-6 h-6" />
+              <Icon
+                icon="material-symbols-light:upload-file-outline"
+                className="w-6 h-6"
+              />
               <span>Insert</span>
             </button>
           )}
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

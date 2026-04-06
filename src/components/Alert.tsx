@@ -41,12 +41,17 @@ const Alert = ({ type, message, onClose }: AlertProps) => {
         <div className="text-4xl mb-4">{icon}</div>
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p className="text-gray-300 text-sm mb-8 leading-relaxed whitespace-pre-line">{message}</p>
-        <Button onClick={onClose} size="lg" fullWidth className={`text-white rounded-full ${buttonBg}`}>
+        <Button
+          onClick={onClose}
+          size="lg"
+          fullWidth
+          className={`text-white rounded-full ${buttonBg}`}
+        >
           확인
         </Button>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

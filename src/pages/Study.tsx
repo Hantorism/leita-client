@@ -10,7 +10,7 @@ import {
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
-import { Logger } from '@utils';
+import { getCurrentUserEmail, Logger } from '@utils';
 import { useEffect, useState } from 'react';
 
 interface StudyWithDetail extends Study {
@@ -35,12 +35,6 @@ const StudyPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [deleteTargetStudy, setDeleteTargetStudy] = useState<Study | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const getCurrentUserEmail = (): string | null => {
-    const storedUser = localStorage.getItem('user');
-    const currentUser = storedUser ? JSON.parse(storedUser) : null;
-    return currentUser?.data?.email?.toLowerCase().trim() ?? null;
-  };
 
   const fetchStudies = async () => {
     setLoading(true);
@@ -83,7 +77,7 @@ const StudyPage = () => {
               },
             ] as [number, StudyWithDetail];
           }
-        })
+        }),
       );
       setStudyDetails(Object.fromEntries(detailEntries));
     } catch (err: any) {
@@ -139,10 +133,14 @@ const StudyPage = () => {
         {/* 타이틀 & Create 버튼 */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">스터디 그룹</h1>
+            <h1 className="text-3xl font-bold text-white">스터디</h1>
             <p className="text-gray-400 mt-1 text-sm">참여할 스터디를 선택하거나 직접 스터디를 만들어 보세요.</p>
           </div>
-          <Button variant="primary" onClick={() => setShowCreateModal(true)} className="rounded-full !px-5">
+          <Button
+            variant="primary"
+            onClick={() => setShowCreateModal(true)}
+            className="rounded-full !px-5"
+          >
             + 스터디 생성
           </Button>
         </div>
@@ -156,7 +154,7 @@ const StudyPage = () => {
 
         {/* 카드 그리드 */}
         {!loading && !error && studies.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             {studies.map((study) => {
               const detail = studyDetails[study.id];
               return (
@@ -257,9 +255,17 @@ const StudyPage = () => {
       </main>
 
       {/* 모달 */}
-      {showCreateModal && <CreateStudyModal onClose={() => setShowCreateModal(false)} onCreated={fetchStudies} />}
+      {showCreateModal && (
+        <CreateStudyModal
+          onClose={() => setShowCreateModal(false)}
+          onCreated={fetchStudies}
+        />
+      )}
       {showJoinModal && selectedStudy && (
-        <JoinStudyModal study={selectedStudy} onClose={() => setShowJoinModal(false)} />
+        <JoinStudyModal
+          study={selectedStudy}
+          onClose={() => setShowJoinModal(false)}
+        />
       )}
       {showUpdateModal && updateTargetStudy && (
         <UpdateStudyModal

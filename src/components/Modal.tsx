@@ -1,4 +1,5 @@
 import { Button } from '@components';
+import { Icon } from '@iconify/react';
 import type { ComponentProps } from 'react';
 import { type ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
@@ -11,7 +12,6 @@ interface ModalProps {
 }
 
 const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
-  // ESC 키를 누르면 모달 닫기
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -38,20 +38,28 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
             className="text-gray-500 hover:text-white transition text-2xl leading-none ml-4 !px-0 !py-0 shadow-none border-none hover:bg-transparent"
             aria-label="닫기"
           >
-            ×
+            <Icon
+              icon="material-symbols-light:close-rounded"
+              className="w-8 h-8"
+            />
           </Button>
         </div>
 
-        {/* 본문 */}
         <div className="px-8 py-6">{children}</div>
 
-        {/* 버튼 영역 */}
         {buttons && buttons.length > 0 && (
           <div className="flex flex-col gap-3 px-8 pb-8">
             {buttons.map((btn, idx) => {
               const { text, ...props } = btn;
               return (
-                <Button key={idx} size="lg" fullWidth className="rounded-full" variant="secondary" {...props}>
+                <Button
+                  key={idx}
+                  size="lg"
+                  fullWidth
+                  className="rounded-full"
+                  variant="secondary"
+                  {...props}
+                >
                   {text}
                 </Button>
               );
@@ -60,7 +68,7 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
         )}
       </div>
     </div>,
-    document.body
+    document.body,
   );
 };
 

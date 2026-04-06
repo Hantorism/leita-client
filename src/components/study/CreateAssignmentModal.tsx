@@ -1,4 +1,4 @@
-import { problemApi, studyApi, studySessionApi } from '@apis';
+import { problemApi, studySessionApi } from '@apis';
 import { Button, Modal } from '@components';
 import { useAlert } from '@contexts';
 import { Logger } from '@utils';
@@ -9,13 +9,14 @@ interface Problem {
   title: string;
 }
 
-interface AddAssignmentModalProps {
+interface CreateAssignmentModalProps {
   studyId: number;
   sessionId: number;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalProps) => {
+const CreateAssignmentModal = ({ studyId, sessionId, onClose, onSuccess }: CreateAssignmentModalProps) => {
   const { showAlert } = useAlert();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -25,15 +26,21 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
   const [selectedProblems, setSelectedProblems] = useState<Problem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10;
+
   useEffect(() => {
     let isMounted = true;
     const fetchProblems = async () => {
       try {
         setIsSearching(true);
-        const res = await problemApi.getProblems(0, 20, searchQuery);
+        const res = await problemApi.getProblems(currentPage, pageSize, searchQuery);
         if (isMounted) {
           const content = res.data?.content || res.content || [];
+          const total = res.data?.totalPages || res.totalPages || 1;
           setProblems(content);
+          setTotalPages(total);
         }
       } catch (err) {
         Logger.error('Failed to fetch problems', err);
@@ -50,6 +57,11 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
       isMounted = false;
       clearTimeout(timer);
     };
+  }, [searchQuery, currentPage]);
+
+  // 검색어가 바뀌면 페이지를 첫 페이지로 리셋
+  useEffect(() => {
+    setCurrentPage(0);
   }, [searchQuery]);
 
   const handleSelectProblem = (problem: Problem) => {
@@ -77,6 +89,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
         problemIds,
       });
       showAlert('success', '과제가 성공적으로 등록되었습니다.');
+      onSuccess?.();
       onClose();
     } catch (err: any) {
       Logger.error('Failed to create assignment', err);
@@ -151,7 +164,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
             onChange={(e) => setSearchQuery(e.target.value)}
           />
 
-          <div className="bg-black/40 border border-white/10 rounded-lg h-40 overflow-y-auto w-full text-sm">
+          <div className="bg-black/40 border border-white/10 rounded-lg h-40 overflow-y-auto w-full text-sm scrollbar-hide">
             {isSearching ? (
               <div className="p-3 text-gray-400 text-center">조회 중...</div>
             ) : problems.length === 0 ? (
@@ -177,7 +190,7 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
                     ) : (
                       <Button
                         variant="ghost"
-                        className="!px-0 !py-0 text-[#CAFE33] hover:text-[#CAFE33] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none"
+                        className="!px-0 !py-0 text-[#CAFE33] hover:text-[#CAFE33] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none font-semibold"
                       >
                         추가
                       </Button>
@@ -187,10 +200,55 @@ const AddAssignmentModal = ({ studyId, sessionId, onClose }: AddAssignmentModalP
               })
             )}
           </div>
+
+          {/* Pagination UI */}
+          {totalPages > 0 && !isSearching && problems.length > 0 && (
+            <div className="flex flex-col items-center gap-3 mt-4">
+              <div className="flex items-center gap-1.5 flex-wrap justify-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                  disabled={currentPage === 0}
+                  className="!px-2 !py-1 text-xs text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
+                >
+                  이전
+                </Button>
+
+                {Array.from({ length: totalPages }, (_, i) => {
+                  // 현재 페이지 주변 5개만 표시하도록 로직을 짤 수 있으나, 일단 심플하게 전체 표시 (페이지가 아주 많을 경우를 대비해 처리 필요)
+                  // 여기서는 일단 유저 요청대로 1 2 3 4 형태로 렌더링
+                  const isPageActive = currentPage === i;
+                  return (
+                    <Button
+                      key={i}
+                      variant="ghost"
+                      onClick={() => setCurrentPage(i)}
+                      className={`!px-2.5 !py-1 text-xs rounded-md min-w-[28px] ${
+                        isPageActive
+                          ? '!bg-[#CAFE33] !text-black font-bold !opacity-100 hover:!bg-[#CAFE33] hover:!text-black transition-none scale-110 shadow-[0_0_10px_rgba(202,255,51,0.3)]'
+                          : 'text-gray-500 hover:text-white hover:bg-white/10 bg-transparent shadow-none border-none'
+                      }`}
+                    >
+                      {i + 1}
+                    </Button>
+                  );
+                })}
+
+                <Button
+                  variant="ghost"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
+                  disabled={currentPage >= totalPages - 1}
+                  className="!px-2 !py-1 text-xs text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
+                >
+                  다음
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </Modal>
   );
 };
 
-export default AddAssignmentModal;
+export default CreateAssignmentModal;
