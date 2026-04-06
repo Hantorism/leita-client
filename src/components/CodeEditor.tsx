@@ -59,7 +59,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
     if (monacoInstance && language === 'javascript') {
-      monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      (monacoInstance.languages as any).typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
@@ -115,7 +115,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     localStorage.setItem('selectedLanguage', newLanguage);
 
     if (monacoInstance && newLanguage === 'javascript') {
-      monacoInstance.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      (monacoInstance.languages as any).typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
@@ -286,7 +286,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
     // JavaScript 에러 검증 비활성화
     if (language === 'javascript') {
-      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      (monaco as any).languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
