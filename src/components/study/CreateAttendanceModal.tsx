@@ -2,23 +2,25 @@ import { studySessionApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
 import { Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-interface StartAttendanceModalProps {
+interface CreateAttendanceModalProps {
   studyId: number;
   sessionId: number;
   initialOpenTime: string;
   initialCloseTime: string;
   onClose: () => void;
+  onSuccess?: () => void;
 }
 
-const StartAttendanceModal = ({
+const CreateAttendanceModal = ({
   studyId,
   sessionId,
   initialOpenTime,
   initialCloseTime,
   onClose,
-}: StartAttendanceModalProps) => {
+  onSuccess,
+}: CreateAttendanceModalProps) => {
   const { showAlert } = useAlert();
 
   const formatForInput = (dateStr: string) => {
@@ -58,6 +60,7 @@ const StartAttendanceModal = ({
         lateThresholdMinutes,
       });
       showAlert('success', '출석 체크가 시작되었습니다.');
+      onSuccess?.();
       onClose();
     } catch (err: any) {
       Logger.error('Failed to start attendance check', err);
@@ -113,4 +116,4 @@ const StartAttendanceModal = ({
   );
 };
 
-export default StartAttendanceModal;
+export default CreateAttendanceModal;

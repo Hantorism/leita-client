@@ -4,6 +4,8 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit"
   },
+  "biome.lsp.bin": "./node_modules/.bin/biome",
+  "biome.configurationPath": "./biome.json",
   "[javascript]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

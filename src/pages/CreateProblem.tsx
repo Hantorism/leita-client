@@ -4,7 +4,7 @@ import { useAlert } from '@contexts';
 import { EncodeBase64, Logger } from '@utils';
 import { type FormEvent, useState } from 'react';
 
-const CreateProblem = () => {
+const CreateProblemPage = () => {
   const { showAlert } = useAlert();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState({
@@ -55,7 +55,10 @@ const CreateProblem = () => {
       </header>
       <div className="create-problem-container max-w-5xl mx-auto p-6  rounded-lg ">
         <h2 className="text-3xl  text-center mb-6 text-white">Create Problem 👾</h2>
-        <form onSubmit={handleSubmit} className="space-y-6 ">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 "
+        >
           <div>
             <label className="block text-lg font-medium text-white">Title</label>
             <input
@@ -123,7 +126,10 @@ const CreateProblem = () => {
           <div>
             <label className="block text-lg font-medium text-white mb-2">Test Cases (최소 5개)</label>
             {testCases.map((testCase, index) => (
-              <div key={index} className="space-y-3 mb-6 p-4 border border-gray-600 rounded-lg bg-white bg-opacity-10">
+              <div
+                key={index}
+                className="space-y-3 mb-6 p-4 border border-gray-600 rounded-lg bg-white bg-opacity-10"
+              >
                 <h3 className="text-white font-semibold mb-2">Test Case #{index + 1}</h3>
 
                 <div>
@@ -193,7 +199,10 @@ const CreateProblem = () => {
             <label className="block text-lg font-medium text-white">Category</label>
             <div className="space-y-3">
               {category.map((cat, index) => (
-                <div key={index} className="flex gap-2">
+                <div
+                  key={index}
+                  className="flex gap-2"
+                >
                   <input
                     placeholder="ex) 자료구조"
                     type="text"
@@ -242,4 +251,4 @@ const CreateProblem = () => {
   );
 };
 
-export default CreateProblem;
+export default CreateProblemPage;

@@ -1,9 +1,8 @@
+import { AlertProvider } from '@contexts/AlertContext';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
-
-import { AlertProvider } from './contexts/AlertContext';
 
 const container = document.getElementById('root');
 if (!container) {
@@ -16,5 +15,5 @@ root.render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </AlertProvider>
+  </AlertProvider>,
 );

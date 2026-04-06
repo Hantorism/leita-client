@@ -21,7 +21,7 @@ const JoinStudyModal = ({ study, onClose }: JoinStudyModalProps) => {
       Logger.error('Failed to join study:', err);
       showAlert(
         'error',
-        '가입 요청 중 오류가 발생했습니다: ' + (err.response?.data?.message || err.message || '알 수 없는 오류')
+        '가입 요청 중 오류가 발생했습니다: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'),
       );
     }
   };

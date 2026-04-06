@@ -1,19 +1,28 @@
 import { studyApi } from '@apis';
-import { Button, Footer, Header, StudyMemberTab, StudyProgressTab, StudySessionTab } from '@components';
+import {
+  Button,
+  Footer,
+  Header,
+  StudyCompletionTab,
+  StudyMemberTab,
+  StudyProgressTab,
+  StudySessionTab,
+} from '@components';
 import type { Study } from '@types';
-import { Logger } from '@utils';
+import { getCurrentUserEmail, Logger } from '@utils';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-type Tab = 'sessions' | 'members' | 'progress';
+type Tab = 'sessions' | 'members' | 'progress' | 'completion';
 
 const TAB_LABELS: { key: Tab; label: string }[] = [
   { key: 'sessions', label: '세션 목록' },
   { key: 'members', label: '멤버 조회' },
   { key: 'progress', label: '출석/과제 현황' },
+  { key: 'completion', label: '수료 확인' },
 ];
 
-const StudyDetail = () => {
+const StudyDetailPage = () => {
   const { id } = useParams();
   const [study, setStudy] = useState<Study | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +30,7 @@ const StudyDetail = () => {
   const [isMember, setIsMember] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('sessions');
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   const fetchStudy = async () => {
     if (!id) return;
@@ -30,12 +40,11 @@ const StudyDetail = () => {
       setStudy(studyData);
       document.title = `${studyData.title} | Leita`;
 
-      const storedUser = localStorage.getItem('user');
-      const currentUser = storedUser ? JSON.parse(storedUser) : null;
-      const currentUserEmail = currentUser?.data?.email?.toLowerCase().trim();
+      const userEmail = getCurrentUserEmail();
 
-      if (currentUserEmail) {
-        const me = studyData.members?.find((m: any) => m.email.toLowerCase().trim() === currentUserEmail);
+      if (userEmail) {
+        setCurrentUserEmail(userEmail);
+        const me = studyData.members?.find((m: any) => m.email.toLowerCase().trim() === userEmail);
         setIsAdmin(me?.role === 'ADMIN');
         setIsMember(me?.role === 'MEMBER');
       }
@@ -65,7 +74,7 @@ const StudyDetail = () => {
 
       <main className="flex-grow flex flex-col items-center py-10 px-5 max-w-5xl mx-auto w-full">
         {/* 스터디 제목 + 수료 조건 배지 */}
-        <div className="w-full flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+        <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 mb-6">
           <div>
             <h1 className="text-3xl font-bold text-[#CAFE33]">{study.title}</h1>
             <p className="text-gray-400 mt-2 text-sm">{study.description}</p>
@@ -73,7 +82,10 @@ const StudyDetail = () => {
         </div>
 
         {/* 탭 네비게이션 */}
-        <div id="study-tabs-nav" className="w-full flex border-b border-gray-700 mb-8">
+        <div
+          id="study-tabs-nav"
+          className="w-full flex border-b border-gray-700 mb-8"
+        >
           {TAB_LABELS.map(({ key, label }) => (
             <Button
               key={key}
@@ -91,15 +103,35 @@ const StudyDetail = () => {
         {/* ── 탭 1: 세션 목록 ── */}
         {activeTab === 'sessions' && (
           <div className="w-full animate-fadeIn">
-            <StudySessionTab study={study} isMember={isMember} isAdmin={isAdmin} />
+            <StudySessionTab
+              study={study}
+              isMember={isMember}
+              isAdmin={isAdmin}
+              currentUserEmail={currentUserEmail}
+            />
           </div>
         )}
 
         {/* ── 탭 2: 멤버 조회 ── */}
-        {activeTab === 'members' && <StudyMemberTab study={study} isAdmin={isAdmin} onMemberUpdated={fetchStudy} />}
+        {activeTab === 'members' && (
+          <StudyMemberTab
+            study={study}
+            isAdmin={isAdmin}
+            onMemberUpdated={fetchStudy}
+          />
+        )}
 
         {/* ── 탭 3: 출석/과제 현황 ── */}
         {activeTab === 'progress' && <StudyProgressTab study={study} />}
+
+        {/* ── 탭 4: 수료 확인 ── */}
+        {activeTab === 'completion' && (
+          <StudyCompletionTab
+            study={study}
+            isAdmin={isAdmin}
+            currentUserEmail={currentUserEmail}
+          />
+        )}
       </main>
 
       <footer className="w-full text-left mt-10">
@@ -109,4 +141,4 @@ const StudyDetail = () => {
   );
 };
 
-export default StudyDetail;
+export default StudyDetailPage;

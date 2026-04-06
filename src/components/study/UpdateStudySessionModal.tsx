@@ -21,6 +21,8 @@ const UpdateStudySessionModal = ({ session, onClose, onUpdated }: UpdateStudySes
     return new Date(date.getTime() - offset).toISOString().slice(0, 16);
   };
 
+  const [title, setTitle] = useState(session.title || '');
+  const [description, setDescription] = useState(session.description || '');
   const [startDateTime, setStartDateTime] = useState(formatDateTime(session.startDateTime));
   const [endDateTime, setEndDateTime] = useState(formatDateTime(session.endDateTime));
 
@@ -36,7 +38,12 @@ const UpdateStudySessionModal = ({ session, onClose, onUpdated }: UpdateStudySes
     }
 
     try {
-      await studySessionApi.updateStudySession(session.id, { startDateTime, endDateTime });
+      await studySessionApi.updateStudySession(session.id, {
+        title,
+        description: description || undefined,
+        startDateTime,
+        endDateTime,
+      });
       showAlert('success', '세션 정보가 수정되었습니다.');
       onUpdated();
       onClose();
@@ -56,6 +63,24 @@ const UpdateStudySessionModal = ({ session, onClose, onUpdated }: UpdateStudySes
       ]}
     >
       <div className="space-y-6">
+        <div>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">세션 제목</label>
+          <input
+            type="text"
+            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">설명 (선택)</label>
+          <textarea
+            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition resize-none h-20"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+        </div>
         <div>
           <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">시작 시간</label>
           <input

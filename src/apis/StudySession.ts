@@ -8,7 +8,13 @@ export const studySessionApi = {
   },
 
   // POST /study-session
-  createStudySession: async (data: { studyId: number; startDateTime: string; endDateTime: string }) => {
+  createStudySession: async (data: {
+    studyId: number;
+    title: string;
+    description?: string;
+    startDateTime: string;
+    endDateTime: string;
+  }) => {
     const response = await AxiosInstance.post(`/study-session`, data);
     return response.data;
   },
@@ -20,7 +26,10 @@ export const studySessionApi = {
   },
 
   // PUT /study-session/{studySessionId}
-  updateStudySession: async (studySessionId: number, data: { startDateTime: string; endDateTime: string }) => {
+  updateStudySession: async (
+    studySessionId: number,
+    data: { title: string; description?: string; startDateTime: string; endDateTime: string },
+  ) => {
     const response = await AxiosInstance.put(`/study-session/${studySessionId}`, data);
     return response.data;
   },
@@ -37,12 +46,21 @@ export const studySessionApi = {
     return response.data;
   },
 
-  // POST /study-session/{studySessionId}/attendance/open
+  // POST /study-session/{studySessionId}/attendance
   openAttendance: async (
     studySessionId: number,
-    data: { openTime: string; closeTime: string; lateThresholdMinutes: number }
+    data: { openTime: string; closeTime: string; lateThresholdMinutes: number },
   ) => {
-    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/open`, data);
+    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance`, data);
+    return response.data;
+  },
+
+  // PUT /study-session/{studySessionId}/attendance
+  updateAttendance: async (
+    studySessionId: number,
+    data: { closeTime?: string; lateThresholdMinutes?: number; status?: string },
+  ) => {
+    const response = await AxiosInstance.put(`/study-session/${studySessionId}/attendance`, data);
     return response.data;
   },
 
@@ -67,7 +85,7 @@ export const studySessionApi = {
   // POST /study-session/{studySessionId}/assignment
   createAssignment: async (
     studySessionId: number,
-    data: { title: string; description?: string; problemIds: number[] }
+    data: { title: string; description?: string; problemIds: number[] },
   ) => {
     const response = await AxiosInstance.post(`/study-session/${studySessionId}/assignment`, data);
     return response.data;
@@ -76,7 +94,7 @@ export const studySessionApi = {
   // PUT /study-session/{studySessionId}/assignment
   updateAssignment: async (
     studySessionId: number,
-    data: { title: string; description?: string; problemIds: number[] }
+    data: { title: string; description?: string; problemIds: number[] },
   ) => {
     const response = await AxiosInstance.put(`/study-session/${studySessionId}/assignment`, data);
     return response.data;

@@ -1,5 +1,11 @@
 import { studySessionApi } from '@apis';
-import { Button, CreateStudySessionModal, DeleteStudySessionModal, UpdateStudySessionModal } from '@components';
+import {
+  Button,
+  CreateStudySessionModal,
+  DeleteStudySessionModal,
+  TodoAssignment,
+  UpdateStudySessionModal,
+} from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudySession } from '@types';
 import { Logger } from '@utils';
@@ -10,9 +16,10 @@ interface StudySessionTabProps {
   study: Study;
   isMember: boolean;
   isAdmin: boolean;
+  currentUserEmail?: string | null;
 }
 
-const StudySessionTab = ({ study, isMember, isAdmin }: StudySessionTabProps) => {
+const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySessionTabProps) => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [sessions, setSessions] = useState<StudySession[]>([]);
@@ -70,18 +77,47 @@ const StudySessionTab = ({ study, isMember, isAdmin }: StudySessionTabProps) => 
     return (
       <div className="mt-4 pl-2">
         <p className="text-red-400 text-sm">{error}</p>
-        <Button variant="ghost" onClick={fetchSessions} className="mt-2 text-xs underline hover:text-white !px-0 !py-0">
+        <Button
+          variant="ghost"
+          onClick={fetchSessions}
+          className="mt-2 text-xs underline hover:text-white !px-0 !py-0"
+        >
           다시 시도
         </Button>
       </div>
     );
 
+  const now = Date.now();
+  const sortedSessions = [...sessions].sort(
+    (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime(),
+  );
+
+  // A: 시작한 시간이 현재보다 이전인 세션 중 가장 늦은 시간 (가장 최근에 시작된 세션)
+  const startedSessions = sortedSessions.filter((s) => new Date(s.startDateTime).getTime() < now);
+  const sessionA = startedSessions.length > 0 ? startedSessions[startedSessions.length - 1] : null;
+
+  // B: 시작할 시간이 현재보다 이후인 세션 중 가장 빠른 시간 (현재랑 가장 가까운)
+  const upcomingSessions = sortedSessions.filter((s) => new Date(s.startDateTime).getTime() > now);
+  const sessionB = upcomingSessions.length > 0 ? upcomingSessions[0] : null;
+
   return (
     <div className="w-full mt-6">
+      {currentUserEmail && sessionA && sessionA.assignmentCreated && (
+        <TodoAssignment
+          studyId={study.id}
+          sessionId={sessionA.id}
+          currentUserEmail={currentUserEmail}
+        />
+      )}
       <div className="flex justify-between items-center border-b border-gray-600 pb-3 pl-2">
         <h2 className="text-2xl font-semibold">스터디 세션</h2>
         {isAdmin && (
-          <Button variant="primary" size="md" onClick={() => setShowCreateModal(true)} className="rounded-full">
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => setShowCreateModal(true)}
+            className="rounded-full"
+          >
             + 세션 생성
           </Button>
         )}
@@ -94,11 +130,13 @@ const StudySessionTab = ({ study, isMember, isAdmin }: StudySessionTabProps) => 
           sessions.map((session, index) => (
             <div
               key={session.id}
-              className="bg-white bg-opacity-5 p-5 rounded-lg flex flex-col md:flex-row justify-between items-start md:items-center"
+              className="bg-white bg-opacity-5 p-5 rounded-lg flex flex-col lg:flex-row justify-between items-start lg:items-center"
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-medium text-[#CAFE33]">{index + 1}회차 세션</h3>
+                  <h3 className="text-lg font-medium text-[#CAFE33]">
+                    {index + 1}회차{session.title ? ` - ${session.title}` : ''}
+                  </h3>
                   {isAdmin && (
                     <div className="flex items-center gap-1 shrink-0">
                       <Button
@@ -131,7 +169,7 @@ const StudySessionTab = ({ study, isMember, isAdmin }: StudySessionTabProps) => 
                 </p>
               </div>
 
-              <div className="mt-4 md:mt-0 flex flex-wrap gap-2">
+              <div className="mt-4 lg:mt-0 flex flex-wrap gap-2">
                 <Button
                   onClick={() =>
                     navigate(`/study/${study.id}/session/${session.id}`, { state: { sessionNumber: index + 1 } })

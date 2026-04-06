@@ -2,6 +2,7 @@ import { studyApi } from '@apis';
 import { Button } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
+import { getCurrentUserEmail } from '@utils';
 
 interface StudyMemberTabProps {
   study: Study;
@@ -16,8 +17,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
   const members = study.members?.filter((m: any) => m.role === 'MEMBER') || [];
   const pendings = study.members?.filter((m: any) => m.role === 'PENDING') || [];
 
-  const storedUser = localStorage.getItem('user');
-  const currentUserEmail = storedUser ? JSON.parse(storedUser).email || JSON.parse(storedUser).data?.email : null;
+  const currentUserEmail = getCurrentUserEmail();
 
   const handleApprove = async (email: string) => {
     try {
@@ -44,7 +44,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
       {/* 관리자 섹션 */}
       <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-6">관리자</h2>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {admins.map((admin: any, i: number) => (
             <li
               key={i}
@@ -66,7 +66,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
       {/* 일반 멤버 섹션 */}
       <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-6">일반 멤버</h2>
-        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {members.map((member: any, i: number) => (
             <li
               key={i}
@@ -89,7 +89,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
       {isAdmin && (
         <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
           <h2 className="text-xl font-semibold mb-6 text-[#CAFE33]">가입 대기 멤버</h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {pendings.map((user: StudyUser, i: number) => (
               <li
                 key={i}
@@ -106,10 +106,18 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
                 </div>
 
                 <div className="flex gap-2 shrink-0">
-                  <Button size="sm" onClick={() => handleDeny(user.email)} className="hover:bg-red-500">
+                  <Button
+                    size="sm"
+                    onClick={() => handleDeny(user.email)}
+                    className="hover:bg-red-500"
+                  >
                     거절
                   </Button>
-                  <Button variant="primary" size="sm" onClick={() => handleApprove(user.email)}>
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => handleApprove(user.email)}
+                  >
                     승인
                   </Button>
                 </div>

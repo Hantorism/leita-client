@@ -57,7 +57,7 @@ const JudgePage = () => {
     }
 
     fetchJudges();
-  }, [navigate, showAlert]);
+  }, []);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -68,7 +68,7 @@ const JudgePage = () => {
       filtered = filtered.filter((judge) => judge.result === 'CORRECT');
     } else if (filter === 'WRONG') {
       filtered = filtered.filter((judge) =>
-        ['WRONG', 'COMPILE_ERROR', 'RUNTIME_ERROR', 'TIME_OUT', 'MEMORY_OUT', 'UNKNOWN'].includes(judge.result)
+        ['WRONG', 'COMPILE_ERROR', 'RUNTIME_ERROR', 'TIME_OUT', 'MEMORY_OUT', 'UNKNOWN'].includes(judge.result),
       );
     }
 
@@ -77,7 +77,7 @@ const JudgePage = () => {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (judge) =>
-          judge.problemTitle?.toLowerCase().includes(lowerQuery) || judge.problemId.toString().includes(lowerQuery)
+          judge.problemTitle?.toLowerCase().includes(lowerQuery) || judge.problemId.toString().includes(lowerQuery),
       );
     }
 
@@ -126,7 +126,7 @@ const JudgePage = () => {
         {/*<ProblemsButton />*/}
       </div>
 
-      <div className="flex-grow max-w-3xl mx-auto w-full pt-9 md:text-sm pl-5 pr-5 ">
+      <div className="flex-grow max-w-3xl mx-auto w-full pt-9 lg:text-sm pl-5 pr-5 ">
         <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
           <table className=" w-full text-left ">
             <thead>
@@ -143,7 +143,10 @@ const JudgePage = () => {
             <tbody>
               {paginatedJudges.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="p-3 text-center text-gray-500">
+                  <td
+                    colSpan={7}
+                    className="p-3 text-center text-gray-500"
+                  >
                     👽 해당 조건에 맞는 결과가 없습니다.
                   </td>
                 </tr>

@@ -42,7 +42,13 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AlertContext.Provider value={{ showAlert }}>
       {children}
-      {alert && <Alert type={alert.type} message={alert.message} onClose={closeAlert} />}
+      {alert && (
+        <Alert
+          type={alert.type}
+          message={alert.message}
+          onClose={closeAlert}
+        />
+      )}
     </AlertContext.Provider>
   );
 };

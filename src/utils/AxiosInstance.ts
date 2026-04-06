@@ -20,7 +20,7 @@ AxiosInstance.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 AxiosInstance.interceptors.response.use(
@@ -31,5 +31,5 @@ AxiosInstance.interceptors.response.use(
       localStorage.removeItem('accessToken');
     }
     return Promise.reject(err);
-  }
+  },
 );

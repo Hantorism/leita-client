@@ -43,7 +43,7 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
 
   return (
     <Modal
-      title="스터디 그룹 생성"
+      title="스터디 생성"
       onClose={onClose}
       buttons={[
         { text: '스터디 생성', variant: 'primary', onClick: handleSubmit },

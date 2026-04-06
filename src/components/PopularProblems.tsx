@@ -34,11 +34,11 @@ const PopularProblems = () => {
   }, []);
 
   return (
-    <div className="mt-20 w-full mb-20 border-collapse bg-white bg-opacity-10 rounded-xl shadow-lg   p-4">
+    <div className="mt-4 w-full mb-8 border-collapse bg-white bg-opacity-10 rounded-xl shadow-lg p-4">
       <h2 className="text-2xl font-normal text-white mb-4 pl-3 font-Pretendard flex items-center gap-2">
         Best Problems
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 font-NanumSquare">
+      <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-5 gap-4 font-NanumSquare">
         {problems.map((problem) => (
           <div
             key={problem.problemId}

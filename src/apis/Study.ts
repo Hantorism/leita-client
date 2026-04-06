@@ -61,4 +61,28 @@ export const studyApi = {
     const response = await AxiosInstance.get(`/study/${id}/pendings`, { params: { page, size } });
     return response.data;
   },
+
+  // GET /study/{id}/members
+  getMemberStatus: async (id: number, studySessionId?: number, memberId?: number) => {
+    const response = await AxiosInstance.get(`/study/${id}/members`, {
+      params: { studySessionId, memberId },
+    });
+    return response.data;
+  },
+
+  // GET /study/{id}/members/attendance
+  getMemberAttendance: async (id: number, studySessionId?: number, memberId?: number) => {
+    const response = await AxiosInstance.get(`/study/${id}/members/attendance`, {
+      params: { studySessionId, memberId },
+    });
+    return response.data;
+  },
+
+  // GET /study/{id}/members/assignment
+  getMemberAssignment: async (id: number, studySessionId?: number, memberId?: number) => {
+    const response = await AxiosInstance.get(`/study/${id}/members/assignment`, {
+      params: { studySessionId, memberId },
+    });
+    return response.data;
+  },
 };

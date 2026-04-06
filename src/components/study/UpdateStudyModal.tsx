@@ -49,7 +49,7 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 
   return (
     <Modal
-      title="스터디 그룹 수정"
+      title="스터디 수정"
       onClose={onClose}
       buttons={[
         { text: '스터디 수정', variant: 'primary', onClick: handleSubmit },

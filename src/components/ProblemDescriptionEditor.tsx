@@ -87,7 +87,10 @@ const MenuBar = ({ editor, onInsertMath, onInsertImage }: MenuBarProps) => {
       >
         Ordered List
       </MenuButton>
-      <MenuButton onClick={() => editor.chain().focus().setHardBreak().run()} disabled={!editorState.canSetHardBreak}>
+      <MenuButton
+        onClick={() => editor.chain().focus().setHardBreak().run()}
+        disabled={!editorState.canSetHardBreak}
+      >
         Hard Break
       </MenuButton>
       <MenuButton
@@ -188,7 +191,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
       if (!latex) return;
       return editor.chain().focus()[command]({ latex }).run();
     },
-    [editor]
+    [editor],
   );
 
   const onInsertImage = useCallback(() => {
@@ -202,7 +205,7 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
       editor.chain().focus().setImage({ src: url }).run();
       setIsImageModalOpen(false);
     },
-    [editor]
+    [editor],
   );
 
   useEffect(() => {
@@ -220,9 +223,22 @@ const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly
   if (!editor) return null;
 
   return (
-    <div className={`${className} tiptap-editor prose prose-invert`} onClick={() => editor.chain().focus().run()}>
-      {!readonly && <MenuBar editor={editor} onInsertMath={onInsertMath} onInsertImage={onInsertImage} />}
-      <ImageModal isOpen={isImageModalOpen} onClose={() => setIsImageModalOpen(false)} onInsert={handleInsertImage} />
+    <div
+      className={`${className} tiptap-editor prose prose-invert`}
+      onClick={() => editor.chain().focus().run()}
+    >
+      {!readonly && (
+        <MenuBar
+          editor={editor}
+          onInsertMath={onInsertMath}
+          onInsertImage={onInsertImage}
+        />
+      )}
+      <ImageModal
+        isOpen={isImageModalOpen}
+        onClose={() => setIsImageModalOpen(false)}
+        onInsert={handleInsertImage}
+      />
       <div>
         <EditorContent editor={editor} />
       </div>
