@@ -1,5 +1,6 @@
 import { problemApi } from '@apis';
 import { Logger } from '@utils';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 interface Problem {
@@ -34,22 +35,43 @@ const PopularProblems = () => {
   }, []);
 
   return (
-    <div className="mt-4 w-full mb-8 border-collapse bg-white bg-opacity-10 rounded-xl shadow-lg p-4">
-      <h2 className="text-2xl font-normal text-white mb-4 pl-3 font-Pretendard flex items-center gap-2">
-        Best Problems
-      </h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 lg:grid-cols-5 gap-4 font-NanumSquare">
-        {problems.map((problem) => (
-          <div
-            key={problem.problemId}
-            onClick={() => window.open(`problems/${problem.problemId}`, '_blank')}
-            className="cursor-pointer w-full h-40 bg-white bg-opacity-10 p-4 rounded-xl transition-transform duration-200 hover:scale-105 hover:bg-opacity-20"
-          >
-            <h3 className="text-lg font-semibold text-white">{problem.title}</h3>
-            <p className="text-sm text-gray-300">{problem.solved.totalCount}번 풀었어요!</p>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 sm:gap-8">
+      {problems.map((problem, index) => (
+        <motion.div
+          key={problem.problemId}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: index * 0.1 }}
+          onClick={() => window.open(`problems/${problem.problemId}`, '_blank')}
+          className="group cursor-pointer bg-white/5 border border-white/5 p-8 rounded-[2rem] sm:rounded-[2.5rem] transition-all duration-500 hover:bg-white/10 hover:border-white/10 active:scale-95 shadow-2xl flex flex-col justify-between aspect-auto min-h-[200px] sm:min-h-[280px]"
+        >
+          <div className="flex flex-col gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#CAFE33]/10 flex items-center justify-center group-hover:bg-[#CAFE33] transition-colors duration-500">
+               <span className="text-sm sm:text-base font-black text-[#CAFE33] group-hover:text-black">0{index + 1}</span>
+            </div>
+            <div>
+              <span className="text-xs font-black text-gray-500 uppercase tracking-[0.2em] mb-2 block">
+                Popular
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-white leading-tight group-hover:text-[#CAFE33] transition-colors line-clamp-2">
+                {problem.title}
+              </h3>
+            </div>
           </div>
-        ))}
-      </div>
+          
+          <div className="flex items-center justify-between mt-6 sm:mt-8">
+            <div className="flex flex-col">
+              <span className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-1">Solved by</span>
+              <span className="text-base sm:text-lg font-black text-gray-300 font-JetBrain">{problem.solved.totalCount.toLocaleString()}</span>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#CAFE33] transition-all duration-500 shadow-lg">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-gray-400 group-hover:text-black">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </div>
+          </div>
+        </motion.div>
+      ))}
     </div>
   );
 };

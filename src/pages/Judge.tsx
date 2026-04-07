@@ -1,6 +1,7 @@
 import { judgeApi } from '@apis';
-import { Footer, Header } from '@components';
+import { Button, Footer, Header } from '@components';
 import { useAlert } from '@contexts';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,6 +38,7 @@ const JudgePage = () => {
 
   useEffect(() => {
     async function fetchJudges() {
+      setLoading(true);
       try {
         const result = await judgeApi.getJudges();
         const data = result.data ?? result ?? [];
@@ -63,7 +65,6 @@ const JudgePage = () => {
     setCurrentPage(1);
     let filtered = [...allJudges];
 
-    // 필터링
     if (filter === 'CORRECT') {
       filtered = filtered.filter((judge) => judge.result === 'CORRECT');
     } else if (filter === 'WRONG') {
@@ -72,7 +73,6 @@ const JudgePage = () => {
       );
     }
 
-    // 검색
     if (searchQuery.trim() !== '') {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -84,130 +84,168 @@ const JudgePage = () => {
     setJudges(filtered);
   }, [filter, searchQuery, allJudges]);
 
-  if (loading) return <p className="text-center text-gray-500 mt-[20%]">👾로딩 중...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
+  if (error) return <div className="flex items-center justify-center min-h-screen text-red-500 font-bold">{error}</div>;
 
   const totalPages = Math.ceil(judges.length / ITEMS_PER_PAGE);
   const paginatedJudges = judges.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
-    <div className="flex flex-col items-start min-h-screen text-gray-200 pt-8 bg-[#1A1A1A] font-Pretendard">
-      <header className="pl-[10%] pr-[10%] w-full text-left">
-        <Header />
-      </header>
+    <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">
+      <Header />
 
-      <div className="flex w-full mt-6 items-center justify-center gap-4">
-        <div className="flex flex-wrap gap-2 w-[25%] justify-center">
-          {[
-            { key: 'ALL', label: 'ALL' },
-            { key: 'CORRECT', label: 'CORRECT' },
-            { key: 'WRONG', label: 'WRONG' },
-          ].map(({ key, label }) => (
-            <button
-              key={key}
-              onClick={() => setFilter(key)}
-              className={`px-4 py-1 rounded-full transition ${
-                filter === key ? 'bg-[#2A2A2A] text-white ' : 'text-white hover:text-[#CAFE33]  hover:bg-opacity-0 '
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <input
-          type="text"
-          placeholder=" Search by Title or ID"
-          className="w-[20%] p-2 py-1 rounded-full bg-[#2A2A2A] text-white text-center"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-
-        {/*<ProblemsButton />*/}
-      </div>
-
-      <div className="flex-grow max-w-3xl mx-auto w-full pt-9 lg:text-sm pl-5 pr-5 ">
-        <div className="bg-[#2A2A2A] bg-opacity-90 text-white rounded-lg shadow-md overflow-hidden border-collapse border border-gray-600">
-          <table className=" w-full text-left ">
-            <thead>
-              <tr className="bg-[#2A2A2A] text-white">
-                <th className="p-3  border-gray-500">문제 ID</th>
-
-                <th className="p-3  border-gray-500">결과</th>
-                <th className="p-3 border-b border-gray-500">메모리(KB)</th>
-                <th className="p-3 border-b border-gray-500">시간(ms)</th>
-                <th className="p-3 border-b border-gray-500">언어</th>
-                <th className="p-3 border-b border-gray-500">코드 길이(bytes)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedJudges.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="p-3 text-center text-gray-500"
-                  >
-                    👽 해당 조건에 맞는 결과가 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                paginatedJudges.map((judge, index) => (
-                  <tr
-                    key={`${judge.problemId}-${index}`}
-                    className={`border-b border-gray-500 hover:bg-black hover:text-[#CAFE33] transition ${
-                      judge.result === 'CORRECT' ? 'bg-white bg-opacity-10' : 'bg-[#2A2A2A] bg-opacity-20'
+      <main className="flex-grow w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-20">
+        <div className="flex flex-col gap-12">
+          {/* Page Header */}
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <h1 className="text-4xl sm:text-5xl font-black mb-2 tracking-tighter">채점 현황</h1>
+              </motion.div>
+              
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6 }}
+                className="flex flex-wrap gap-1.5 bg-white/5 p-1.5 rounded-[1.5rem] border border-white/5 w-fit"
+              >
+                {[
+                  { key: 'ALL', label: '전체' },
+                  { key: 'CORRECT', label: '성공' },
+                  { key: 'WRONG', label: '실패' },
+                ].map(({ key, label }) => (
+                  <button
+                    key={key}
+                    onClick={() => setFilter(key)}
+                    className={`px-6 py-2.5 text-xs sm:text-sm font-black rounded-2xl transition-all duration-300 ${
+                      filter === key 
+                        ? 'bg-white/10 text-[#CAFE33] shadow-lg' 
+                        : 'text-gray-500 hover:text-white'
                     }`}
                   >
-                    <td className="p-3 border-b border-gray-500">{judge.problemId}</td>
+                    {label}
+                  </button>
+                ))}
+              </motion.div>
+            </div>
 
-                    <td className={`p-3 border-b border-gray-500 font-bold ${judge.result}`}>{judge.result}</td>
-                    <td className="p-3 border-b border-gray-500">{judge.used.memory}</td>
-                    <td className="p-3 border-b border-gray-500">{judge.used.time}</td>
-                    <td className="p-3 border-b border-gray-500">{judge.used.language}</td>
-                    <td className="p-3 border-b border-gray-500">{judge.sizeOfCode}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+            {/* Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative w-full"
+            >
+              <svg
+                className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#CAFE33] transition-colors"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
+                placeholder="검색할 문제 번호나 제목을 입력하세요"
+                className="w-full pl-16 pr-8 py-6 sm:py-7 rounded-[2.5rem] bg-white/5 border border-white/5 text-lg sm:text-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#CAFE33]/30 focus:ring-[12px] focus:ring-[#CAFE33]/5 transition-all font-bold"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </motion.div>
+          </div>
+
+          {/* Judge List */}
+          <div className="grid grid-cols-1 gap-5">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-40">
+                <div className="w-12 h-12 border-4 border-[#CAFE33]/20 border-t-[#CAFE33] rounded-full animate-spin mb-4" />
+                <p className="text-gray-500 font-bold">채점 현황을 불러오고 있어요...</p>
+              </div>
+            ) : paginatedJudges.length > 0 ? (
+              paginatedJudges.map((judge, index) => (
+                <motion.div
+                  key={`${judge.problemId}-${index}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="group flex flex-col md:flex-row md:items-center justify-between p-8 sm:p-10 rounded-[2.5rem] bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-500 gap-8 active:scale-[0.99] shadow-2xl"
+                >
+                  <div className="flex items-center gap-8">
+                    <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-[1.5rem] bg-white/5 flex items-center justify-center text-xl sm:text-2xl font-black text-gray-500 font-JetBrain group-hover:bg-white/10 group-hover:text-[#CAFE33] transition-all duration-500">
+                      #{judge.problemId}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <div className={`text-2xl sm:text-4xl font-black tracking-tighter italic uppercase ${judge.result === 'CORRECT' ? 'text-[#CAFE33]' : 'text-red-500'}`}>
+                        {judge.result}
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <span className="text-xs sm:text-[11px] font-black text-gray-600 uppercase tracking-widest">{judge.used.language}</span>
+                         <span className="w-1 h-1 rounded-full bg-gray-800"></span>
+                         <span className="text-xs sm:text-[11px] font-bold text-gray-600 font-JetBrain">{judge.sizeOfCode} Bytes</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 md:flex items-center gap-6 sm:gap-12 border-t md:border-t-0 border-white/5 pt-8 md:pt-0">
+                    <div className="flex flex-col items-start md:items-end">
+                      <span className="text-xs sm:text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] mb-2">Memory</span>
+                      <span className="text-xl sm:text-2xl font-black text-gray-400 font-JetBrain group-hover:text-white transition-colors">
+                        {judge.used.memory.toLocaleString()} <span className="text-xs font-normal text-gray-600">KB</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-col items-start md:items-end">
+                      <span className="text-xs font-black text-gray-600 uppercase tracking-[0.2em] mb-2">Time</span>
+                      <span className="text-xl sm:text-2xl font-black text-gray-400 font-JetBrain group-hover:text-white transition-colors">
+                        {judge.used.time} <span className="text-xs font-normal text-gray-600">ms</span>
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center justify-center py-40 rounded-[3rem] bg-white/5 border border-dashed border-white/10"
+              >
+                <p className="text-gray-500 text-xl font-bold">결과가 아직 없어요.</p>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="w-full flex justify-center items-center gap-4 mt-12">
+              <Button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                variant="ghost"
+                className="px-8 py-4 text-gray-600 font-black hover:bg-white/10 hover:text-white disabled:opacity-30 rounded-2xl"
+              >
+                이전
+              </Button>
+              
+              <div className="px-8 py-4 text-white font-black font-JetBrain bg-white/5 rounded-2xl border border-white/5">
+                {currentPage} <span className="text-gray-700 font-normal mx-2">/</span> {totalPages}
+              </div>
+
+              <Button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                variant="ghost"
+                className="px-8 py-4 text-gray-600 font-black hover:bg-white/10 hover:text-white disabled:opacity-30 rounded-2xl"
+              >
+                다음
+              </Button>
+            </div>
+          )}
         </div>
-      </div>
+      </main>
 
-      {totalPages > 1 && (
-        <div className="w-full flex justify-center items-center gap-4 my-6">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className={`px-4 py-2 rounded-full transition ${
-              currentPage === 1
-                ? 'bg-gray-700 text-white opacity-50 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            이전
-          </button>
-
-          <span className="px-3 py-1 text-white rounded-full">
-            {currentPage} / {totalPages}
-          </span>
-
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className={`px-4 py-2 rounded-full transition ${
-              currentPage === totalPages
-                ? 'bg-gray-700 text-white opacity-50 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-600'
-            }`}
-          >
-            다음
-          </button>
-        </div>
-      )}
-
-      <footer className="w-full text-left mt-20">
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };
