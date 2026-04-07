@@ -1,13 +1,13 @@
 import { Logo } from '@assets/images';
 import { Login } from '@components';
-import type { User } from '@types';
+import { useAuth } from '@contexts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
-  const [user, setUser] = useState<User | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }) =>
     `nav-link px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
@@ -51,7 +51,7 @@ const Header = () => {
           {/* Right: Login & Hamburger */}
           <div className="flex items-center gap-4">
             <div className="hidden sm:block">
-              <Login user={user} setUser={setUser} />
+              <Login />
             </div>
             
             {/* Hamburger Button */}
@@ -101,7 +101,7 @@ const Header = () => {
               {/* Mobile Footer Info inside Menu */}
               <div className="mt-auto pt-10 flex flex-col gap-10">
                 <div className="sm:hidden border-t border-white/10 pt-10">
-                  <Login user={user} setUser={setUser} />
+                  <Login />
                 </div>
                 
                 <div className="space-y-6">
@@ -110,12 +110,12 @@ const Header = () => {
                     <Link to="/privacy" onClick={() => setIsMenuOpen(false)} className="text-base font-bold text-gray-400 hover:text-white">개인정보 처리방침</Link>
                   </div>
                   <div className="pt-6 border-t border-white/5">
-                    <p className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-3">Developed by</p>
-                    <p className="text-base font-bold text-gray-400 leading-relaxed">
+                    <p className="text-xs font-black text-gray-600 uppercase tracking-widest mb-3">Developed by</p>
+                    <p className="text-sm font-bold text-gray-400 leading-relaxed">
                       아주대학교 소프트웨어학과<br />
                       이장원, 조성연, 오태림
                     </p>
-                    <p className="text-base font-bold text-[#CAFE33] mt-3">leitaajou@gmail.com</p>
+                    <p className="text-sm font-bold text-[#CAFE33] mt-3">leitaajou@gmail.com</p>
                   </div>
                   <p className="text-xs font-bold text-gray-700">© 2025 LEITA. All rights reserved.</p>
                 </div>

@@ -1,52 +1,13 @@
 import { authApi } from '@apis';
-import { useAlert } from '@contexts';
+import { useAlert, useAuth } from '@contexts';
 import { googleLogout, type TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import type { User } from '@types';
 import { Logger } from '@utils';
-import { type Dispatch, type SetStateAction, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
-}
-
-const Login = ({ user, setUser }: LoginProps) => {
+const Login = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const storedUser = localStorage.getItem('user');
-
-    if (!token) {
-      if (storedUser) {
-        localStorage.removeItem('user');
-      }
-      setUser(null);
-      return;
-    }
-
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
-    // Use authApi to validate token and refresh user info
-    authApi
-      .getAuthInfo()
-      .then((res: any) => {
-        setUser(res);
-        localStorage.setItem('user', JSON.stringify(res));
-      })
-      .catch((err: any) => {
-        Logger.error('Token validation failed:', err);
-        if (err.response?.status === 401) {
-          setUser(null);
-          localStorage.removeItem('user');
-          localStorage.removeItem('accessToken');
-        }
-      });
-  }, [setUser]);
+  const { user, login, logout } = useAuth();
 
   const signInWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
@@ -59,14 +20,7 @@ const Login = ({ user, setUser }: LoginProps) => {
           return;
         }
 
-        localStorage.setItem('accessToken', accessToken);
-
-        const userRes = await authApi.getAuthInfo();
-        Logger.print(' User Info Response:', userRes);
-
-        setUser(userRes);
-        localStorage.setItem('user', JSON.stringify(userRes));
-
+        await login(accessToken);
         navigate('/');
       } catch (error: any) {
         Logger.error(' Google login failed:', error);
@@ -82,21 +36,19 @@ const Login = ({ user, setUser }: LoginProps) => {
     },
   });
 
-  const logout = () => {
+  const handleLogout = () => {
     googleLogout();
-    setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
+    logout();
   };
 
   return (
     <div className="login-container">
       {user ? (
         <div className="flex items-center gap-2 lg:gap-3 flex-nowrap whitespace-nowrap">
-          <span className="text-white flex-shrink-0 font-light tracking-wide">Hello, {user.data.name} 👋</span>
+          <span className="text-white flex-shrink-0 font-light tracking-wide font-Pretendard">Hello, {user.data.name} 👋</span>
           <button
             className="relative bg-[#303030] text-[#ededed] font-light tracking-wide px-5 py-1.5 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030] flex-shrink-0 transition-colors"
-            onClick={logout}
+            onClick={handleLogout}
           >
             Logout
           </button>
