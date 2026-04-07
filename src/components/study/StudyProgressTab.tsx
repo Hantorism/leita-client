@@ -179,7 +179,7 @@ const StudyProgressDetail = ({
     const originalIdx = sessions.findIndex((orig) => orig.id === s.id);
     return {
       value: s.id,
-      label: `${originalIdx + 1}회차 세션 (${new Date(s.startDateTime).toLocaleDateString()})`,
+      label: `${originalIdx + 1}회차 세션 (${formatDate(s.startDateTime)})`,
     };
   });
 
@@ -297,12 +297,12 @@ const StudyProgressDetail = ({
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <span className="block text-gray-500 text-xs mb-1">출석 시작 시간</span>
-                      <span className="text-gray-300">{new Date(attendanceInfo.openTime).toLocaleString()}</span>
+                      <span className="text-gray-300">{formatDateTime(attendanceInfo.openTime)}</span>
                     </div>
                     <div>
                       <span className="block text-gray-500 text-xs mb-1">출석 마감 시간</span>
                       <span className="text-gray-300">
-                        {attendanceInfo.closeTime ? new Date(attendanceInfo.closeTime).toLocaleString() : '미정'}
+                        {attendanceInfo.closeTime ? formatDateTime(attendanceInfo.closeTime) : '미정'}
                       </span>
                     </div>
                   </div>
@@ -749,6 +749,10 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
       </div>
     </div>
   );
+};
+
+export default StudyProgressTab;
+
 };
 
 export default StudyProgressTab;

@@ -220,14 +220,14 @@ const StudySessionDetailPage = () => {
                     <div>
                       <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">출석 시작</span>
                       <span className="text-lg font-medium text-gray-300">
-                        {new Date(session.attendance.openTime).toLocaleString()}
+                        {formatDateTime(session.attendance.openTime)}
                       </span>
                     </div>
                     <div className="pt-4 border-t border-gray-800 lg:border-t-0 lg:pt-0">
                       <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">출석 마감</span>
                       <span className="text-lg font-medium text-gray-300">
                         {session.attendance.closeTime
-                          ? new Date(session.attendance.closeTime).toLocaleString()
+                          ? formatDateTime(session.attendance.closeTime)
                           : '미정'}
                       </span>
                     </div>
@@ -260,7 +260,7 @@ const StudySessionDetailPage = () => {
                                 {myAttendance.status === 'LATE' ? '지각' : '정상 출석'}
                               </span>
                               <span className="text-sm text-gray-400">
-                                {new Date(myAttendance.attendedAt).toLocaleString()}
+                                {formatDateTime(myAttendance.attendedAt)}
                               </span>
                             </div>
                           );
@@ -446,3 +446,4 @@ const StudySessionDetailPage = () => {
 };
 
 export default StudySessionDetailPage;
+lt StudySessionDetailPage;
