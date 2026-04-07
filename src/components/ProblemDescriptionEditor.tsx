@@ -16,8 +16,8 @@ interface MenuBarProps {
 interface ProblemDescriptionEditorProps {
   content: string;
   onChange?: (content: string) => void;
-  className: string;
-  rows: number;
+  className?: string;
+  rows?: number;
   readonly?: boolean;
 }
 
@@ -114,7 +114,7 @@ const MenuBar = ({ editor, onInsertMath, onInsertImage }: MenuBarProps) => {
   );
 };
 
-const ProblemDescriptionEditor = ({ content, onChange, className, rows, readonly }: ProblemDescriptionEditorProps) => {
+const ProblemDescriptionEditor = ({ content, onChange, className = '', rows, readonly }: ProblemDescriptionEditorProps) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const createMathClickHandler = (type: 'inline' | 'block') => (node: any, pos: number) => {

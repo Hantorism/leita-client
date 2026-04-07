@@ -55,6 +55,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem('selectedLanguage') || 'undefined';
   });
+  const [isSaved, setIsSaved] = useState(false);
 
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
@@ -72,7 +73,12 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   });
 
   useEffect(() => {
-    localStorage.setItem(`code-${problemId}`, code);
+    const timer = setTimeout(() => {
+      localStorage.setItem(`code-${problemId}`, code);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+    }, 500);
+    return () => clearTimeout(timer);
   }, [code, problemId]);
   // useEffect(() => {
   //     const savedLang = localStorage.getItem("preferred-language");
@@ -387,6 +393,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
             language={language}
             handleLanguageChange={handleLanguageChange}
           />
+          <div className={`transition-opacity duration-500 text-xs text-gray-400 flex items-center gap-1 ${isSaved ? 'opacity-100' : 'opacity-0'}`}>
+            <span className="text-[#CAFE33]">✅</span> 임시 저장됨
+          </div>
 
           {/*<div className="mt-4">*/}
           {/*    <p>Selected Language: {language}</p>*/}
@@ -619,7 +628,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
             </div>
             <div className="mt-2 p-2 bg-black rounded-md">
               {result?.testCases && (
-                <div className="mb-2 text-sm text-gray-400 font-NanumSquare font-semibold">
+                <div className="mb-2 text-sm text-gray-400 font-Pretendard font-semibold">
                   {result.testCases.length}개 테스트 케이스 중
                   <span className="font-bold mx-1 text-white">
                     {result.testCases.filter((tc) => tc.actualOutput === '맞았습니다').length}개
