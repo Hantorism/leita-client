@@ -1,16 +1,9 @@
 import { problemApi } from '@apis';
-import { Logger } from '@utils';
+import { Logger, type PagedResponse } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import type { ProblemDetail } from '@types';
+import { useEffect, useRef, useState } from 'react';
 
-interface Problem {
-  problemId: number;
-  title: string;
-  solved: {
-    totalCount: number;
-    rate: number;
-  };
-}
 
 const PopularProblems = () => {
   const [problems, setProblems] = useState<ProblemDetail[]>([]);

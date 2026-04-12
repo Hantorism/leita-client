@@ -8,8 +8,8 @@ import {
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudySession } from '@types';
-import { Logger, formatDateTime } from '@utils';
-import { useEffect, useState } from 'react';
+import { Logger, formatDateTime, type PagedResponse } from '@utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface StudySessionTabProps {

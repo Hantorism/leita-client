@@ -1,6 +1,6 @@
 import { Alert } from '@components';
 import { Logger } from '@utils';
-import { createContext, type ReactNode, useCallback, useContext, useState } from 'react';
+import { createContext, type ReactNode, useCallback, useContext, useMemo, useState } from 'react';
 
 export type AlertType = 'success' | 'error' | 'info';
 
@@ -39,8 +39,10 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
     setAlert(null);
   }, []);
 
+  const value = useMemo(() => ({ showAlert }), [showAlert]);
+
   return (
-    <AlertContext.Provider value={{ showAlert }}>
+    <AlertContext.Provider value={value}>
       {children}
       {alert && (
         <Alert

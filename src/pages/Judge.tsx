@@ -1,8 +1,8 @@
-import { judgeApi } from '@apis';
 import { Button, Footer, Header } from '@components';
 import { useAlert } from '@contexts';
+import { useJudges } from '@hooks';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { formatMemory, formatTime, formatCodeSize } from '@utils';
 
@@ -30,33 +30,10 @@ const getResultBadge = (result: string) => {
 
 const JudgePage = () => {
   const { judges: allJudges, loading, error } = useJudges();
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [filter, setFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-
-  // 검색/필터 조건이 변경되면 페이지를 첫 페이지로 초기화
-  useEffect(() => {
-    async function fetchJudges() {
-      setLoading(true);
-      try {
-        const result = await judgeApi.getJudges();
-        const data = result.data ?? result ?? [];
-        setAllJudges(data);
-        setJudges(data);
-      } catch (err: any) {
-        if (err.response?.status === 401) {
-          showAlert('error', '로그인이 필요합니다.');
-          navigate('/');
-        } else {
-          setError('데이터를 가져오는 중 오류가 발생했습니다.');
-        }
-        setAllJudges([]);
-        setJudges([]);
-      } finally {
-        setLoading(false);
-      }
-    }
 
   // 필터링 및 검색 로직 (Memoization)
   const filteredJudges = useMemo(() => {
@@ -80,6 +57,18 @@ const JudgePage = () => {
 
     return filtered;
   }, [filter, searchQuery, allJudges]);
+
+  const totalPages = Math.ceil(filteredJudges.length / ITEMS_PER_PAGE);
+
+  const paginatedJudges = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredJudges.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredJudges, currentPage]);
+
+  // 필터나 검색어가 바뀌면 1페이지로 이동
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, searchQuery]);
 
   if (error) return <div className="flex items-center justify-center min-h-screen text-red-500 font-bold">{error}</div>;
 

@@ -11,9 +11,9 @@ import {
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
-import { getCurrentUserEmail, Logger } from '@utils';
+import { getCurrentUserEmail, Logger, type PagedResponse, extractErrorMessage } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 
 const StudyPage = () => {
   const { showAlert } = useAlert();
@@ -40,7 +40,7 @@ const StudyPage = () => {
 
       const { content, totalPages: total } = result as unknown as PagedResponse<Study>;
       setStudies(content);
-      setTotalPages(result.data?.totalPages || result.totalPages || 1);
+      setTotalPages(total || 1);
     } catch (err: any) {
       Logger.error('Failed to fetch studies:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');

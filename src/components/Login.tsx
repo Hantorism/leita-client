@@ -46,7 +46,7 @@ const Login = () => {
     <div className="login-container">
       {user ? (
         <div className="flex items-center gap-2 lg:gap-3 flex-nowrap whitespace-nowrap">
-          <span className="text-white flex-shrink-0 font-light tracking-wide font-Pretendard">Hello, {user.data.name} 👋</span>
+          <span className="text-white flex-shrink-0 font-light tracking-wide font-Pretendard">Hello, {user.name} 👋</span>
           <button
             className="relative bg-[#303030] text-[#ededed] font-light tracking-wide px-5 py-1.5 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030] flex-shrink-0 transition-colors"
             onClick={handleLogout}

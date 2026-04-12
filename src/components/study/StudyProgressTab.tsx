@@ -3,7 +3,7 @@ import { Button } from '@components';
 import { useAlert } from '@contexts';
 import { useAssignmentProgress } from '@hooks';
 import type { Study, StudySession } from '@types';
-import { getCurrentUserEmail, getProblemStatusDetail, getSessionAssignmentStatus, Logger, type PagedResponse } from '@utils';
+import { formatDate, formatDateTime, getCurrentUserEmail, getProblemStatusDetail, getSessionAssignmentStatus, Logger, type PagedResponse } from '@utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 // ── Searchable Dropdown Helper ──
@@ -519,7 +519,8 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
       try {
         const res = await studySessionApi.getStudySessions(study.id, 0, 100);
         const data = (res as unknown as PagedResponse<StudySession>).content;
-        setSessions(data);
+        const sortedData = [...data].sort((a, b) => a.id - b.id);
+        setSessions(sortedData);
 
         let myJudges: any[] = [];
         if (currentUserEmail) {
@@ -773,10 +774,6 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
       </div>
     </div>
   );
-};
-
-export default StudyProgressTab;
-
 };
 
 export default StudyProgressTab;

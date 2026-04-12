@@ -1,9 +1,10 @@
 import { Solved } from '@assets/images';
 import { Button, Footer, Header } from '@components';
 import { useAlert } from '@contexts';
-import { getCurrentUserEmail, Logger } from '@utils';
+import { useProblems, useJudges, useDebounce } from '@hooks';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
+import { getCurrentUserEmail } from '@utils';
 
 const PROBLEMS_PER_PAGE = 10;
 
@@ -12,42 +13,29 @@ const ProblemsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearchQuery = useDebounce(searchQuery, 400);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const problemsPerPage = 10;
   const [filter, setFilter] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
 
-  useEffect(() => {
-    const fetchProblems = async () => {
-      setLoading(true);
-      try {
-        const filterValue = filter !== 'ALL' ? filter : undefined;
-        const res = await problemApi.getProblems(currentPage, problemsPerPage, searchQuery, filterValue as any);
-        const content = res.data?.content ?? res.content ?? [];
-        const total = res.data?.totalPages ?? res.totalPages ?? 1;
-        setProblems(content);
-        setTotalPages(total);
-      } catch (error) {
-        Logger.error('Failed to fetch problems:', error);
-        setProblems([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // 커스텀 훅을 사용하여 데이터 페칭 및 상태 관리
+  const { problems, totalPages, loading } = useProblems(
+    currentPage,
+    PROBLEMS_PER_PAGE,
+    debouncedSearchQuery,
+    filter
+  );
 
-  // 해결한 문제 ID를 Set으로 메모이제이션 (O(1) 조회)
+  const { judges } = useJudges();
+
+  // 해결한 문제 ID를 Set으로 메모이제이션 하여 성능 최적화
   const solvedProblemIds = useMemo(() => {
     const ids = new Set<number>();
-    judges.forEach((judge) => {
+    if (!judges) return ids;
+    for (const judge of judges) {
       if (judge.result === 'CORRECT') {
         ids.add(judge.problemId);
       }
-    };
-
-    fetchProblems();
-    fetchJudgedProblems();
-  }, [currentPage, searchQuery, filter]);
+    }
+    return ids;
+  }, [judges]);
 
   const handlePageChange = (page: number) => {
     if (page >= 0 && page < totalPages) {
@@ -56,19 +44,11 @@ const ProblemsPage = () => {
   };
 
   const isProblemSolved = (problemId: number) => {
-    return judgedProblems.some((judge) => judge.problemId === problemId);
+    return solvedProblemIds.has(problemId);
   };
 
-  const filteredProblems = problems.filter((problem) => {
-    const matchesSearch =
-      problem.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      problem.problemId.toString().includes(searchQuery);
-    if (!matchesSearch) return false;
-    if (filter === 'ALL') return true;
-    if (filter === 'SOLVED') return isProblemSolved(problem.problemId);
-    if (filter === 'UNSOLVED') return !isProblemSolved(problem.problemId);
-    return true;
-  });
+  // hook에서 이미 검색 및 필터링이 처리된 데이터를 반환함
+  const filteredProblems = problems;
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">

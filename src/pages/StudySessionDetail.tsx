@@ -18,7 +18,7 @@ import {
   type AttendanceRecord,
 } from '@types';
 import { useAlert } from '@contexts';
-import { getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
+import { formatDateTime, getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
 import { useEffect, useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -539,4 +539,3 @@ const StudySessionDetailPage = () => {
 };
 
 export default StudySessionDetailPage;
-lt StudySessionDetailPage;
