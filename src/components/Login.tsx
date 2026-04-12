@@ -12,19 +12,20 @@ const Login = () => {
   const signInWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
       try {
-        const res = await authApi.oauthRegister(tokenResponse.access_token);
+        const res = await authApi.oauthRegister({ accessToken: tokenResponse.access_token });
         Logger.print(' Google Login Response:', res);
 
-        const accessToken = res.data?.accessToken || res.accessToken;
+        const accessToken = res.accessToken;
         if (!accessToken) {
           return;
         }
 
         await login(accessToken);
         navigate('/');
-      } catch (error: any) {
+      } catch (error: unknown) {
         Logger.error(' Google login failed:', error);
-        if (error.response?.status === 401) {
+        const errorResp = (error as any).response;
+        if (errorResp?.status === 401) {
           showAlert('error', '@ajou.ac.kr의 아주대 계정으로 로그인 가능합니다!');
         } else {
           showAlert('error', '로그인 중 문제가 발생했습니다. 다시 시도해주세요.');

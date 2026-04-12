@@ -29,8 +29,8 @@ interface MenuButtonProps {
 }
 
 const MenuButton = ({ onClick, disabled, isActive, children }: MenuButtonProps) => {
-  const baseClasses = 'px-2 py-1 rounded-md transition bg-[#2A2A2A] text-white text-sm hover:text-[#CAFE33]';
-  const activeClasses = 'bg-[#CAFE33] !text-black';
+  const baseClasses = 'px-2 py-1 rounded-md transition bg-[var(--color-bg-surface)] text-white text-sm hover:text-[var(--color-brand)]';
+  const activeClasses = 'bg-[var(--color-brand)] !text-black';
 
   return (
     <button

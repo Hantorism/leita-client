@@ -1,4 +1,3 @@
-import { judgeApi, problemApi } from '@apis';
 import { Solved } from '@assets/images';
 import { Button, Footer, Header } from '@components';
 import { useAlert } from '@contexts';
@@ -6,25 +5,12 @@ import { getCurrentUserEmail, Logger } from '@utils';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-interface Problem {
-  problemId: number;
-  title: string;
-  category: string[];
-  solved: {
-    rate: number;
-  };
-}
-
-interface JudgedProblem {
-  problemId: number;
-  result: string;
-}
+const PROBLEMS_PER_PAGE = 10;
 
 const ProblemsPage = () => {
   const { showAlert } = useAlert();
-  const [problems, setProblems] = useState<Problem[]>([]);
-  const [judgedProblems, setJudgedProblems] = useState<JudgedProblem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 400);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -50,13 +36,12 @@ const ProblemsPage = () => {
       }
     };
 
-    const fetchJudgedProblems = async () => {
-      try {
-        const res = await judgeApi.getJudges();
-        const judgedData = res.data ?? res ?? [];
-        setJudgedProblems(judgedData.filter((judge: JudgedProblem) => judge.result === 'CORRECT'));
-      } catch (error) {
-        Logger.error('Failed to fetch judged problems:', error);
+  // 해결한 문제 ID를 Set으로 메모이제이션 (O(1) 조회)
+  const solvedProblemIds = useMemo(() => {
+    const ids = new Set<number>();
+    judges.forEach((judge) => {
+      if (judge.result === 'CORRECT') {
+        ids.add(judge.problemId);
       }
     };
 

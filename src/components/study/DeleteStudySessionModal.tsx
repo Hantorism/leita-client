@@ -39,11 +39,11 @@ const DeleteStudySessionModal = ({ sessionNumber, isDeleting, onConfirm, onClose
           value={confirmText}
           onChange={(e) => setConfirmText(e.target.value)}
           placeholder="문구를 입력하세요"
-          className="w-full px-4 py-2.5 mb-4 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white text-center focus:outline-none focus:border-red-600 transition"
+          className="w-full px-4 py-2.5 mb-4 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white text-center focus:outline-none focus:border-red-600 transition"
           autoFocus
         />
 
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-sm">
           해당 회차의 모든 데이터(출석, 과제 등)가 영구적으로 삭제됩니다.
           <br />
           <span className="text-red-400 font-semibold mt-1 block">되돌릴 수 없습니다.</span>

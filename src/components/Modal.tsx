@@ -26,12 +26,12 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
       onClick={onClose}
     >
       <div
-        className="bg-[#1f1f1f] border border-gray-700/50 rounded-2xl w-full max-w-md shadow-2xl text-white relative"
+        className="bg-[var(--color-bg-card)] border border-gray-700/50 rounded-2xl w-full max-w-md shadow-2xl text-white relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더 */}
         <div className="flex items-center justify-between px-8 pt-8 pb-2">
-          <h2 className="text-xl font-bold text-[#CAFE33]">{title}</h2>
+          <h2 className="text-xl font-bold text-[var(--color-brand)]">{title}</h2>
           <Button
             variant="ghost"
             onClick={onClose}

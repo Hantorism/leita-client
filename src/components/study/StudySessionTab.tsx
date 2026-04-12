@@ -34,26 +34,40 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
   const [deleteTargetSession, setDeleteTargetSession] = useState<StudySession | null>(null);
   const [deleteTargetNumber, setDeleteTargetNumber] = useState<number>(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const isMounted = useRef(true);
 
-  const fetchSessions = async () => {
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const fetchSessions = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await studySessionApi.getStudySessions(study.id);
-      const data = response.data?.content ?? response;
-      const sortedData = Array.isArray(data) ? [...data].sort((a: any, b: any) => a.id - b.id) : [];
+      if (!isMounted.current) return;
+
+      const { content: data } = response as unknown as PagedResponse<StudySession>;
+      const sortedData = [...data].sort((a: StudySession, b: StudySession) => a.id - b.id);
       setSessions(sortedData);
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Failed to fetch sessions', err);
-      setError('세션 목록을 불러오지 못했습니다.');
+      if (isMounted.current) {
+        setError('세션 목록을 불러오지 못했습니다.');
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [study.id]);
 
   useEffect(() => {
     fetchSessions();
-  }, [study.id]);
+  }, [fetchSessions]);
 
   const handleDeleteSession = async () => {
     if (!deleteTargetSession) return;
@@ -68,7 +82,9 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
       Logger.error('Delete Error:', err);
       showAlert('error', '세션 삭제에 실패했습니다.');
     } finally {
-      setIsDeleting(false);
+      if (isMounted.current) {
+        setIsDeleting(false);
+      }
     }
   };
 
@@ -80,7 +96,7 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
         <Button
           variant="ghost"
           onClick={fetchSessions}
-          className="mt-2 text-xs underline hover:text-white !px-0 !py-0"
+          className="mt-2 text-sm underline hover:text-white !px-0 !py-0"
         >
           다시 시도
         </Button>
@@ -123,7 +139,7 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
         )}
       </div>
 
-      <div className="mt-4 space-y-4">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {sessions.length === 0 ? (
           <p className="text-gray-500 pl-2">등록된 세션이 없습니다.</p>
         ) : (
@@ -134,7 +150,7 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
             >
               <div className="flex-1">
                 <div className="flex items-center gap-3">
-                  <h3 className="text-lg font-medium text-[#CAFE33]">
+                  <h3 className="text-lg font-medium text-[var(--color-brand)]">
                     {index + 1}회차{session.title ? ` - ${session.title}` : ''}
                   </h3>
                   {isAdmin && (
@@ -145,7 +161,7 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
                           setUpdateTargetSession(session);
                           setShowUpdateModal(true);
                         }}
-                        className="text-[11px] !px-2.5 !py-0.5 rounded-full hover:bg-[#CAFE33] hover:text-black"
+                        className="text-sm !px-2.5 !py-0.5 rounded-full hover:bg-[var(--color-brand)] hover:text-black"
                       >
                         수정
                       </Button>
@@ -156,7 +172,7 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
                           setDeleteTargetNumber(index + 1);
                           setShowDeleteModal(true);
                         }}
-                        className="text-[11px] !px-2.5 !py-0.5 rounded-full hover:bg-red-600 hover:text-white"
+                        className="text-sm !px-2.5 !py-0.5 rounded-full hover:bg-red-600 hover:text-white"
                       >
                         삭제
                       </Button>

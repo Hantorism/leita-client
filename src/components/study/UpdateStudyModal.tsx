@@ -2,7 +2,7 @@ import { studyApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
 import type { Study } from '@types';
-import { Logger } from '@utils';
+import { extractErrorMessage, Logger } from '@utils';
 import { useState } from 'react';
 
 interface UpdateStudyModalProps {
@@ -41,9 +41,9 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
       showAlert('success', '수정 완료되었습니다!');
       onClose();
       onUpdated();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Update Error:', err);
-      showAlert('error', '수정 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+      showAlert('error', '수정 실패: ' + extractErrorMessage(err));
     }
   };
 
@@ -58,9 +58,9 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
     >
       <div className="space-y-5">
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">스터디 이름</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">스터디 이름</label>
           <input
-            className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#CAFE33]/50 transition"
+            className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-brand)]/50 transition"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -68,9 +68,9 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">상세 설명</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">상세 설명</label>
           <textarea
-            className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 resize-none focus:outline-none focus:border-[#CAFE33]/50 transition"
+            className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 resize-none focus:outline-none focus:border-[var(--color-brand)]/50 transition"
             placeholder="Description"
             rows={3}
             value={description}
@@ -79,9 +79,9 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">모집 조건</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">모집 조건</label>
           <input
-            className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[#CAFE33]/50 transition"
+            className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-brand)]/50 transition"
             placeholder="Requirement"
             value={requirement}
             onChange={(e) => setRequirement(e.target.value)}
@@ -90,19 +90,19 @@ const UpdateStudyModal = ({ study, onClose, onUpdated }: UpdateStudyModalProps) 
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">시작일</label>
+            <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">시작일</label>
             <input
               type="date"
-              className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition text-sm [color-scheme:dark]"
+              className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition text-sm [color-scheme:dark]"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">종료일</label>
+            <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">종료일</label>
             <input
               type="date"
-              className="w-full px-4 py-2.5 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition text-sm [color-scheme:dark]"
+              className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition text-sm [color-scheme:dark]"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
             />

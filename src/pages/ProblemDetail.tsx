@@ -56,7 +56,7 @@ const ProblemDetailPage = () => {
     const fetchProblem = async () => {
       try {
         const res = await problemApi.getProblem(Number(id));
-        const data = res.data || res;
+        const data = res as unknown as ProblemDetailType;
 
         if (!data) {
           throw new Error('Invalid response format');

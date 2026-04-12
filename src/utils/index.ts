@@ -6,3 +6,4 @@ export * from './Logger';
 export * from './Profile';
 export * from './Study';
 export * from './User';
+export * from './Formatter';

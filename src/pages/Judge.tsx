@@ -4,38 +4,38 @@ import { useAlert } from '@contexts';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatMemory, formatTime, formatCodeSize } from '@utils';
 
 const ITEMS_PER_PAGE = 15;
 
-interface JudgeData {
-  problemId: number;
-  problemTitle?: string;
-  user: {
-    name: string;
-    email: string;
-    profileImage?: string;
-  };
-  result: 'CORRECT' | 'WRONG' | 'COMPILE_ERROR' | 'RUNTIME_ERROR' | 'TIME_OUT' | 'MEMORY_OUT' | 'UNKNOWN';
-  used: {
-    memory: number;
-    time: number;
-    language: string;
-  };
-  sizeOfCode: number;
-  type: string;
-}
+const getResultBadge = (result: string) => {
+  switch (result) {
+    case 'CORRECT':
+      return <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">정답</span>;
+    case 'WRONG':
+      return <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">오답</span>;
+    case 'COMPILE_ERROR':
+      return <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">컴파일 에러</span>;
+    case 'RUNTIME_ERROR':
+      return <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">런타임 에러</span>;
+    case 'TIME_OUT':
+      return <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">시간 초과</span>;
+    case 'MEMORY_OUT':
+      return <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">메모리 초과</span>;
+    default:
+      return <span className="bg-gray-500/10 text-gray-400 border border-gray-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">{result}</span>;
+  }
+};
+
 
 const JudgePage = () => {
-  const [allJudges, setAllJudges] = useState<JudgeData[]>([]);
-  const [judges, setJudges] = useState<JudgeData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const { judges: allJudges, loading, error } = useJudges();
+  const [currentPage, setCurrentPage] = useState(0);
   const [filter, setFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
 
+  // 검색/필터 조건이 변경되면 페이지를 첫 페이지로 초기화
   useEffect(() => {
     async function fetchJudges() {
       setLoading(true);
@@ -58,11 +58,8 @@ const JudgePage = () => {
       }
     }
 
-    fetchJudges();
-  }, []);
-
-  useEffect(() => {
-    setCurrentPage(1);
+  // 필터링 및 검색 로직 (Memoization)
+  const filteredJudges = useMemo(() => {
     let filtered = [...allJudges];
 
     if (filter === 'CORRECT') {
@@ -81,13 +78,11 @@ const JudgePage = () => {
       );
     }
 
-    setJudges(filtered);
+    return filtered;
   }, [filter, searchQuery, allJudges]);
 
   if (error) return <div className="flex items-center justify-center min-h-screen text-red-500 font-bold">{error}</div>;
 
-  const totalPages = Math.ceil(judges.length / ITEMS_PER_PAGE);
-  const paginatedJudges = judges.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">

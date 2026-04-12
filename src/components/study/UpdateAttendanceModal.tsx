@@ -1,7 +1,7 @@
 import { studySessionApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { extractErrorMessage, Logger } from '@utils';
 import { useState } from 'react';
 
 interface UpdateAttendanceModalProps {
@@ -52,13 +52,14 @@ const UpdateAttendanceModal = ({
       await studySessionApi.updateAttendance(sessionId, {
         closeTime: new Date(closeTime).toISOString(),
         lateThresholdMinutes,
+        status: null,
       });
       showAlert('success', '출석 정보가 수정되었습니다.');
       onSuccess?.();
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Failed to update attendance info', err);
-      showAlert('error', '출석 정보 수정에 실패했습니다.');
+      showAlert('error', '출석 정보 수정에 실패했습니다: ' + extractErrorMessage(err));
     }
   };
 
@@ -86,7 +87,7 @@ const UpdateAttendanceModal = ({
           <label className="block text-sm font-medium text-gray-400 mb-2">출석 마감 시간</label>
           <input
             type="datetime-local"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors [color-scheme:dark]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors [color-scheme:dark]"
             value={closeTime}
             onChange={(e) => setCloseTime(e.target.value)}
           />
@@ -98,7 +99,7 @@ const UpdateAttendanceModal = ({
             <input
               type="number"
               min="0"
-              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors pr-10"
+              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors pr-10"
               value={lateThresholdMinutes}
               onChange={(e) => setLateThresholdMinutes(e.target.value ? Number(e.target.value) : 0)}
             />

@@ -6,6 +6,7 @@ import {
   Footer,
   Header,
   JoinStudyModal,
+  Pagination,
   UpdateStudyModal,
 } from '@components';
 import { useAlert } from '@contexts';
@@ -29,19 +30,24 @@ const StudyPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [deleteTargetStudy, setDeleteTargetStudy] = useState<Study | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const isMounted = useRef(true);
 
   const fetchStudies = useCallback(async () => {
     setLoading(true);
     try {
       const result = await studyApi.getStudies(page, 10);
-      const content: Study[] = result.data?.content || result.content || [];
+      if (!isMounted.current) return;
+
+      const { content, totalPages: total } = result as unknown as PagedResponse<Study>;
       setStudies(content);
       setTotalPages(result.data?.totalPages || result.totalPages || 1);
     } catch (err: any) {
       Logger.error('Failed to fetch studies:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }, [page]);
 
@@ -71,11 +77,13 @@ const StudyPage = () => {
       setShowDeleteModal(false);
       setDeleteTargetStudy(null);
       fetchStudies();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Delete Error:', err);
-      showAlert('error', '삭제 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+      showAlert('error', '삭제 실패: ' + extractErrorMessage(err));
     } finally {
-      setIsDeleting(false);
+      if (isMounted.current) {
+        setIsDeleting(false);
+      }
     }
   };
 

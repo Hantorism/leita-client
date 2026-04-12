@@ -4,6 +4,7 @@ export { default as JudgePage } from './Judge';
 export { default as PrivacyPage } from './Privacy';
 export { default as ProblemDetailPage } from './ProblemDetail';
 export { default as ProblemsPage } from './Problems';
+export { default as SourcePage } from './Source';
 export { default as StudyPage } from './Study';
 export { default as StudyDetailPage } from './StudyDetail';
 export { default as StudySessionDetailPage } from './StudySessionDetail';

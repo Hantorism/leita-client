@@ -13,16 +13,20 @@ interface Problem {
 }
 
 const PopularProblems = () => {
-  const [problems, setProblems] = useState<Problem[]>([]);
+  const [problems, setProblems] = useState<ProblemDetail[]>([]);
+  const isMounted = useRef(true);
 
   useEffect(() => {
+    isMounted.current = true;
     const fetchProblems = async () => {
       try {
         const res = await problemApi.getProblems(0, 20);
-        const content = res.data?.content || res.content || [];
+        if (!isMounted.current) return;
+
+        const { content } = res as unknown as PagedResponse<ProblemDetail>;
 
         const sortedProblems = [...content]
-          .sort((a: Problem, b: Problem) => (b.solved?.totalCount || 0) - (a.solved?.totalCount || 0))
+          .sort((a, b) => (b.solved?.totalCount || 0) - (a.solved?.totalCount || 0))
           .slice(0, 5);
 
         setProblems(sortedProblems);
@@ -32,6 +36,9 @@ const PopularProblems = () => {
     };
 
     fetchProblems();
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
 
   return (

@@ -1,7 +1,7 @@
 import { studySessionApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { extractErrorMessage, Logger } from '@utils';
 import { useState } from 'react';
 
 interface CreateAttendanceModalProps {
@@ -62,9 +62,9 @@ const CreateAttendanceModal = ({
       showAlert('success', '출석 체크가 시작되었습니다.');
       onSuccess?.();
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Failed to start attendance check', err);
-      showAlert('error', '출석 체크 시작에 실패했습니다.');
+      showAlert('error', '출석 체크 시작에 실패했습니다: ' + extractErrorMessage(err));
     }
   };
 
@@ -82,7 +82,7 @@ const CreateAttendanceModal = ({
           <label className="block text-sm font-medium text-gray-400 mb-2">출석 시작 시간</label>
           <input
             type="datetime-local"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors [color-scheme:dark]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors [color-scheme:dark]"
             value={openTime}
             onChange={(e) => setOpenTime(e.target.value)}
           />
@@ -92,7 +92,7 @@ const CreateAttendanceModal = ({
           <label className="block text-sm font-medium text-gray-400 mb-2">출석 마감 시간</label>
           <input
             type="datetime-local"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors [color-scheme:dark]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors [color-scheme:dark]"
             value={closeTime}
             onChange={(e) => setCloseTime(e.target.value)}
           />
@@ -104,7 +104,7 @@ const CreateAttendanceModal = ({
             <input
               type="number"
               min="0"
-              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors pr-10"
+              className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors pr-10"
               value={lateThresholdMinutes}
               onChange={(e) => setLateThresholdMinutes(e.target.value ? Number(e.target.value) : 0)}
             />
