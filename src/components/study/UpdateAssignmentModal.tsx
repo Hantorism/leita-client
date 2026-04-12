@@ -1,19 +1,14 @@
 import { problemApi, studySessionApi } from '@apis';
 import { Button, Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { type ProblemDetail } from '@types';
+import { Logger, type PagedResponse } from '@utils';
 import { useEffect, useState } from 'react';
-
-interface Problem {
-  problemId: number;
-  title: string;
-}
 
 interface UpdateAssignmentModalProps {
   studyId: number;
   sessionId: number;
   initialData: {
-    title: string;
     description?: string;
     problemIds: number[];
   };
@@ -23,12 +18,11 @@ interface UpdateAssignmentModalProps {
 
 const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuccess }: UpdateAssignmentModalProps) => {
   const { showAlert } = useAlert();
-  const [title, setTitle] = useState(initialData.title);
   const [description, setDescription] = useState(initialData.description || '');
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [problems, setProblems] = useState<Problem[]>([]);
-  const [selectedProblems, setSelectedProblems] = useState<Problem[]>([]);
+  const [problems, setProblems] = useState<ProblemDetail[]>([]);
+  const [selectedProblems, setSelectedProblems] = useState<ProblemDetail[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -43,10 +37,8 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
           const res = await Promise.all(
             initialData.problemIds.map((pid: number) => problemApi.getProblem(pid).catch(() => null)),
           );
-          const initialProbs = res
-            .map((p) => p?.data || p)
-            .filter((p) => p && p.problemId)
-            .map((p) => ({ problemId: p.problemId, title: p.title }));
+          const initialProbs = (res.filter((p) => p !== null) as ProblemDetail[])
+            .map((p) => ({ problemId: p.problemId, title: p.title } as ProblemDetail));
           setSelectedProblems(initialProbs);
         } catch (err) {
           Logger.error('Failed to fetch initial assignment problems', err);
@@ -64,8 +56,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
         setIsSearching(true);
         const res = await problemApi.getProblems(currentPage, pageSize, searchQuery);
         if (isMounted) {
-          const content = res.data?.content || res.content || [];
-          const total = res.data?.totalPages || res.totalPages || 1;
+          const { content, totalPages: total } = res as unknown as PagedResponse<ProblemDetail>;
           setProblems(content);
           setTotalPages(total);
         }
@@ -90,7 +81,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
     setCurrentPage(0);
   }, [searchQuery]);
 
-  const handleSelectProblem = (problem: Problem) => {
+  const handleSelectProblem = (problem: ProblemDetail) => {
     if (!selectedProblems.some((p) => p.problemId === problem.problemId)) {
       setSelectedProblems([...selectedProblems, problem]);
     }
@@ -101,8 +92,8 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
   };
 
   const handleSubmit = async () => {
-    if (!title.trim() || selectedProblems.length === 0) {
-      showAlert('info', '과제 제목과 문제를 1개 이상 선택해주세요.');
+    if (selectedProblems.length === 0) {
+      showAlert('info', '문제를 1개 이상 선택해주세요.');
       return;
     }
 
@@ -110,14 +101,15 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
 
     try {
       await studySessionApi.updateAssignment(sessionId, {
-        title,
-        description,
+        description: description || null,
         problemIds,
+        startDateTime: null,
+        endDateTime: new Date().toISOString(),
       });
       showAlert('success', '과제가 수정되었습니다.');
       onSuccess?.();
       onClose();
-    } catch (err: any) {
+    } catch (err: unknown) {
       Logger.error('Failed to update assignment', err);
       showAlert('error', '과제 수정에 실패했습니다.');
     }
@@ -134,20 +126,9 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
     >
       <div className="space-y-5 text-white">
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">과제 제목</label>
-          <input
-            type="text"
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors"
-            placeholder="예: 1주차 기본 알고리즘"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-
-        <div>
           <label className="block text-sm font-medium text-gray-400 mb-2">설명</label>
           <textarea
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors min-h-[80px]"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors min-h-[80px]"
             placeholder="상세 설명 (선택 사항)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -163,7 +144,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
             {selectedProblems.map((p) => (
               <div
                 key={p.problemId}
-                className="flex items-center gap-2 px-3 py-1.5 bg-[#CAFE33] text-black rounded-full text-sm font-semibold max-w-full"
+                className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-brand)] text-black rounded-full text-sm font-semibold max-w-full"
               >
                 <span className="truncate">
                   {p.problemId}. {p.title}
@@ -185,7 +166,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
           <input
             type="text"
             placeholder="문제 번호 또는 제목으로 검색..."
-            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-colors mb-2"
+            className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:border-[var(--color-brand)] transition-colors mb-2"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -212,11 +193,11 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
                       {p.problemId}. {p.title}
                     </span>
                     {isSelected ? (
-                      <span className="text-xs text-gray-500 font-semibold shrink-0">선택됨</span>
+                      <span className="text-sm text-gray-500 font-semibold shrink-0">선택됨</span>
                     ) : (
                       <Button
                         variant="ghost"
-                        className="!px-0 !py-0 text-[#CAFE33] hover:text-[#CAFE33] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none font-semibold"
+                        className="!px-0 !py-0 text-[var(--color-brand)] hover:text-[var(--color-brand)] hover:bg-transparent shrink-0 hover:underline bg-transparent shadow-none border-none font-semibold"
                       >
                         추가
                       </Button>
@@ -235,7 +216,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
                   variant="ghost"
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
                   disabled={currentPage === 0}
-                  className="!px-2 !py-1 text-xs text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
+                  className="!px-2 !py-1 text-sm text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
                 >
                   이전
                 </Button>
@@ -247,9 +228,9 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
                       key={i}
                       variant="ghost"
                       onClick={() => setCurrentPage(i)}
-                      className={`!px-2.5 !py-1 text-xs rounded-md min-w-[28px] ${
+                      className={`!px-2.5 !py-1 text-sm rounded-md min-w-[28px] ${
                         isPageActive
-                          ? '!bg-[#CAFE33] !text-black font-bold !opacity-100 hover:!bg-[#CAFE33] hover:!text-black transition-none scale-110 shadow-[0_0_10px_rgba(202,255,51,0.3)]'
+                          ? '!bg-[var(--color-brand)] !text-black font-bold !opacity-100 hover:!bg-[var(--color-brand)] hover:!text-black transition-none scale-110 shadow-[0_0_10px_rgba(202,255,51,0.3)]'
                           : 'text-gray-500 hover:text-white hover:bg-white/10 bg-transparent shadow-none border-none'
                       }`}
                     >
@@ -262,7 +243,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
                   variant="ghost"
                   onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
                   disabled={currentPage >= totalPages - 1}
-                  className="!px-2 !py-1 text-xs text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
+                  className="!px-2 !py-1 text-sm text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
                 >
                   다음
                 </Button>

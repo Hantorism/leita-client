@@ -139,7 +139,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
           {uploadedUrl && (
             <button
               onClick={() => onInsert(uploadedUrl)}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-[#CAFE33] text-black rounded-md w-32 hover:bg-[#d8ff5b] transition"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-[var(--color-brand)] text-black rounded-md w-32 hover:bg-[#d8ff5b] transition"
               type="button"
             >
               <Icon

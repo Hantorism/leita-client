@@ -1,102 +1,90 @@
-import { AxiosInstance } from '@utils';
+import type {
+  StudySession,
+  StudySessionDetail,
+  AttendanceCheck,
+  AssignmentResponse,
+  AssignmentDetailResponse,
+  StudySessionCreateRequest,
+  StudySessionUpdateRequest,
+  AttendanceOpenRequest,
+  AttendanceUpdateRequest,
+  AssignmentCreateRequest,
+  AssignmentUpdateRequest,
+  MemberAttendanceUpdateRequest,
+  MemberAssignmentUpdateRequest,
+} from '@types';
+import { AxiosInstance, type PagedResponse } from '@utils';
 
 export const studySessionApi = {
   // GET /study-session
   getStudySessions: async (studyId: number, page?: number, size?: number) => {
-    const response = await AxiosInstance.get(`/study-session`, { params: { studyId, page, size } });
-    return response.data;
+    return AxiosInstance.get<PagedResponse<StudySession>>(`/study-session`, {
+      params: { studyId, page, size },
+    });
   },
 
   // POST /study-session
-  createStudySession: async (data: {
-    studyId: number;
-    title: string;
-    description?: string;
-    startDateTime: string;
-    endDateTime: string;
-  }) => {
-    const response = await AxiosInstance.post(`/study-session`, data);
-    return response.data;
+  createStudySession: async (data: StudySessionCreateRequest) => {
+    return AxiosInstance.post<StudySessionDetail>(`/study-session`, data);
   },
 
   // GET /study-session/{studySessionId}
   getStudySession: async (studySessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studySessionId}`);
-    return response.data;
+    return AxiosInstance.get<StudySessionDetail>(`/study-session/${studySessionId}`);
   },
 
   // PUT /study-session/{studySessionId}
-  updateStudySession: async (
-    studySessionId: number,
-    data: { title: string; description?: string; startDateTime: string; endDateTime: string },
-  ) => {
-    const response = await AxiosInstance.put(`/study-session/${studySessionId}`, data);
-    return response.data;
+  updateStudySession: async (studySessionId: number, data: StudySessionUpdateRequest) => {
+    return AxiosInstance.put<StudySessionDetail>(`/study-session/${studySessionId}`, data);
   },
 
   // DELETE /study-session/{studySessionId}
   deleteStudySession: async (studySessionId: number) => {
-    const response = await AxiosInstance.delete(`/study-session/${studySessionId}`);
-    return response.data;
+    return AxiosInstance.delete(`/study-session/${studySessionId}`);
   },
 
   // GET /study-session/{studySessionId}/attendance
   getAttendance: async (studySessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studySessionId}/attendance`);
-    return response.data;
+    return AxiosInstance.get<AttendanceCheck>(`/study-session/${studySessionId}/attendance`);
   },
 
   // POST /study-session/{studySessionId}/attendance
-  openAttendance: async (
-    studySessionId: number,
-    data: { openTime: string; closeTime: string; lateThresholdMinutes: number },
-  ) => {
-    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance`, data);
-    return response.data;
+  openAttendance: async (studySessionId: number, data: AttendanceOpenRequest) => {
+    return AxiosInstance.post<AttendanceCheck>(`/study-session/${studySessionId}/attendance`, data);
   },
 
   // PUT /study-session/{studySessionId}/attendance
-  updateAttendance: async (
-    studySessionId: number,
-    data: { closeTime?: string; lateThresholdMinutes?: number; status?: string },
-  ) => {
-    const response = await AxiosInstance.put(`/study-session/${studySessionId}/attendance`, data);
-    return response.data;
+  updateAttendance: async (studySessionId: number, data: AttendanceUpdateRequest) => {
+    return AxiosInstance.put<AttendanceCheck>(`/study-session/${studySessionId}/attendance`, data);
   },
 
   // POST /study-session/{studySessionId}/attendance/attend
   attend: async (studySessionId: number) => {
-    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/attend`);
-    return response.data;
+    return AxiosInstance.post<AttendanceCheck>(`/study-session/${studySessionId}/attendance/attend`);
   },
 
-  // POST /study-session/{studySessionId}/attendance/close
-  closeAttendance: async (studySessionId: number, data?: { closeTime: string }) => {
-    const response = await AxiosInstance.post(`/study-session/${studySessionId}/attendance/close`, data || {});
-    return response.data;
+  // PUT /study-session/{studySessionId}/attendance/members/{memberId}
+  updateMemberAttendance: async (studySessionId: number, memberId: number, data: MemberAttendanceUpdateRequest) => {
+    return AxiosInstance.put<AttendanceCheck>(`/study-session/${studySessionId}/attendance/members/${memberId}`, data);
   },
 
   // GET /study-session/{studySessionId}/assignment
   getAssignment: async (studySessionId: number) => {
-    const response = await AxiosInstance.get(`/study-session/${studySessionId}/assignment`);
-    return response.data;
+    return AxiosInstance.get<AssignmentDetailResponse>(`/study-session/${studySessionId}/assignment`);
   },
 
   // POST /study-session/{studySessionId}/assignment
-  createAssignment: async (
-    studySessionId: number,
-    data: { title: string; description?: string; problemIds: number[] },
-  ) => {
-    const response = await AxiosInstance.post(`/study-session/${studySessionId}/assignment`, data);
-    return response.data;
+  createAssignment: async (studySessionId: number, data: AssignmentCreateRequest) => {
+    return AxiosInstance.post<AssignmentResponse>(`/study-session/${studySessionId}/assignment`, data);
   },
 
   // PUT /study-session/{studySessionId}/assignment
-  updateAssignment: async (
-    studySessionId: number,
-    data: { title: string; description?: string; problemIds: number[] },
-  ) => {
-    const response = await AxiosInstance.put(`/study-session/${studySessionId}/assignment`, data);
-    return response.data;
+  updateAssignment: async (studySessionId: number, data: AssignmentUpdateRequest) => {
+    return AxiosInstance.put<AssignmentResponse>(`/study-session/${studySessionId}/assignment`, data);
+  },
+
+  // PUT /study-session/{studySessionId}/assignment/members/{memberId}
+  updateMemberAssignment: async (studySessionId: number, memberId: number, data: MemberAssignmentUpdateRequest) => {
+    return AxiosInstance.put<AssignmentDetailResponse>(`/study-session/${studySessionId}/assignment/members/${memberId}`, data);
   },
 };

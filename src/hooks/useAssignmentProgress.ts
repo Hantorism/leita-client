@@ -45,7 +45,7 @@ export const useAssignmentProgress = (problemIds: number[]): AssignmentProgress 
           problemIds.map((id) =>
             problemApi
               .getProblem(id)
-              .then((res) => res.data || res)
+              .then((res) => res as unknown as ProblemDetail)
               .catch(() => ({ problemId: id, title: `문제 ${id}` }) as ProblemDetail),
           ),
         );
@@ -53,7 +53,7 @@ export const useAssignmentProgress = (problemIds: number[]): AssignmentProgress 
         // 2. 사용자의 풀이 현황 조회 및 상태 주입
         // 추후 getMemberAssignment api로 수정 예정
         const judgeRes = await judgeApi.getJudges();
-        const myJudges = judgeRes.data || judgeRes || [];
+        const myJudges = (judgeRes as unknown as any[]) || [];
 
         let solvedCount = 0;
         let attemptedCount = 0;
@@ -89,7 +89,7 @@ export const useAssignmentProgress = (problemIds: number[]): AssignmentProgress 
     };
 
     fetchProgressData();
-  }, [problemIds]);
+  }, [JSON.stringify(problemIds)]);
 
   return {
     problems,

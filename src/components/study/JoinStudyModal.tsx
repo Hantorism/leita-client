@@ -1,7 +1,7 @@
 import { studyApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { extractErrorMessage, Logger } from '@utils';
 
 interface JoinStudyModalProps {
   study: any;
@@ -17,12 +17,9 @@ const JoinStudyModal = ({ study, onClose }: JoinStudyModalProps) => {
       await studyApi.joinStudy(study.id);
       showAlert('success', '가입 요청을 전송했습니다.');
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Failed to join study:', err);
-      showAlert(
-        'error',
-        '가입 요청 중 오류가 발생했습니다: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'),
-      );
+      showAlert('error', '가입 요청 중 오류가 발생했습니다: ' + extractErrorMessage(err));
     }
   };
 
@@ -37,8 +34,8 @@ const JoinStudyModal = ({ study, onClose }: JoinStudyModalProps) => {
     >
       <div className="text-center">
         <p className="text-gray-400 text-sm mb-4 leading-relaxed line-clamp-2">{study.description}</p>
-        <div className="bg-[#2a2a2a] rounded-xl p-4 text-left">
-          <p className="text-xs text-gray-500 uppercase tracking-wider mb-1 font-bold">모집 조건</p>
+        <div className="bg-[var(--color-bg-surface)] rounded-xl p-4 text-left">
+          <p className="text-sm text-gray-500 uppercase tracking-wider mb-1 font-bold">모집 조건</p>
           <p className="text-sm text-gray-200">{study.requirement || '제한 없음'}</p>
         </div>
       </div>

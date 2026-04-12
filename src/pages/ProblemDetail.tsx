@@ -1,6 +1,6 @@
 import { problemApi } from '@apis';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
-import { Logger, Profile } from '@utils';
+import { Logger, Profile, formatMemory, formatTime } from '@utils';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -54,7 +54,7 @@ const ProblemDetailPage = () => {
     const fetchProblem = async () => {
       try {
         const res = await problemApi.getProblem(Number(id));
-        const data = res.data || res;
+        const data = res as unknown as ProblemDetailType;
 
         if (!data) {
           throw new Error('Invalid response format');
@@ -108,9 +108,9 @@ const ProblemDetailPage = () => {
   if (!problem) return <div className="text-white text-center mt-10">👽 문제를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex h-screen bg-[#1A1A1A] text-white px-3 py-4 font-Pretendard">
+    <div className="flex h-screen bg-[var(--color-bg-main)] text-white px-3 py-4 font-Pretendard">
       <div
-        className="scrollbar-hide bg-[#2A2A2A] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
+        className="scrollbar-hide bg-[var(--color-bg-surface)] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
         style={{ width: `${leftWidth}px`, height: 'calc(100vh - 60px)' }}
       >
         <h2 className="text-2xl font-bold text-gray-200 font-Pretendard">
@@ -121,7 +121,7 @@ const ProblemDetailPage = () => {
           {problem.category?.map((cat, i) => (
             <span
               key={i}
-              className="px-2 py-1 text-xs text-gray-200 border border-gray-500 rounded-full"
+              className="px-2 py-1 text-sm text-gray-200 border border-gray-500 rounded-full"
             >
               {cat}
             </span>
@@ -141,7 +141,7 @@ const ProblemDetailPage = () => {
           )}
           <ProblemDescriptionEditor
             content={problem.description.problem}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
             rows={3}
             readonly
           />
@@ -156,7 +156,7 @@ const ProblemDetailPage = () => {
           )}
           <ProblemDescriptionEditor
             content={problem.description.input}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
             rows={3}
             readonly
           />
@@ -171,7 +171,7 @@ const ProblemDetailPage = () => {
           )}
           <ProblemDescriptionEditor
             content={problem.description.output}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
             rows={3}
             readonly
           />
@@ -195,7 +195,7 @@ const ProblemDetailPage = () => {
                     </pre>
                     <button
                       onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
-                      className="absolute top-2 right-2 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 text-white rounded-md"
+                      className="absolute top-2 right-2 px-2 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-md"
                     >
                       {copiedId === (testCase.id || index) ? '복사완료!' : '복사하기'}
                     </button>
@@ -211,8 +211,8 @@ const ProblemDetailPage = () => {
 
         <div className="mt-4">
           <h3 className="text-lg font-normal pb-2 pt-3">제한 사항</h3>
-          <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ?? '정보 없음'}KB</p>
-          <p className="text-gray-300">시간 제한: {problem?.limit?.time ?? '정보 없음'}MS</p>
+          <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ? formatMemory(problem.limit.memory) : '정보 없음'}</p>
+          <p className="text-gray-300">시간 제한: {problem?.limit?.time ? formatTime(problem.limit.time) : '정보 없음'}</p>
         </div>
 
         <p className="text-sm text-gray-400 pt-6">출처: {problem.source}</p>

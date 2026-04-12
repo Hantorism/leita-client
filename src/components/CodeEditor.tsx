@@ -1,6 +1,7 @@
 import { judgeApi, problemApi } from '@apis';
 import { CustomDropdown } from '@components';
 import { useAlert } from '@contexts';
+import type { JudgeLanguage } from '@types';
 import MonacoEditor, { type Monaco } from '@monaco-editor/react';
 import { Logger } from '@utils';
 import type * as monacoEditor from 'monaco-editor';
@@ -59,7 +60,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
     if (monacoInstance && language === 'javascript') {
-      (monacoInstance.languages as any).typescript.javascriptDefaults.setDiagnosticsOptions({
+      // @ts-ignore
+      const monaco = monacoInstance as any;
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
@@ -115,7 +118,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     localStorage.setItem('selectedLanguage', newLanguage);
 
     if (monacoInstance && newLanguage === 'javascript') {
-      (monacoInstance.languages as any).typescript.javascriptDefaults.setDiagnosticsOptions({
+      // @ts-ignore
+      const monaco = monacoInstance as any;
+      monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
@@ -201,16 +206,17 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     setResult(null);
 
     try {
-      const resultData = await judgeApi.submitCode(Number(problemId), {
+      const result = await judgeApi.submitCode(Number(problemId), {
         code: encodeBase64(code),
-        language: language.toUpperCase(),
+        language: language.toUpperCase() as JudgeLanguage,
       });
 
+      const resultData = result as any;
       setResult({
         message: resultData.message || '✅ 제출 성공!',
         isSubmit: true,
-        result: resultData.data?.result || resultData.result || '',
-        error: resultData.data?.error || resultData.error || null,
+        result: resultData.result || '',
+        error: resultData.error || null,
       });
     } catch (error) {
       Logger.error('서버 요청 오류:', error);
@@ -236,7 +242,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
     try {
       const problemRes = await problemApi.getProblem(Number(problemId));
-      const problemData = problemRes.data || problemRes;
+      const problemData = problemRes as any;
       const testCases = problemData?.testCases || [];
 
       if (testCases.length === 0) {
@@ -247,20 +253,22 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       const combinedTestCases = [...initialTestCases, ...testCases.slice(initialTestCases.length)];
 
-      const resultData = await judgeApi.runCode(Number(problemId), {
+      const result = await judgeApi.runCode(Number(problemId), {
         code: encodeBase64(code),
-        language: language.toUpperCase(),
+        language: language.toUpperCase() as JudgeLanguage,
         testCases: combinedTestCases.map(({ input, output }) => ({
           input,
           output,
+          isShow: true,
         })),
       });
 
+      const resultData = result as any;
       setResult({
         message: resultData.message || '🛠 실행 완료!',
         isSubmit: false,
         testCases:
-          resultData.data?.map((testResult: any, index: number) => ({
+          resultData?.map((testResult: any, index: number) => ({
             actualOutput: testResult.result || '',
             error: testResult.error || null,
             isPassed: testResult.result === combinedTestCases[index].output,
@@ -286,7 +294,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
     // JavaScript 에러 검증 비활성화
     if (language === 'javascript') {
-      (monaco as any).languages.typescript.javascriptDefaults.setDiagnosticsOptions({
+      // @ts-ignore
+      const m = monaco as any;
+      m.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
         noSyntaxValidation: true,
       });
@@ -330,22 +340,24 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     const testCase = testCases[index];
 
     try {
-      const resultData = await judgeApi.runCode(Number(problemId), {
+      const result = await judgeApi.runCode(Number(problemId), {
         code: encodeBase64(code),
-        language: language.toUpperCase(),
+        language: language.toUpperCase() as JudgeLanguage,
         testCases: [
           {
             input: testCase.input,
             output: testCase.output,
+            isShow: true,
           },
         ],
       });
 
+      const resultData = result as any;
       setResult({
         message: resultData.message || '🛠 실행 완료!',
         isSubmit: false,
         testCases:
-          resultData.data?.map((item: any) => ({
+          resultData?.map((item: any) => ({
             actualOutput: item.result || '',
             error: item.error || null,
             isPassed: item.status === 'CORRECT',
@@ -395,7 +407,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           <button
             type="button"
             onClick={handleRunCode}
-            className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-white bg-[#3E3E3E] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:text-[#CAFE33] hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-white bg-[#3E3E3E] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:text-[var(--color-brand)] hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isRunningCode}
           >
             {isRunningCode ? (
@@ -430,7 +442,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           <button
             type="button"
             onClick={handleSubmitCode}
-            className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-[#1A1A1A] bg-[#CAFE33] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-gray-200 hover:text-gray-900 hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center justify-center gap-2 px-4 py-2 text-[0.9rem] font-light text-[var(--color-bg-main)] bg-[var(--color-brand)] rounded-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-gray-200 hover:text-gray-900 hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isSubmitting}
           >
             {isSubmitting ? (
@@ -501,7 +513,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         </div>
       </div>
 
-      <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
+      <div className="mt-2 bg-[var(--color-bg-surface)] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
         {/* 테스트 케이스 선택 바 */}
         {isSubmitMode ? null : (
           <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">
@@ -512,7 +524,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
               >
                 <button
                   onClick={() => setSelectedTestCase(index)}
-                  className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${
+                  className={`px-2 py-1 text-sm rounded flex items-center gap-1 ${
                     selectedTestCase === index
                       ? 'bg-gray-700 text-white'
                       : 'bg-gray-600 hover:bg-gray-500 text-gray-300'
@@ -526,7 +538,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                         setTestCases((prevTestCases) => prevTestCases.filter((_, i) => i !== index));
                         setSelectedTestCase((prev) => (prev === index ? 0 : Math.max(0, prev - 1)));
                       }}
-                      className="text-red-400 hover:text-white text-xs ml-1"
+                      className="text-red-400 hover:text-white text-sm ml-1"
                     >
                       x
                     </button>
@@ -537,7 +549,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
             <button
               onClick={addTestCase}
-              className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"
+              className="px-2 py-1 text-sm rounded bg-gray-600 hover:bg-gray-800 text-white"
             >
               +
             </button>
@@ -549,7 +561,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           <>
             {result?.result && (
               <div className="mt-2 p-2 bg-black rounded-md">
-                <h4 className="text-xs text-gray-400">Result</h4>
+                <h4 className="text-sm text-gray-400">Result</h4>
                 <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-JetBrain whitespace-pre-wrap">
                   {result.result}
                 </pre>
@@ -558,7 +570,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
             {result?.error?.trim() && (
               <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                <h4 className="text-xs text-red-400">❌ Error</h4>
+                <h4 className="text-sm text-red-400">❌ Error</h4>
                 <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{result.error}</pre>
               </div>
             )}
@@ -572,7 +584,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                   <div>
                     {testCases[selectedTestCase].input.trim() !== '' && (
                       <>
-                        <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+                        <h4 className="text-sm text-gray-400">입력 {selectedTestCase + 1}</h4>
                         <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                           {decodeText(testCases[selectedTestCase].input)}
                         </pre>
@@ -583,11 +595,11 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                   <div>
                     <button
                       onClick={() => handleRunSingleTestCase(selectedTestCase)}
-                      className="font-Pretendard mt-1 mb-2 px-3 py-1 text-xs border-2 border border-gray-800 rounded-md hover:bg-gray-500 text-white hover:text-white"
+                      className="font-Pretendard mt-1 mb-2 px-3 py-1 text-sm border-2 border border-gray-800 rounded-md hover:bg-gray-500 text-white hover:text-white"
                     >
                       My Testcase RUN
                     </button>
-                    <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>
+                    <h4 className="text-sm text-gray-400">입력 {selectedTestCase + 1}</h4>
 
                     <textarea
                       className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"
@@ -600,7 +612,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
               </div>
 
               <div className="mt-1 mb-3">
-                <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
+                <h4 className="text-sm text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                 {selectedTestCase < initialTestCases.length ? (
                   <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
                     {decodeText(testCases[selectedTestCase].output)}
@@ -631,11 +643,11 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
               {result?.testCases?.map((testCase, index) => (
                 <div key={index}>
                   <div
-                    className={`mt-2 p-2 rounded-md ${testCase.actualOutput === '맞았습니다' ? 'bg-[#2A2A2A]' : 'bg-[#2A2A2A]'}`}
+                    className={`mt-2 p-2 rounded-md ${testCase.actualOutput === '맞았습니다' ? 'bg-[var(--color-bg-surface)]' : 'bg-[var(--color-bg-surface)]'}`}
                   >
-                    <h4 className="text-xs text-gray-400">Testcase {index + 1}</h4>
+                    <h4 className="text-sm text-gray-400">Testcase {index + 1}</h4>
                     <pre
-                      className={`font-JetBrain whitespace-pre-wrap ${testCase.actualOutput === '맞았습니다' ? 'text-[#CAFE33]' : 'text-white-400'}`}
+                      className={`font-JetBrain whitespace-pre-wrap ${testCase.actualOutput === '맞았습니다' ? 'text-[var(--color-brand)]' : 'text-white-400'}`}
                     >
                       {testCase.actualOutput}
                     </pre>
@@ -643,7 +655,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
                   {testCase.error?.trim() && (
                     <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                      <h4 className="text-xs text-red-400">❌ Error : Testcase {index + 1}</h4>
+                      <h4 className="text-sm text-red-400">❌ Error : Testcase {index + 1}</h4>
                       <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{testCase.error}</pre>
                     </div>
                   )}
@@ -655,14 +667,14 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       </div>
 
       {/*        /!* 결과 및 테스트 케이스 *!/*/}
-      {/*        <div className="mt-2 bg-[#2A2A2A] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">*/}
+      {/*        <div className="mt-2 bg-[var(--color-bg-surface)] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">*/}
       {/*            /!* 테스트 케이스 선택 바 *!/*/}
       {/*            <div className="flex gap-2 overflow-x-auto whitespace-nowrap scrollbar-hide">*/}
       {/*                {testCases.map((_, index) => (*/}
       {/*                <div key={index} className="relative">*/}
       {/*                    <button*/}
       {/*                        onClick={() => setSelectedTestCase(index)}*/}
-      {/*                        className={`px-2 py-1 text-xs rounded flex items-center gap-1 ${*/}
+      {/*                        className={`px-2 py-1 text-sm rounded flex items-center gap-1 ${*/}
       {/*                        selectedTestCase === index*/}
       {/*                            ? "bg-gray-700 text-white"*/}
       {/*                            : "bg-gray-600 hover:bg-gray-500 text-gray-300"*/}
@@ -680,7 +692,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*                                    prev === index ? 0 : Math.max(0, prev - 1)*/}
       {/*                                );*/}
       {/*                            }}*/}
-      {/*                            className="text-red-400 hover:text-white text-xs ml-1"*/}
+      {/*                            className="text-red-400 hover:text-white text-sm ml-1"*/}
       {/*                            >*/}
       {/*                                x*/}
       {/*                            </button>*/}
@@ -691,7 +703,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       {/*                <button*/}
       {/*                onClick={addTestCase}*/}
-      {/*                className="px-2 py-1 text-xs rounded bg-gray-600 hover:bg-gray-800 text-white"*/}
+      {/*                className="px-2 py-1 text-sm rounded bg-gray-600 hover:bg-gray-800 text-white"*/}
       {/*                >*/}
       {/*                    +*/}
       {/*                </button>*/}
@@ -703,7 +715,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*                    <div>*/}
       {/*                        {testCases[selectedTestCase].input.trim() !== "" && (*/}
       {/*                            <>*/}
-      {/*                                <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
+      {/*                                <h4 className="text-sm text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
       {/*                                <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
       {/*                    {decodeText(testCases[selectedTestCase].input)}*/}
       {/*                </pre>*/}
@@ -714,11 +726,11 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*                    <div>*/}
       {/*                        <button*/}
       {/*                            onClick={() => handleRunSingleTestCase(selectedTestCase)}*/}
-      {/*                            className=" font-Pretendard mt-1 mb-2 px-3 py-1 text-xs  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"*/}
+      {/*                            className=" font-Pretendard mt-1 mb-2 px-3 py-1 text-sm  border-2 border border-gray-800   rounded-md hover:bg-gray-500 text-white hover:text-white"*/}
       {/*                        >*/}
       {/*                            My Testcase RUN*/}
       {/*                        </button>*/}
-      {/*                        <h4 className="text-xs text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
+      {/*                        <h4 className="text-sm text-gray-400">입력 {selectedTestCase + 1}</h4>*/}
 
       {/*                        <textarea*/}
       {/*                            className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md w-full min-h-[50px]"*/}
@@ -731,7 +743,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*                </div>*/}
 
       {/*                <div className="mt-1 mb-3">*/}
-      {/*                    <h4 className="text-xs text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>*/}
+      {/*                    <h4 className="text-sm text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>*/}
       {/*                    {selectedTestCase < initialTestCases.length ? (*/}
 
       {/*                    <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">*/}
@@ -750,8 +762,8 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*            </div>*/}
 
       {/*/!*                {result?.result && (*!/*/}
-      {/*/!*                <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*!/*/}
-      {/*/!*                    <h4 className="text-xs text-gray-400"> Result</h4>*!/*/}
+      {/*/!*                <div className="mt-2 p-2 bg-[var(--color-bg-surface)] rounded-md">*!/*/}
+      {/*/!*                    <h4 className="text-sm text-gray-400"> Result</h4>*!/*/}
       {/*/!*                    <pre className="text-gray-300 font-JetBrain whitespace-pre-wrap">*!/*/}
       {/*/!*                {result.result}*!/*/}
       {/*/!*            </pre>*!/*/}
@@ -760,7 +772,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       {/*/!*                {result?.error?.trim() && (*!/*/}
       {/*/!*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*!/*/}
-      {/*/!*                    <h4 className="text-xs text-red-400">❌ Error</h4>*!/*/}
+      {/*/!*                    <h4 className="text-sm text-red-400">❌ Error</h4>*!/*/}
       {/*/!*                    <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">*!/*/}
       {/*/!*    {result.error}*!/*/}
       {/*/!*</pre>*!/*/}
@@ -770,8 +782,8 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*                /!*run 결과 *!/*/}
       {/*                {result?.testCases?.[selectedTestCase] && (*/}
       {/*                <>*/}
-      {/*                    <div className="mt-2 p-2 bg-[#2A2A2A] rounded-md">*/}
-      {/*                        <h4 className="text-xs text-gray-400">Result</h4>*/}
+      {/*                    <div className="mt-2 p-2 bg-[var(--color-bg-surface)] rounded-md">*/}
+      {/*                        <h4 className="text-sm text-gray-400">Result</h4>*/}
       {/*                        <pre className="text-gray-300 font-JetBrain whitespace-pre-wrap">*/}
       {/*        {result.testCases[selectedTestCase].actualOutput}*/}
       {/*    </pre>*/}
@@ -782,7 +794,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/*            {Array.isArray(result?.testCases) &&*/}
       {/*            result.testCases[selectedTestCase]?.error?.trim() && (*/}
       {/*                <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">*/}
-      {/*                    <h4 className="text-xs text-red-400">❌ Error</h4>*/}
+      {/*                    <h4 className="text-sm text-red-400">❌ Error</h4>*/}
       {/*                    <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">*/}
       {/*    {result.testCases[selectedTestCase].error}*/}
       {/*</pre>*/}

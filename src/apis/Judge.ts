@@ -1,27 +1,31 @@
 import { AxiosInstance } from '@utils';
+import type { 
+  JudgeData, 
+  SubmitRequest, 
+  SubmitResponse, 
+  RunRequest, 
+  RunResponse, 
+  ReviewRequest 
+} from '@types';
 
 export const judgeApi = {
   // POST /judge/submit/{problemId}
-  submitCode: async (problemId: number, data: { code: string; language: string }) => {
-    const response = await AxiosInstance.post(`/judge/submit/${problemId}`, data);
-    return response.data;
+  submitCode: async (problemId: number, data: SubmitRequest) => {
+    return AxiosInstance.post<SubmitResponse>(`/judge/submit/${problemId}`, data);
   },
 
   // POST /judge/run/{problemId}
-  runCode: async (problemId: number, data: { code: string; language: string; testCases: any[] }) => {
-    const response = await AxiosInstance.post(`/judge/run/${problemId}`, data);
-    return response.data;
+  runCode: async (problemId: number, data: RunRequest) => {
+    return AxiosInstance.post<RunResponse[]>(`/judge/run/${problemId}`, data);
   },
 
   // GET /judge
   getJudges: async (problemId?: number) => {
-    const response = await AxiosInstance.get(`/judge`, { params: { problemId } });
-    return response.data;
+    return AxiosInstance.get<JudgeData[]>(`/judge`, { params: { problemId } });
   },
 
   // POST /judge/auto-commit
-  addReview: async (data: { submitId: number; description: string; commitMessage: string; repositoryName: string }) => {
-    const response = await AxiosInstance.post(`/judge/auto-commit`, data);
-    return response.data;
+  addReview: async (data: ReviewRequest) => {
+    return AxiosInstance.post(`/judge/auto-commit`, data);
   },
 };

@@ -1,7 +1,7 @@
 import { studySessionApi } from '@apis';
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
-import { Logger } from '@utils';
+import { extractErrorMessage, Logger } from '@utils';
 import { useState } from 'react';
 
 interface CreateStudySessionModalProps {
@@ -38,16 +38,16 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
       await studySessionApi.createStudySession({
         studyId,
         title,
-        description: description || undefined,
+        description: description || null,
         startDateTime,
         endDateTime,
       });
       showAlert('success', '세션이 성공적으로 생성되었습니다.');
       onCreated();
       onClose();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Failed to create session', err);
-      showAlert('error', '세션 생성에 실패했습니다.');
+      showAlert('error', '세션 생성에 실패했습니다: ' + extractErrorMessage(err));
     }
   };
 
@@ -62,10 +62,10 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
     >
       <div className="space-y-6">
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">세션 제목</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">세션 제목</label>
           <input
             type="text"
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition"
+            className="w-full px-4 py-3 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition"
             placeholder="예: 1회차 세션"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -73,29 +73,29 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">설명 (선택)</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">설명 (선택)</label>
           <textarea
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition resize-none h-20"
+            className="w-full px-4 py-3 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition resize-none h-20"
             placeholder="세션에 대한 설명을 입력하세요"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">시작 시간</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">시작 시간</label>
           <input
             type="datetime-local"
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition [color-scheme:dark]"
+            className="w-full px-4 py-3 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition [color-scheme:dark]"
             value={startDateTime}
             onChange={(e) => setStartDateTime(e.target.value)}
           />
         </div>
 
         <div>
-          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">종료 시간</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">종료 시간</label>
           <input
             type="datetime-local"
-            className="w-full px-4 py-3 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[#CAFE33]/50 transition [color-scheme:dark]"
+            className="w-full px-4 py-3 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand)]/50 transition [color-scheme:dark]"
             value={endDateTime}
             onChange={(e) => setEndDateTime(e.target.value)}
           />

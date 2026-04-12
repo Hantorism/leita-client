@@ -21,7 +21,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-start h-full text-white pt-8 bg-[#1A1A1A] font-Pretendard">
+    <div className="flex flex-col items-start h-full text-white pt-8 bg-[var(--color-bg-main)] font-Pretendard">
       <header className="w-full text-left pl-[10%] pr-[10%]">
         <Header />
       </header>
@@ -35,7 +35,7 @@ const HomePage = () => {
             transition={{ duration: 0.8 }}
             className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-8 shadow-sm backdrop-blur-sm"
           >
-            <div className="bg-[#CAFE33] rounded-full p-0.5">
+            <div className="bg-[var(--color-brand)] rounded-full p-0.5">
               <svg
                 width="14"
                 height="14"

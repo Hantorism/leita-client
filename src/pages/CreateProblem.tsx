@@ -16,7 +16,7 @@ const CreateProblemPage = () => {
     memory: 0,
     time: 0,
   });
-  const [testCases, setTestCases] = useState([{ input: '', output: '' }]);
+  const [testCases, setTestCases] = useState([{ input: '', output: '', isShow: true }]);
   const [source, setSource] = useState('');
   const [category, setCategory] = useState(['']);
 
@@ -25,6 +25,7 @@ const CreateProblemPage = () => {
     const encodedTestCases = testCases.map((tc) => ({
       input: EncodeBase64(tc.input),
       output: EncodeBase64(tc.output),
+      isShow: tc.isShow,
     }));
     if (testCases.length < 5) {
       showAlert('info', '테스트 케이스는 최소 5개 이상이어야 합니다!');
@@ -49,7 +50,7 @@ const CreateProblemPage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#1A1A1A] font-Pretendard pt-8">
+    <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] font-Pretendard pt-8">
       <header className="pl-[10%] pr-[10%] w-full text-left">
         <Header />
       </header>
@@ -66,7 +67,7 @@ const CreateProblemPage = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+              className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
             />
           </div>
 
@@ -75,7 +76,7 @@ const CreateProblemPage = () => {
             <ProblemDescriptionEditor
               content={description.problem}
               onChange={(content) => setDescription({ ...description, problem: content })}
-              className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+              className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
               rows={3}
             />
           </div>
@@ -85,7 +86,7 @@ const CreateProblemPage = () => {
             <ProblemDescriptionEditor
               content={description.input}
               onChange={(content) => setDescription({ ...description, input: content })}
-              className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+              className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700  rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
               rows={3}
             />
           </div>
@@ -95,7 +96,7 @@ const CreateProblemPage = () => {
             <ProblemDescriptionEditor
               content={description.output}
               onChange={(content) => setDescription({ ...description, output: content })}
-              className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[#CAFE33]"
+              className="mt-2 p-3 w-full border  bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
               rows={3}
             />
           </div>
@@ -108,7 +109,7 @@ const CreateProblemPage = () => {
                 value={limit.memory}
                 onChange={(e) => setLimit({ ...limit, memory: Number(e.target.value) })}
                 required
-                className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+                className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
               />
             </div>
 
@@ -119,7 +120,7 @@ const CreateProblemPage = () => {
                 value={limit.time}
                 onChange={(e) => setLimit({ ...limit, time: Number(e.target.value) })}
                 required
-                className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+                className="mt-2 p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
               />
             </div>
           </div>
@@ -143,7 +144,7 @@ const CreateProblemPage = () => {
                         ...testCases.slice(index + 1),
                       ])
                     }
-                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
                     rows={3}
                   />
                 </div>
@@ -158,7 +159,7 @@ const CreateProblemPage = () => {
                         ...testCases.slice(index + 1),
                       ])
                     }
-                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
                     rows={3}
                   />
                 </div>
@@ -167,7 +168,7 @@ const CreateProblemPage = () => {
                   <button
                     type="button"
                     onClick={() => setTestCases(testCases.filter((_, i) => i !== index))}
-                    className="px-2 py-1 rounded-full transition bg-[#2A2A2A] text-white hover:text-[#CAFE33] hover:bg-opacity-0"
+                    className="px-2 py-1 rounded-full transition bg-[var(--color-bg-surface)] text-white hover:text-[var(--color-brand)] hover:bg-opacity-0"
                   >
                     Remove Test Case (-)
                   </button>
@@ -177,8 +178,8 @@ const CreateProblemPage = () => {
 
             <button
               type="button"
-              onClick={() => setTestCases([...testCases, { input: '', output: '' }])}
-              className="mt-2 px-4 py-2 rounded-full transition bg-[#2A2A2A] text-white hover:text-[#CAFE33] hover:bg-opacity-0"
+              onClick={() => setTestCases([...testCases, { input: '', output: '', isShow: true }])}
+              className="mt-2 px-4 py-2 rounded-full transition bg-[var(--color-bg-surface)] text-white hover:text-[var(--color-brand)] hover:bg-opacity-0"
             >
               Add Test Case (+)
             </button>
@@ -191,7 +192,7 @@ const CreateProblemPage = () => {
               type="text"
               value={source}
               onChange={(e) => setSource(e.target.value)}
-              className=" p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+              className=" p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
             />
           </div>
 
@@ -212,13 +213,13 @@ const CreateProblemPage = () => {
                       newCategories[index] = e.target.value;
                       setCategory(newCategories);
                     }}
-                    className="p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#CAFE33]"
+                    className="p-3 w-full border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
                   />
                   <button
                     type="button"
                     onClick={() => setCategory(category.filter((_, i) => i !== index))}
-                    className="px-3 py-[0.2] rounded-full transition bg-[#2A2A2A] text-white
-                                hover:text-[#CAFE33]  hover:bg-opacity-0 "
+                    className="px-3 py-[0.2] rounded-full transition bg-[var(--color-bg-surface)] text-white
+                                hover:text-[var(--color-brand)]  hover:bg-opacity-0 "
                   >
                     -
                   </button>
@@ -229,8 +230,8 @@ const CreateProblemPage = () => {
             <button
               type="button"
               onClick={() => setCategory([...category, ''])}
-              className="px-2 mt-4 py-1 rounded-full transition bg-[#2A2A2A] text-white
-                                hover:text-[#CAFE33]  hover:bg-opacity-0 "
+              className="px-2 mt-4 py-1 rounded-full transition bg-[var(--color-bg-surface)] text-white
+                                hover:text-[var(--color-brand)]  hover:bg-opacity-0 "
             >
               Add Category (+)
             </button>
@@ -238,7 +239,7 @@ const CreateProblemPage = () => {
 
           <button
             type="submit"
-            className="font-Pretendard mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[#1A1A1A] bg-[#CAFE33] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[#CAFE33] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
+            className="font-Pretendard mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[var(--color-bg-main)] bg-[var(--color-brand)] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[var(--color-brand)] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
           >
             Create Problem
           </button>

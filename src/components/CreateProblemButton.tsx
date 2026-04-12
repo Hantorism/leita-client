@@ -10,7 +10,7 @@ const CreateProblemButton = () => {
   return (
     <button
       onClick={handleClick}
-      className="create-problem-button px-4 py-1 rounded-full bg-[#2A2A2A]  rounded-full bg-[#2A2A2A] text-white text-center"
+      className="create-problem-button px-4 py-1 rounded-full bg-[var(--color-bg-surface)]  rounded-full bg-[var(--color-bg-surface)] text-white text-center"
     >
       Create Problem
     </button>

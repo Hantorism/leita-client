@@ -1,15 +1,14 @@
 import { AxiosInstance } from '@utils';
+import type { RepositoryResponse, GitInstallResponse } from '@types';
 
 export const gitApi = {
   // GET /git/repositories
   getInstalledRepositories: async () => {
-    const response = await AxiosInstance.get(`/git/repositories`);
-    return response.data;
+    return AxiosInstance.get<RepositoryResponse[]>(`/git/repositories`);
   },
 
   // GET /git/install
   getGitInstallationUrl: async () => {
-    const response = await AxiosInstance.get(`/git/install`);
-    return response.data;
+    return AxiosInstance.get<GitInstallResponse>(`/git/install`);
   },
 };

@@ -20,7 +20,7 @@ export const getSessionAssignmentStatus = (solvedCount: number, totalCount: numb
     return {
       text: '완료',
       color: '#22c55e',
-      twColor: 'text-[#CAFE33]',
+      twColor: 'text-[var(--color-brand)]',
     };
   }
 
@@ -51,23 +51,23 @@ export const getProblemStatusDetail = (status: 'CORRECT' | 'WRONG' | 'UNATTEMPTE
   if (status === 'CORRECT') {
     return {
       text: '정답',
-      twColor: 'text-[#CAFE33]',
-      bgColor: 'bg-[#CAFE33]/5',
-      borderColor: 'border-[#CAFE33]/20',
+      twColor: 'text-[#cafe33]',
+      bgColor: 'bg-[#cafe33]/10',
+      borderColor: 'border-[#cafe33]/30',
     };
   }
   if (status === 'WRONG') {
     return {
       text: '오답',
       twColor: 'text-[#F87171]',
-      bgColor: 'bg-[#F87171]/5',
-      borderColor: 'border-[#F87171]/20',
+      bgColor: 'bg-[#F87171]/10',
+      borderColor: 'border-[#F87171]/30',
     };
   }
   return {
     text: '미시도',
     twColor: 'text-gray-500',
     bgColor: 'bg-white/5',
-    borderColor: 'border-white/10',
+    borderColor: 'border-white/5',
   };
 };

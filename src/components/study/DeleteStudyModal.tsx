@@ -37,11 +37,11 @@ const DeleteStudyModal = ({ study, isDeleting, onConfirm, onClose }: DeleteStudy
           value={confirmTitle}
           onChange={(e) => setConfirmTitle(e.target.value)}
           placeholder="스터디 이름을 입력하세요"
-          className="w-full px-4 py-2 mb-4 bg-[#2a2a2a] border border-gray-700/50 rounded-xl text-white text-center focus:outline-none focus:border-red-600 transition"
+          className="w-full px-4 py-2 mb-4 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white text-center focus:outline-none focus:border-red-600 transition"
           autoFocus
         />
 
-        <p className="text-gray-400 text-xs">
+        <p className="text-gray-400 text-sm">
           정말 삭제하시겠습니까?
           <br />
           <span className="text-red-400 font-semibold">되돌릴 수 없습니다.</span>

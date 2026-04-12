@@ -1,7 +1,7 @@
 import { studyApi, studySessionApi } from '@apis';
 import type { Study, StudyMemberAssignment, StudyMemberAttendance, StudySession } from '@types';
-import { Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { Logger, type PagedResponse } from '@utils';
+import { useEffect, useRef, useState } from 'react';
 
 interface CompletionMemberProps {
   study: Study;
@@ -13,10 +13,12 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [attendance, setAttendance] = useState<StudyMemberAttendance | null>(null);
   const [assignment, setAssignment] = useState<StudyMemberAssignment | null>(null);
+  const isMounted = useRef(true);
 
   const me = study.members.find((m) => m.email.toLowerCase().trim() === currentUserEmail.toLowerCase().trim());
 
   useEffect(() => {
+    isMounted.current = true;
     const fetchData = async () => {
       if (!me) return;
       setLoading(true);
@@ -27,24 +29,31 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
           studyApi.getMemberAssignment(study.id, undefined, me.userId),
         ]);
 
-        const sessionsData = sessionsRes.data?.content || sessionsRes || [];
-        setSessions(Array.isArray(sessionsData) ? sessionsData : []);
+        if (!isMounted.current) return;
 
-        const attData = attRes.data || attRes || [];
-        const myAtt = Array.isArray(attData) ? attData.find((a: any) => a.user.email === me.email) : null;
+        const { content: sessionsData } = sessionsRes as unknown as PagedResponse<StudySession>;
+        setSessions(sessionsData);
+
+        const attData = (attRes as unknown as StudyMemberAttendance[]) || [];
+        const myAtt = Array.isArray(attData) ? attData.find((a: StudyMemberAttendance) => a.user.email === me.email) : null;
         setAttendance(myAtt || null);
 
-        const asgData = asgRes.data || asgRes || [];
-        const myAsg = Array.isArray(asgData) ? asgData.find((a: any) => a.user.email === me.email) : null;
+        const asgData = (asgRes as unknown as StudyMemberAssignment[]) || [];
+        const myAsg = Array.isArray(asgData) ? asgData.find((a: StudyMemberAssignment) => a.user.email === me.email) : null;
         setAssignment(myAsg || null);
       } catch (error) {
         Logger.error('Failed to fetch completion data for member', error);
       } finally {
-        setLoading(false);
+        if (isMounted.current) {
+          setLoading(false);
+        }
       }
     };
 
     fetchData();
+    return () => {
+      isMounted.current = false;
+    };
   }, [study.id, me]);
 
   if (!me) return <div className="text-gray-400 p-6">접근 권한이 없습니다.</div>;
@@ -58,7 +67,7 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
 
   const totalAssignments = sessions.filter((s) => s.assignmentCreated).length;
   const assignmentRecords = assignment?.assignments || [];
-  const completedAssignments = assignmentRecords.filter((a) => a.isCompleted);
+  const completedAssignments = assignmentRecords.filter((a) => a.status === 'COMPLETED');
   const assignmentRate = totalAssignments > 0 ? (completedAssignments.length / totalAssignments) * 100 : 0;
 
   // Calculate specific thresholds dynamically
@@ -77,34 +86,29 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
 
   // Attendance Warnings
   const reqAtt = Math.ceil(totalSessions * (attendanceThreshold / 100));
-  const maxAllowedAbsences = study.maxAbsences ?? totalSessions - reqAtt;
+  const maxAllowedAbsences = totalSessions - reqAtt;
   const evaluatedAttendances = sessions.filter((s) => s.attendanceStatus === 'CLOSED').length;
   const currentAbsences = Math.max(0, evaluatedAttendances - validAttendances.length);
   const remainingAbsencesBeforeFail = maxAllowedAbsences - currentAbsences + 1;
 
   // Assignment Warnings
   const reqAsg = Math.ceil(totalAssignments * (assignmentThreshold / 100));
-  const maxAllowedIncompleteAsg = study.maxIncompleteAsg ?? totalAssignments - reqAsg;
+  const maxAllowedIncompleteAsg = totalAssignments - reqAsg;
   const pastSessions = sessions.filter((s) => new Date(s.endDateTime) < new Date() && s.assignmentCreated);
   const currentIncompleteAsg = Math.max(0, pastSessions.length - completedAssignments.length);
   const remainingIncompleteAsgBeforeFail = maxAllowedIncompleteAsg - currentIncompleteAsg + 1;
 
-  const getWarningText = (remaining: number, type: '결석' | '과제 미완료') => {
-    if (remaining <= 0) return `🚨 이미 수료 기준을 미달했습니다. (${type} 초과)`;
-    if (remaining === 1) return `⚠️ 한 번 더 ${type} 시 수료가 불가합니다.`;
-    return `💡 앞으로 ${remaining}번 더 ${type} 시 수료가 불가합니다.`;
-  };
 
   return (
     <div className="w-full flex flex-col gap-6 animate-fadeIn">
-      <div className="bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 shadow-xl">
+      <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 shadow-xl">
         <div className="flex items-center justify-between mb-8 border-b border-gray-800 pb-6">
           <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">🎓 나의 수료 현황</h2>
           <div className="flex gap-2">
-            <span className="text-[11px] bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-md font-medium">
+            <span className="text-sm bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-md font-medium">
               결석 {maxAllowedAbsences}회 허용
             </span>
-            <span className="text-[11px] bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-md font-medium">
+            <span className="text-sm bg-gray-800 text-gray-300 border border-gray-700 px-3 py-1 rounded-md font-medium">
               과제 {maxAllowedIncompleteAsg}회 미제출 허용
             </span>
           </div>
@@ -112,7 +116,7 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* 출석 게이지 */}
-          <div className="bg-[#2a2a2a] rounded-lg p-5 border border-gray-700/50 flex flex-col justify-between">
+          <div className="bg-[var(--color-bg-surface)] rounded-lg p-5 border border-gray-700/50 flex flex-col justify-between">
             <div>
               <h3 className="text-gray-300 font-medium mb-1">출석률</h3>
               <div className="flex items-end gap-2 mb-3">
@@ -128,17 +132,10 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
                 style={{ width: `${attendanceRate}%` }}
               ></div>
             </div>
-            {totalSessions > 0 && (
-              <p
-                className={`mt-3 text-xs font-medium ${remainingAbsencesBeforeFail <= 1 ? 'text-red-400' : 'text-gray-400'}`}
-              >
-                {getWarningText(remainingAbsencesBeforeFail, '결석')}
-              </p>
-            )}
           </div>
 
           {/* 과제 게이지 */}
-          <div className="bg-[#2a2a2a] rounded-lg p-5 border border-gray-700/50 flex flex-col justify-between">
+          <div className="bg-[var(--color-bg-surface)] rounded-lg p-5 border border-gray-700/50 flex flex-col justify-between">
             <div>
               <h3 className="text-gray-300 font-medium mb-1">과제 수행률</h3>
               <div className="flex items-end gap-2 mb-3">
@@ -154,13 +151,6 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
                 style={{ width: `${assignmentRate}%` }}
               ></div>
             </div>
-            {totalAssignments > 0 && (
-              <p
-                className={`mt-3 text-xs font-medium ${remainingIncompleteAsgBeforeFail <= 1 ? 'text-red-400' : 'text-gray-400'}`}
-              >
-                {getWarningText(remainingIncompleteAsgBeforeFail, '과제 미완료')}
-              </p>
-            )}
           </div>
         </div>
       </div>
