@@ -6,7 +6,7 @@ export const getCurrentUserEmail = (): string | null => {
 
   try {
     const user = JSON.parse(storedUser);
-    return user?.data?.email?.toLowerCase().trim() || null;
+    return user?.email?.toLowerCase().trim() || null;
   } catch (error) {
     Logger.error('Failed to parse user from localStorage', error);
     return null;

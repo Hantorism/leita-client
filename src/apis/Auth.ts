@@ -1,15 +1,14 @@
 import { AxiosInstance } from '@utils';
+import type { InfoResponse, JwtResponse, OAuthRequest } from '@types';
 
 export const authApi = {
   // GET /auth/info
   getAuthInfo: async () => {
-    const response = await AxiosInstance.get(`/auth/info`);
-    return response.data;
+    return AxiosInstance.get<InfoResponse>(`/auth/info`);
   },
 
   // POST /auth/oauth
-  oauthRegister: async (accessToken: string) => {
-    const response = await AxiosInstance.post(`/auth/oauth`, { accessToken });
-    return response.data;
+  oauthRegister: async (data: OAuthRequest) => {
+    return AxiosInstance.post<JwtResponse>(`/auth/oauth`, data);
   },
 };

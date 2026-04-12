@@ -3,7 +3,7 @@ import { Button } from '@components';
 import { useAlert } from '@contexts';
 import { useAssignmentProgress } from '@hooks';
 import type { Study, StudySession } from '@types';
-import { getCurrentUserEmail, getProblemStatusDetail, getSessionAssignmentStatus, Logger } from '@utils';
+import { getCurrentUserEmail, getProblemStatusDetail, getSessionAssignmentStatus, Logger, type PagedResponse } from '@utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 // ── Searchable Dropdown Helper ──
@@ -31,20 +31,20 @@ const SearchableDropdown = ({ options, value, onChange, placeholder }: any) => {
       ref={ref}
     >
       <div
-        className="bg-[#2A2A2A] border border-gray-600 rounded-lg p-2.5 flex justify-between items-center cursor-pointer text-sm font-medium"
+        className="bg-[var(--color-bg-surface)] border border-gray-600 rounded-lg p-2.5 flex justify-between items-center cursor-pointer text-sm font-medium"
         onClick={() => {
           setIsOpen(!isOpen);
           setSearch('');
         }}
       >
         <span className="truncate pr-2 text-gray-200">{selectedOption ? selectedOption.label : placeholder}</span>
-        <span className="text-gray-400 text-xs text-opacity-50">▼</span>
+        <span className="text-gray-400 text-sm text-opacity-50">▼</span>
       </div>
       {isOpen && (
-        <div className="absolute top-12 left-0 w-full bg-[#2A2A2A] border border-gray-600 rounded-lg shadow-2xl z-40 max-h-60 flex flex-col overflow-hidden">
+        <div className="absolute top-12 left-0 w-full bg-[var(--color-bg-surface)] border border-gray-600 rounded-lg shadow-2xl z-40 max-h-60 flex flex-col overflow-hidden">
           <input
             type="text"
-            className="bg-[#1f1f1f] text-white p-2.5 border-b border-gray-600 text-sm outline-none placeholder-gray-500"
+            className="bg-[var(--color-bg-card)] text-white p-2.5 border-b border-gray-600 text-sm outline-none placeholder-gray-500"
             placeholder="검색..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -105,7 +105,10 @@ const StudyProgressDetail = ({
   const currentLoggedInEmail = getCurrentUserEmail();
   const isAdmin = study.members.find((m) => m.email.toLowerCase().trim() === currentLoggedInEmail)?.role === 'ADMIN';
 
-  const assignmentProblemIds = assignment?.problemIds || assignment?.problems?.map((p: any) => p.id) || [];
+  const assignmentProblemIds = useMemo(
+    () => assignment?.problems?.map((p: any) => p.problemId) || [],
+    [assignment],
+  );
   const hookData = useAssignmentProgress(assignmentProblemIds);
   const isCurrentUser = selectedMemberEmail === currentLoggedInEmail;
 
@@ -121,9 +124,9 @@ const StudyProgressDetail = ({
         if (currentSession?.attendanceStatus === 'OPEN' || currentSession?.attendanceStatus === 'CLOSED') {
           try {
             const attRes = await studySessionApi.getAttendance(Number(selectedSessionId));
-            const attData = attRes.data || attRes;
+            const attData = attRes as any;
             setAttendanceInfo(attData);
-            setAttendanceRecords(attData.records || []);
+            setAttendanceRecords(attData?.records || []);
           } catch {
             setAttendanceInfo(null);
             setAttendanceRecords([]);
@@ -136,7 +139,7 @@ const StudyProgressDetail = ({
         // Always try fetching assignment data to ensure sync
         try {
           const asgRes = await studySessionApi.getAssignment(Number(selectedSessionId));
-          const asgData = asgRes.data || asgRes;
+          const asgData = asgRes as any;
           setAssignment(asgData);
 
           // Fetch actual solving status for the selected member
@@ -147,7 +150,7 @@ const StudyProgressDetail = ({
           if (memberRes && !isCurrentUser) {
             // If it's another member, use studyApi (Admin view)
             const statusRes = await studyApi.getMemberAssignment(study.id, Number(selectedSessionId), memberRes.userId);
-            const statusData = statusRes.data || statusRes;
+            const statusData = statusRes as any;
             const memberStatus = statusData[0]?.assignments?.find(
               (a: any) => a.sessionId === Number(selectedSessionId),
             );
@@ -155,10 +158,8 @@ const StudyProgressDetail = ({
             if (memberStatus) {
               setAssignment((prev: any) => ({
                 ...prev,
-                solvedProblemIds: memberStatus.solvedProblemIds || [],
-                attemptedProblemIds: memberStatus.attemptedProblemIds || [],
-                isCompleted: memberStatus.isCompleted,
-                isAttemptedAll: memberStatus.isAttemptedAll,
+                problems: memberStatus.problems || [],
+                status: memberStatus.status,
               }));
             }
           }
@@ -193,28 +194,53 @@ const StudyProgressDetail = ({
   const userAttRecord = attendanceRecords.find((r) => r.userEmail === selectedMemberEmail);
   const userAttendanceStatus = userAttRecord
     ? userAttRecord.status
-    : sessionDetail?.attendanceStatus === 'BEFORE'
+    : !sessionDetail?.attendanceStatus
       ? '미진행'
       : '결석/미출석';
 
-  const handleUpdateAttendance = (newStatus: string) => {
-    if (!isAdmin) return;
-    showAlert('success', '출석 정보가 변경되었습니다. (UI 전용 - API 미연동)');
-    setAttendanceRecords((prev) => {
-      const exists = prev.find((r) => r.userEmail === selectedMemberEmail);
-      if (exists) {
-        return prev.map((r) => (r.userEmail === selectedMemberEmail ? { ...r, status: newStatus } : r));
-      } else {
-        return [...prev, { userEmail: selectedMemberEmail, status: newStatus }];
-      }
-    });
+  const handleUpdateAttendance = async (newStatus: string) => {
+    if (!isAdmin || !selectedSessionId) return;
+
+    const targetMember = study.members.find((m) => m.email === selectedMemberEmail);
+    if (!targetMember) return;
+
+    try {
+      const res = await studySessionApi.updateMemberAttendance(Number(selectedSessionId), targetMember.userId, {
+        status: newStatus as any,
+      });
+      const updatedAttData = res as any;
+      setAttendanceRecords(updatedAttData?.records || []);
+      setAttendanceInfo(updatedAttData);
+      showAlert('success', '출석 정보가 변경되었습니다.');
+    } catch (err) {
+      Logger.error('Failed to update attendance', err);
+      showAlert('error', '출석 정보 변경에 실패했습니다.');
+    }
   };
 
-  const handleUpdateAssignmentStatus = (status: string) => {
-    if (!isAdmin) return;
-    showAlert('success', `과제 평가가 '${status}'로 변경되었습니다. (UI 전용 - API 미연동)`);
-    // Mock state for detail view
-    setAssignment((prev: any) => ({ ...prev, mockStatus: status }));
+  const handleUpdateAssignmentStatus = async (statusLabel: string) => {
+    if (!isAdmin || !selectedSessionId) return;
+
+    const statusMap: Record<string, string> = {
+      완료: 'COMPLETED',
+      '부분 완료': 'PARTIAL',
+      미완료: 'INCOMPLETE',
+    };
+
+    const targetMember = study.members.find((m) => m.email === selectedMemberEmail);
+    if (!targetMember) return;
+
+    try {
+      const res = await studySessionApi.updateMemberAssignment(Number(selectedSessionId), targetMember.userId, {
+        status: statusMap[statusLabel] as any,
+      });
+      const updatedAsgData = res as any;
+      setAssignment(updatedAsgData);
+      showAlert('success', `과제 평가가 '${statusLabel}'로 변경되었습니다.`);
+    } catch (err) {
+      Logger.error('Failed to update assignment status', err);
+      showAlert('error', '과제 평가 변경에 실패했습니다.');
+    }
   };
 
   const getProblemStatus = (problemId: number) => {
@@ -225,28 +251,26 @@ const StudyProgressDetail = ({
       return prob?.status || 'UNATTEMPTED';
     }
 
-    const isSolved = assignment.solvedProblemIds?.includes(problemId);
-    const isAttempted = assignment.attemptedProblemIds?.includes(problemId);
-
-    if (isSolved) return 'CORRECT';
-    if (isAttempted) return 'WRONG';
-    return 'UNATTEMPTED';
+    const problemStatus = assignment.problems?.find((p: any) => p.problemId === problemId);
+    if (!problemStatus || !problemStatus.result) return 'UNATTEMPTED';
+    if (problemStatus.result === 'CORRECT') return 'CORRECT';
+    return 'WRONG';
   };
 
   const isNotSelected = !selectedMemberEmail || selectedSessionId === '';
   const assignmentStatus = assignment
     ? getSessionAssignmentStatus(
-        isCurrentUser ? hookData.progress.solvedCount : assignment.solvedProblemIds?.length || 0,
-        isCurrentUser ? hookData.progress.totalCount : assignment.problemIds?.length || 0,
-        isCurrentUser ? hookData.progress.isAttemptedAll : assignment.isAttemptedAll,
+        isCurrentUser ? hookData.progress.solvedCount : (assignment.problems?.filter((p: any) => p.result === 'CORRECT')?.length || 0),
+        isCurrentUser ? hookData.progress.totalCount : (assignment.problems?.length || 0),
+        isCurrentUser ? hookData.progress.isAttemptedAll : (assignment.problems?.every((p: any) => p.result !== null) || false),
       )
     : null;
 
   return (
-    <div className="bg-[#1a1a1a] border border-gray-700/50 rounded-2xl w-full shadow-2xl text-white flex flex-col h-[600px] overflow-hidden mb-8 animate-fadeIn">
+    <div className="bg-[var(--color-bg-main)] border border-gray-700/50 rounded-2xl w-full shadow-2xl text-white flex flex-col h-[600px] overflow-hidden mb-8 animate-fadeIn">
       {/* Header */}
-      <div className="p-6 border-b border-gray-700/50 bg-[#1f1f1f] flex flex-col lg:flex-row justify-between items-center gap-3 shrink-0">
-        <h2 className="text-xl font-bold text-[#CAFE33] shrink-0">상세 현황</h2>
+      <div className="p-6 border-b border-gray-700/50 bg-[var(--color-bg-card)] flex flex-col lg:flex-row justify-between items-center gap-3 shrink-0">
+        <h2 className="text-xl font-bold text-[var(--color-brand)] shrink-0">상세 현황</h2>
         <div className="flex flex-col lg:flex-row gap-3 w-full lg:w-auto">
           <div className="w-full lg:w-[260px]">
             <SearchableDropdown
@@ -268,9 +292,9 @@ const StudyProgressDetail = ({
       </div>
 
       {/* Body */}
-      <div className="flex-1 overflow-hidden flex flex-row p-6 gap-6 bg-[#171717]">
+      <div className="flex-1 overflow-hidden flex flex-row p-6 gap-6 bg-[var(--color-bg-main)]">
         {/* Attendance Section */}
-        <div className="bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar w-80 shrink-0">
+        <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar w-80 shrink-0">
           <h3 className="text-lg font-bold mb-5 flex items-center gap-2 text-gray-200">
             <span className="text-xl">⏱️</span> 출석 현황
           </h3>
@@ -296,11 +320,11 @@ const StudyProgressDetail = ({
                 <div className="bg-black/30 rounded-lg p-4 border border-gray-700/30 text-sm">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className="block text-gray-500 text-xs mb-1">출석 시작 시간</span>
+                      <span className="block text-gray-500 text-sm mb-1">출석 시작 시간</span>
                       <span className="text-gray-300">{new Date(attendanceInfo.openTime).toLocaleString()}</span>
                     </div>
                     <div>
-                      <span className="block text-gray-500 text-xs mb-1">출석 마감 시간</span>
+                      <span className="block text-gray-500 text-sm mb-1">출석 마감 시간</span>
                       <span className="text-gray-300">
                         {attendanceInfo.closeTime ? new Date(attendanceInfo.closeTime).toLocaleString() : '미정'}
                       </span>
@@ -335,22 +359,22 @@ const StudyProgressDetail = ({
               </div>
               {isAdmin && (
                 <div className="pt-4 border-t border-gray-700/50 mt-auto">
-                  <h4 className="text-sm font-semibold text-[#CAFE33] mb-3">🛠️ 출석 상태 변경</h4>
+                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3">🛠️ 출석 상태 변경</h4>
                   <div className="flex gap-2">
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'PRESENT' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'PRESENT' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAttendance('PRESENT')}
                     >
                       출석
                     </Button>
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'LATE' ? 'bg-yellow-400 text-black border-yellow-400' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'LATE' ? 'bg-yellow-400 text-black border-yellow-400' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAttendance('LATE')}
                     >
                       지각
                     </Button>
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'ABSENT' || (!userAttRecord && sessionDetail?.attendanceStatus !== 'BEFORE') ? 'bg-red-500 text-white border-red-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'ABSENT' || (!userAttRecord && sessionDetail?.attendanceStatus) ? 'bg-red-500 text-white border-red-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAttendance('ABSENT')}
                     >
                       결석
@@ -363,7 +387,7 @@ const StudyProgressDetail = ({
         </div>
 
         {/* Assignment Section */}
-        <div className="flex-1 bg-[#1f1f1f] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar">
+        <div className="flex-1 bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-lg font-bold flex items-center gap-2 text-gray-200">
               <span className="text-xl">📚</span> 과제 현황
@@ -391,10 +415,10 @@ const StudyProgressDetail = ({
           ) : (
             <div className="space-y-5 flex-1 flex flex-col h-full overflow-hidden">
               <div className="flex-1 overflow-hidden flex flex-col min-h-0">
-                <h4 className="text-xs font-semibold text-gray-400 mb-3">포함된 문제 목록</h4>
+                <h4 className="text-sm font-semibold text-gray-400 mb-3">포함된 문제 목록</h4>
                 <div className="grid grid-cols-2 gap-2 overflow-y-auto custom-scrollbar flex-1 pr-1 content-start">
                   {hookData.problems.length === 0 ? (
-                    <div className="col-span-2 text-gray-500 text-xs text-center py-5">문제가 없습니다.</div>
+                    <div className="col-span-2 text-gray-500 text-sm text-center py-5">문제가 없습니다.</div>
                   ) : (
                     hookData.problems.map((prob, idx) => {
                       const status = getProblemStatus(prob.problemId);
@@ -415,7 +439,7 @@ const StudyProgressDetail = ({
                                 {prob.problemId}. {prob.title}
                               </h3>
                             </div>
-                            <span className={`text-xs font-bold shrink-0 ${probStatus.twColor}`}>
+                            <span className={`text-sm font-bold shrink-0 ${probStatus.twColor}`}>
                               {probStatus.text}
                             </span>
                           </div>
@@ -427,22 +451,22 @@ const StudyProgressDetail = ({
               </div>
               {isAdmin && (
                 <div className="pt-4 border-t border-gray-700/50 mt-auto shrink-0">
-                  <h4 className="text-sm font-semibold text-[#CAFE33] mb-3">🛠️ 과제 결과 부여</h4>
+                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3">🛠️ 과제 결과 부여</h4>
                   <div className="flex gap-2">
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${assignment.mockStatus === '완료' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${assignment.status === 'COMPLETED' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAssignmentStatus('완료')}
                     >
                       완료
                     </Button>
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${assignment.mockStatus === '부분 완료' ? 'bg-yellow-400 text-black border-yellow-400' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${assignment.status === 'PARTIAL' ? 'bg-yellow-400 text-black border-yellow-400' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAssignmentStatus('부분 완료')}
                     >
                       부분 완료
                     </Button>
                     <Button
-                      className={`flex-1 py-1.5 text-xs font-semibold rounded-lg transition-colors border ${assignment.mockStatus === '미완료' ? 'bg-red-500 text-white border-red-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
+                      className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${assignment.status === 'INCOMPLETE' ? 'bg-red-500 text-white border-red-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
                       onClick={() => handleUpdateAssignmentStatus('미완료')}
                     >
                       미완료
@@ -472,7 +496,7 @@ interface SessionProgress {
   problemIds: number[];
   assignmentRecords: Record<
     string,
-    { solvedCount: number; totalCount: number; isCompleted: boolean; isAttemptedAll: boolean }
+    { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
   >;
 }
 
@@ -494,14 +518,14 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
       setLoading(true);
       try {
         const res = await studySessionApi.getStudySessions(study.id, 0, 100);
-        const data = res.data?.content || res.content || [];
+        const data = (res as unknown as PagedResponse<StudySession>).content;
         setSessions(data);
 
         let myJudges: any[] = [];
         if (currentUserEmail) {
           try {
             const myJudgesRes = await judgeApi.getJudges();
-            myJudges = myJudgesRes.data || myJudgesRes || [];
+            myJudges = (myJudgesRes as unknown as any[]) || [];
           } catch (e) {
             Logger.error('Failed to fetch user judges for grass calculation', e);
           }
@@ -513,7 +537,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
             if (sec.attendanceStatus === 'OPEN' || sec.attendanceStatus === 'CLOSED') {
               try {
                 const attRes = await studySessionApi.getAttendance(sec.id);
-                const records = attRes.data?.records || attRes.records || [];
+                const records = (attRes as any).records || [];
                 records.forEach((r: any) => {
                   attendanceRecords[r.userEmail] = r.status;
                 });
@@ -525,17 +549,17 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
             let problemIds: number[] = [];
             const assignmentRecords: Record<
               string,
-              { solvedCount: number; totalCount: number; isCompleted: boolean; isAttemptedAll: boolean }
+              { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
             > = {};
             if (sec.assignmentCreated) {
               try {
                 const asgRes = await studySessionApi.getAssignment(sec.id);
-                const asgData = asgRes.data || asgRes;
-                problemIds = asgData.problemIds || asgData.problems?.map((p: any) => p.id) || [];
+                const asgData = asgRes as any;
+                problemIds = asgData.problems?.map((p: any) => p.problemId) || asgData.problemIds || [];
 
                 // Fetch assignment status for all members in this session
                 const asigStatusRes = await studyApi.getMemberAssignment(study.id, sec.id);
-                const asigStatusData = asigStatusRes.data || asigStatusRes;
+                const asigStatusData = asigStatusRes as any;
                 asigStatusData.forEach((userRecord: any) => {
                   const asgDetail = userRecord.assignments?.[0]; // getMemberAssignment for specific session should return 1 assignment detail
                   if (asgDetail) {
@@ -556,7 +580,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
                     assignmentRecords[email] = {
                       solvedCount: asgDetail.solvedCount,
                       totalCount: asgDetail.totalCount,
-                      isCompleted: asgDetail.isCompleted,
+                      status: asgDetail.status,
                       isAttemptedAll: isAttemptedAll,
                     };
                   }
@@ -600,8 +624,8 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
   const getCellStyles = (session: SessionProgress, email: string) => {
     const attStatus = session.attendanceRecords[email];
 
-    let attColor = '#262626'; // 기본 회색 (BEFORE 또는 미체크)
-    if (session.attendanceStatus !== 'BEFORE') {
+    let attColor = '#262626'; // 기본 회색 (출석 미시작 또는 미체크)
+    if (session.attendanceStatus) {
       if (attStatus === 'PRESENT')
         attColor = '#22c55e'; // 정상 출석: 초록
       else if (attStatus === 'LATE')
@@ -614,7 +638,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
       const record = session.assignmentRecords[email];
       const status = getSessionAssignmentStatus(record.solvedCount, record.totalCount, record.isAttemptedAll);
       asgnColor = status.color;
-    } else if (session.attendanceStatus !== 'BEFORE') {
+    } else if (session.attendanceStatus) {
       asgnColor = '#262626'; // 과제 없음 상태도 회색으로 통일
     }
 
@@ -655,9 +679,9 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
         }}
       />
 
-      <div className="w-full animate-fadeIn bg-[#1f1f1f] border border-gray-700/50 rounded-2xl p-6 overflow-hidden">
+      <div className="w-full animate-fadeIn bg-[var(--color-bg-card)] border border-gray-700/50 rounded-2xl p-6 overflow-hidden">
         <div className="flex border border-gray-700/50 rounded-lg overflow-hidden">
-          <div className="w-32 flex-shrink-0 bg-[#1f1f1f] border-r border-gray-700/50">
+          <div className="w-32 flex-shrink-0 bg-[var(--color-bg-card)] border-r border-gray-700/50">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="h-[64px]">
@@ -679,7 +703,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
                           {member.name}
                         </span>
                         <span
-                          className="block text-gray-400 text-[10px] truncate leading-tight mt-0.5 w-full"
+                          className="block text-gray-400 text-sm truncate leading-tight mt-0.5 w-full"
                           title={member.email}
                         >
                           {member.email}
@@ -692,14 +716,14 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
             </table>
           </div>
 
-          <div className="flex-grow overflow-x-auto custom-scrollbar bg-[#1a1a1a]">
+          <div className="flex-grow overflow-x-auto custom-scrollbar bg-[var(--color-bg-main)]">
             <table className="w-full text-center border-collapse min-max">
               <thead>
                 <tr className="h-[64px]">
                   {sessionsProgress.map((sec: any, idx: number) => (
                     <th
                       key={sec.id}
-                      className="px-4 text-gray-400 font-semibold text-xs border-b border-gray-700 min-w-[70px]"
+                      className="px-4 text-gray-400 font-semibold text-sm border-b border-gray-700 min-w-[70px]"
                     >
                       {idx + 1}회차
                     </th>

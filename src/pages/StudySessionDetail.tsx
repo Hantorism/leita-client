@@ -8,10 +8,18 @@ import {
   UpdateAssignmentModal,
   UpdateAttendanceModal,
 } from '@components';
+import {
+  type Study,
+  type StudyMemberAssignment,
+  type StudyMemberAttendance,
+  type StudySession,
+  type StudySessionDetail,
+  type AttendanceCheck,
+  type AttendanceRecord,
+} from '@types';
 import { useAlert } from '@contexts';
-import type { Study, StudySessionDetail } from '@types';
-import { getCurrentUserEmail, Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const StudySessionDetailPage = () => {
@@ -22,8 +30,9 @@ const StudySessionDetailPage = () => {
 
   const [study, setStudy] = useState<Study | null>(null);
   const [session, setSession] = useState<StudySessionDetail | null>(null);
-  const [memberAssignments, setMemberAssignments] = useState<any[]>([]);
-  const [memberAttendances, setMemberAttendances] = useState<any[]>([]);
+  const [attendanceDetail, setAttendanceDetail] = useState<AttendanceCheck | null>(null);
+  const [memberAssignments, setMemberAssignments] = useState<StudyMemberAssignment[]>([]);
+  const [memberAttendances, setMemberAttendances] = useState<StudyMemberAttendance[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMember, setIsMember] = useState(false);
@@ -31,47 +40,55 @@ const StudySessionDetailPage = () => {
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
   const [lateTimeLeft, setLateTimeLeft] = useState<string | null>(null);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const isMounted = useRef(true);
 
   const [showCreateAttendanceModal, setShowCreateAttendanceModal] = useState(false);
   const [showUpdateAttendanceModal, setShowUpdateAttendanceModal] = useState(false);
   const [showCreateAssignmentModal, setShowCreateAssignmentModal] = useState(false);
   const [showUpdateAssignmentModal, setShowUpdateAssignmentModal] = useState(false);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!id || !sessionId) return;
     setLoading(true);
     try {
-      const [studyRes, sessionRes, sessionsRes, assignmentsRes, attendancesRes] = await Promise.all([
+      const [studyRes, sessionRes, sessionsRes, assignmentsRes, attendancesRes, attendanceDetailRes] = await Promise.all([
         studyApi.getStudy(Number(id)),
         studySessionApi.getStudySession(Number(sessionId)),
         studySessionApi.getStudySessions(Number(id)),
         studyApi.getMemberAssignment(Number(id), Number(sessionId)),
         studyApi.getMemberAttendance(Number(id), Number(sessionId)),
+        studySessionApi.getAttendance(Number(sessionId)).catch(() => null),
       ]);
 
-      const studyData = studyRes.data || studyRes;
+      if (!isMounted.current) return;
+
+      const studyData = studyRes as unknown as Study;
       setStudy(studyData);
 
-      const currentSession = sessionRes.data || sessionRes;
+      const currentSession = sessionRes as unknown as StudySessionDetail;
       setSession(currentSession);
 
-      const assignmentsData = assignmentsRes.data || assignmentsRes;
+      const assignmentsData = (assignmentsRes as unknown as StudyMemberAssignment[]) || [];
       setMemberAssignments(assignmentsData);
 
-      const attendancesData = attendancesRes.data || attendancesRes;
+      const attendancesData = (attendancesRes as unknown as StudyMemberAttendance[]) || [];
       setMemberAttendances(attendancesData);
 
+      if (attendanceDetailRes) {
+        setAttendanceDetail(attendanceDetailRes);
+      }
+
       if (!sessionNumber) {
-        const allSessions = sessionsRes.data?.content ?? sessionsRes;
-        const sortedSessions = [...allSessions].sort((a: any, b: any) => a.id - b.id);
-        const index = sortedSessions.findIndex((s: any) => s.id === Number(sessionId));
+        const { content: allSessions } = sessionsRes as unknown as PagedResponse<StudySession>;
+        const sortedSessions = [...allSessions].sort((a: StudySession, b: StudySession) => a.id - b.id);
+        const index = sortedSessions.findIndex((s: StudySession) => s.id === Number(sessionId));
         setSessionNumber(index !== -1 ? index + 1 : null);
       }
 
       const email = getCurrentUserEmail();
       if (email) {
         setCurrentUserEmail(email);
-        const memberInfo = studyData.members?.find((m: any) => m.email === email);
+        const memberInfo = studyData.members?.find((m) => m.email === email);
         setIsAdmin(memberInfo?.role === 'ADMIN');
         setIsMember(!!memberInfo);
       }
@@ -79,13 +96,19 @@ const StudySessionDetailPage = () => {
       Logger.error('Failed to fetch session detail', err);
       showAlert('error', '데이터를 불러오는 중 오류가 발생했습니다.');
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [id, sessionId, sessionNumber, showAlert]);
 
   useEffect(() => {
+    isMounted.current = true;
     fetchData();
-  }, [id, sessionId]);
+    return () => {
+      isMounted.current = false;
+    };
+  }, [fetchData]);
 
   useEffect(() => {
     if (!session?.attendance?.closeTime || session.attendance.status !== 'OPEN') {
@@ -153,23 +176,23 @@ const StudySessionDetailPage = () => {
   };
 
   if (loading)
-    return <div className="min-h-screen bg-[#121212] flex items-center justify-center text-white">로딩 중...</div>;
+    return <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center text-white">로딩 중...</div>;
   if (!session)
     return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center text-white">
+      <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center text-white">
         세션을 찾을 수 없습니다.
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-Pretendard flex flex-col">
+    <div className="min-h-screen bg-[var(--color-bg-main)] text-white font-Pretendard flex flex-col">
       <Header />
 
       <main className="flex-1 container mx-auto px-6 py-12">
-        <div className="bg-[#1f1f1f] rounded-2xl p-8 border border-gray-800 shadow-xl">
+        <div className="bg-[var(--color-bg-card)] rounded-2xl p-8 border border-gray-800 shadow-xl">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-[#CAFE33] mb-2">
+              <h1 className="text-3xl font-bold text-[var(--color-brand)] mb-2">
                 {sessionNumber ? `${sessionNumber}회차` : ''}
                 {session.title ? ` - ${session.title}` : !sessionNumber ? '세션 상세 정보' : ''}
               </h1>
@@ -183,7 +206,7 @@ const StudySessionDetailPage = () => {
                 <Button
                   size="lg"
                   onClick={handleAttend}
-                  className="bg-blue-600 hover:bg-blue-500 rounded-full !px-5 hover:!bg-[#CAFE33] hover:!text-black"
+                  className="bg-blue-600 hover:bg-blue-500 rounded-full !px-5 hover:!bg-[var(--color-brand)] hover:!text-black"
                 >
                   출석하기
                 </Button>
@@ -201,7 +224,7 @@ const StudySessionDetailPage = () => {
                   onClick={() =>
                     session.attendance ? setShowUpdateAttendanceModal(true) : setShowCreateAttendanceModal(true)
                   }
-                  className="rounded-full !px-5 hover:!bg-[#CAFE33] hover:!text-black"
+                  className="rounded-full !px-5 hover:!bg-[var(--color-brand)] hover:!text-black"
                 >
                   {session.attendance ? '출석 수정하기' : '출석 시작하기'}
                 </Button>
@@ -218,13 +241,13 @@ const StudySessionDetailPage = () => {
                   {/* Left: Start/Close Times (Vertical Stack) */}
                   <div className="flex flex-col gap-4 w-full lg:w-[280px] shrink-0">
                     <div>
-                      <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">출석 시작</span>
+                      <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">출석 시작</span>
                       <span className="text-lg font-medium text-gray-300">
                         {new Date(session.attendance.openTime).toLocaleString()}
                       </span>
                     </div>
                     <div className="pt-4 border-t border-gray-800 lg:border-t-0 lg:pt-0">
-                      <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">출석 마감</span>
+                      <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">출석 마감</span>
                       <span className="text-lg font-medium text-gray-300">
                         {session.attendance.closeTime
                           ? new Date(session.attendance.closeTime).toLocaleString()
@@ -236,18 +259,18 @@ const StudySessionDetailPage = () => {
                   {/* Right: Personal Status / Countdown */}
                   {timeLeft !== null ||
                   memberAttendances.some(
-                    (r: any) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
+                    (r: StudyMemberAttendance) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
                   ) ? (
                     <div className="flex flex-col items-start w-full lg:w-auto shrink-0 font-Pretendard tabular-nums">
-                      <span className="block text-xs text-gray-500 uppercase tracking-wider mb-1">
+                      <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">
                         {memberAttendances.some(
-                          (r: any) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
+                          (r: StudyMemberAttendance) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
                         )
                           ? '출석 상태'
                           : ''}
                       </span>
                       {(() => {
-                        const memberRecord = memberAttendances.find((r: any) => r.user.email === currentUserEmail);
+                        const memberRecord = memberAttendances.find((r: StudyMemberAttendance) => r.user.email === currentUserEmail);
                         const myAttendance = memberRecord?.attendances?.[0];
 
                         // 1. 출석 한 경우
@@ -270,7 +293,7 @@ const StudySessionDetailPage = () => {
                         if (timeLeft === 'EXPIRED') {
                           return (
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-500 font-medium">현재 상태</span>
+                              <span className="text-sm text-gray-500 font-medium">현재 상태</span>
                               <span className="text-lg text-red-500">미출석</span>
                             </div>
                           );
@@ -281,19 +304,19 @@ const StudySessionDetailPage = () => {
                             {/* 지각 시간 체크 */}
                             {lateTimeLeft === 'EXPIRED' ? (
                               <div className="flex flex-col">
-                                <span className="text-xs text-gray-500 font-medium">현재 상태</span>
+                                <span className="text-sm text-gray-500 font-medium">현재 상태</span>
                                 <span className="text-lg text-orange-500">지각</span>
                               </div>
                             ) : (
                               <div className="flex flex-col">
-                                <span className="text-xs text-gray-500 font-medium">남은 지각 시간</span>
+                                <span className="text-sm text-gray-500 font-medium">남은 지각 시간</span>
                                 <span className="text-lg text-white">{lateTimeLeft}</span>
                               </div>
                             )}
 
                             {/* 출석 시간 체크 */}
                             <div className="flex flex-col">
-                              <span className="text-xs text-gray-500 font-medium">남은 출석 시간</span>
+                              <span className="text-sm text-gray-500 font-medium">남은 출석 시간</span>
                               <span className="text-lg text-white">{timeLeft}</span>
                             </div>
                           </div>
@@ -302,6 +325,77 @@ const StudySessionDetailPage = () => {
                     </div>
                   ) : null}
                 </div>
+
+                {/* attendance order list */}
+                {attendanceDetail?.records?.some((r: any) => r.attendedAt) && (
+                  <div className="mt-10 pt-8 border-t border-gray-800/50">
+                    <h4 className="text-sm font-semibold text-gray-400 mb-6 flex items-center gap-2">
+                      <span className="text-base">🎖️</span> 출석 순서
+                    </h4>
+                    <div className="flex flex-nowrap overflow-x-auto custom-scrollbar gap-x-12 pb-6 px-1">
+                      {[...(attendanceDetail.records || [])]
+                        .filter((r) => {
+                          if (!r.attendedAt) return false;
+                          const member = study?.members.find((m) => m.userId === r.userId);
+                          return member?.role !== 'ADMIN';
+                        })
+                        .map((record, index) => {
+                          const isLate = record.status === 'LATE';
+                          const attendedDate = new Date(record.attendedAt!);
+
+                          return (
+                            <div
+                              key={record.id}
+                              className="flex items-center gap-4 group animate-fadeIn flex-shrink-0"
+                            >
+                              <div className="relative">
+                                <div
+                                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2
+                                    ${
+                                      index === 0
+                                        ? 'bg-yellow-500/10 border-yellow-500/50 text-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.2)]'
+                                        : index === 1
+                                          ? 'bg-gray-300/10 border-gray-400/50 text-gray-300'
+                                          : index === 2
+                                            ? 'bg-orange-700/10 border-orange-700/50 text-orange-600'
+                                            : 'bg-black/40 border-gray-700 text-gray-500'
+                                    }`}
+                                >
+                                  {index + 1}
+                                </div>
+                                {index < 3 && (
+                                  <span className="absolute -top-1 -right-1 text-sm">
+                                    {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                                  </span>
+                                )}
+                              </div>
+
+                              {/* Info */}
+                              <div className="flex flex-col">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-gray-200 group-hover:text-white transition-colors">
+                                    {record.userName}
+                                  </span>
+                                  {isLate && (
+                                    <span className="text-sm bg-orange-500/20 text-orange-500 px-1.5 py-0.5 rounded font-bold border border-orange-500/20">
+                                      지각
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-sm text-gray-500 tabular-nums">
+                                  {attendedDate.toLocaleTimeString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                  })}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -312,7 +406,7 @@ const StudySessionDetailPage = () => {
               <div className="flex items-center gap-4">
                 {session.assignment && (
                   <p className="text-sm text-gray-400">
-                    총 <span className="font-bold text-[#CAFE33]">{session.assignment.problemIds.length}</span>문제
+                    총 <span className="font-bold text-[var(--color-brand)]">{session.assignment.problems.length}</span>문제
                   </p>
                 )}
                 {isAdmin && (
@@ -322,7 +416,7 @@ const StudySessionDetailPage = () => {
                     onClick={() =>
                       session.assignment ? setShowUpdateAssignmentModal(true) : setShowCreateAssignmentModal(true)
                     }
-                    className="rounded-full !px-5 hover:!bg-[#CAFE33] hover:!text-black"
+                    className="rounded-full !px-5 hover:!bg-[var(--color-brand)] hover:!text-black"
                   >
                     {session.assignment ? '과제 수정하기' : '과제 출제하기'}
                   </Button>
@@ -342,7 +436,7 @@ const StudySessionDetailPage = () => {
                     const memberAsgRecord = memberAssignments.find((ma) => ma.user.email === member.email);
                     const asgDetail = memberAsgRecord?.assignments?.[0];
 
-                    const totalProblems = asgDetail?.totalCount || session.assignment?.problemIds.length || 0;
+                    const totalProblems = asgDetail?.totalCount || session.assignment?.problems.length || 0;
                     const solvedCount = asgDetail?.solvedCount || 0;
                     const progressPercentage =
                       totalProblems === 0 ? 0 : Math.round((solvedCount / totalProblems) * 100);
@@ -361,24 +455,24 @@ const StudySessionDetailPage = () => {
                               <div className="flex items-center gap-1.5">
                                 <span className="font-medium text-gray-200 leading-none">{member.name}</span>
                                 {member.role === 'ADMIN' && (
-                                  <span className="text-[10px] bg-[#CAFE33]/20 text-[#CAFE33] px-1.5 py-0.5 rounded leading-none">
+                                  <span className="text-sm bg-[var(--color-brand)]/20 text-[var(--color-brand)] px-1.5 py-0.5 rounded leading-none">
                                     Admin
                                   </span>
                                 )}
                               </div>
                             </div>
                           </div>
-                          <span className="text-lg font-bold text-[#CAFE33] leading-none">{progressPercentage}%</span>
+                          <span className="text-lg font-bold text-[var(--color-brand)] leading-none">{progressPercentage}%</span>
                         </div>
 
                         <div className="w-full">
                           <div className="w-full bg-gray-800 rounded-full h-2 mb-2">
                             <div
-                              className="bg-[#CAFE33] h-2 rounded-full transition-all duration-500"
+                              className="bg-[var(--color-brand)] h-2 rounded-full transition-all duration-500"
                               style={{ width: `${progressPercentage}%` }}
                             />
                           </div>
-                          <div className="flex justify-between text-xs mt-1">
+                          <div className="flex justify-between text-sm mt-1">
                             <span className="text-gray-500">진행률</span>
                             <span className="text-gray-400 font-medium">
                               <span className="text-gray-200">{solvedCount}</span> / {totalProblems} 문제
@@ -433,9 +527,8 @@ const StudySessionDetailPage = () => {
           studyId={Number(id)}
           sessionId={Number(sessionId)}
           initialData={{
-            title: session.assignment.title,
             description: session.assignment.description || undefined,
-            problemIds: session.assignment.problemIds,
+            problemIds: session.assignment.problems.map(p => p.problemId),
           }}
           onSuccess={fetchData}
           onClose={() => setShowUpdateAssignmentModal(false)}

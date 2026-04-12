@@ -13,9 +13,9 @@ interface StudyMemberTabProps {
 const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps) => {
   const { showAlert } = useAlert();
 
-  const admins = study.members?.filter((m: any) => m.role === 'ADMIN') || [];
-  const members = study.members?.filter((m: any) => m.role === 'MEMBER') || [];
-  const pendings = study.members?.filter((m: any) => m.role === 'PENDING') || [];
+  const admins = study.members?.filter((m: StudyUser) => m.role === 'ADMIN') || [];
+  const members = study.members?.filter((m: StudyUser) => m.role === 'MEMBER') || [];
+  const pendings = study.members?.filter((m: StudyUser) => m.role === 'PENDING') || [];
 
   const currentUserEmail = getCurrentUserEmail();
 
@@ -42,15 +42,15 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
   return (
     <div className="w-full space-y-8 animate-fadeIn">
       {/* 관리자 섹션 */}
-      <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
+      <div className="bg-[var(--color-bg-surface)] border border-gray-700 rounded-xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-6">관리자</h2>
         <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {admins.map((admin: any, i: number) => (
+          {admins.map((admin: StudyUser, i: number) => (
             <li
               key={i}
               className="flex items-center gap-4 bg-black bg-opacity-20 p-5 rounded-lg border border-gray-800 transition-colors"
             >
-              <div className="w-12 h-12 shrink-0 rounded-full border-2 border-[#CAFE33] bg-gray-700 flex items-center justify-center font-bold text-white uppercase text-lg shadow-sm">
+              <div className="w-12 h-12 shrink-0 rounded-full border-2 border-[var(--color-brand)] bg-gray-700 flex items-center justify-center font-bold text-white uppercase text-lg shadow-sm">
                 {admin.name.charAt(0)}
               </div>
               <div className="min-w-0">
@@ -64,10 +64,10 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
       </div>
 
       {/* 일반 멤버 섹션 */}
-      <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
+      <div className="bg-[var(--color-bg-surface)] border border-gray-700 rounded-xl p-6 shadow-lg">
         <h2 className="text-xl font-semibold mb-6">일반 멤버</h2>
         <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {members.map((member: any, i: number) => (
+          {members.map((member: StudyUser, i: number) => (
             <li
               key={i}
               className="flex items-center gap-4 bg-black bg-opacity-20 p-5 rounded-lg border border-gray-800 transition-colors"
@@ -87,13 +87,13 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
 
       {/* 가입 대기 멤버 섹션 (관리자 전용) */}
       {isAdmin && (
-        <div className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 shadow-lg">
-          <h2 className="text-xl font-semibold mb-6 text-[#CAFE33]">가입 대기 멤버</h2>
+        <div className="bg-[var(--color-bg-surface)] border border-gray-700 rounded-xl p-6 shadow-lg">
+          <h2 className="text-xl font-semibold mb-6 text-[var(--color-brand)]">가입 대기 멤버</h2>
           <ul className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {pendings.map((user: StudyUser, i: number) => (
               <li
                 key={i}
-                className="flex items-center justify-between gap-4 bg-black bg-opacity-20 p-5 rounded-lg border border-gray-800 hover:border-[#CAFE33] hover:border-opacity-50 transition-all duration-300"
+                className="flex items-center justify-between gap-4 bg-black bg-opacity-20 p-5 rounded-lg border border-gray-800 hover:border-[var(--color-brand)] hover:border-opacity-50 transition-all duration-300"
               >
                 <div className="flex items-center gap-4 min-w-0">
                   <div className="w-12 h-12 shrink-0 rounded-full bg-gray-600 flex items-center justify-center font-bold text-gray-200 uppercase text-lg shadow-sm">
@@ -104,7 +104,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
                     <span className="block text-sm text-gray-400 truncate">{user.email}</span>
                   </div>
                 </div>
-
+         
                 <div className="flex gap-2 shrink-0">
                   <Button
                     size="sm"

@@ -1,8 +1,8 @@
 import { studySessionApi } from '@apis';
 import { useAssignmentProgress } from '@hooks';
 import type { StudySessionDetail } from '@types';
-import { getProblemStatusDetail, getSessionAssignmentStatus, Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { getProblemStatusDetail, getSessionAssignmentStatus, Logger, type PagedResponse } from '@utils';
+import { useEffect, useMemo, useState } from 'react';
 
 interface TodoAssignmentProps {
   studyId: number;
@@ -22,7 +22,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
 
         // 1. 세션 정보를 가져와 회차(Index) 계산
         const sessionsRes = await studySessionApi.getStudySessions(studyId);
-        const sessions = sessionsRes.data?.content ?? sessionsRes;
+        const { content: sessions } = sessionsRes as unknown as PagedResponse<any>;
 
         if (Array.isArray(sessions)) {
           const sorted = [...sessions].sort(
@@ -33,7 +33,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
         }
 
         const sessionDetailRes = await studySessionApi.getStudySession(sessionId);
-        setNextSession(sessionDetailRes.data || sessionDetailRes);
+        setNextSession(sessionDetailRes as unknown as StudySessionDetail);
       } catch (err) {
         Logger.error('Failed to fetch session data', err);
       } finally {
@@ -44,7 +44,10 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
     fetchSessionData();
   }, [studyId, sessionId]);
 
-  const problemIds = nextSession?.assignment?.problemIds || [];
+  const problemIds = useMemo(
+    () => nextSession?.assignment?.problems?.map((p) => p.problemId) || [],
+    [nextSession],
+  );
   const { problems, progress, loading: hookLoading } = useAssignmentProgress(problemIds);
 
   if (loading || hookLoading) return null;
@@ -57,7 +60,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-gray-800/50 pb-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-3 w-fit">
-            <span className="text-[#CAFE33] bg-[#CAFE33]/10 px-3 py-1 rounded-full text-xs font-bold shrink-0">
+            <span className="border border-[var(--color-brand)] text-white bg-[var(--color-brand)]/10 px-3 py-1 rounded-full text-sm font-bold shrink-0">
               TODO 과제
             </span>
             <h2 className="text-xl font-bold text-gray-100 flex items-center shrink-0">
@@ -66,7 +69,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
           </div>
 
           <div className="flex items-baseline gap-2 pl-1">
-            <span className="font-bold text-[#CAFE33]">{progress.solvedCount}</span>
+            <span className="font-bold text-[var(--color-brand)]">{progress.solvedCount}</span>
             <span className="text-gray-500 font-medium">/</span>
             <span className="text-gray-400">{progress.totalCount} 문제 완료</span>
           </div>
@@ -97,7 +100,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
                     {problem.problemId}. {problem.title}
                   </h3>
                 </div>
-                <span className={`text-xs font-bold shrink-0 ${probStatus.twColor}`}>{probStatus.text}</span>
+                <span className={`text-sm font-bold shrink-0 ${probStatus.twColor}`}>{probStatus.text}</span>
               </div>
             </div>
           );

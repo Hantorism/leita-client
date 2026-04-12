@@ -8,9 +8,9 @@ import {
   StudyProgressTab,
   StudySessionTab,
 } from '@components';
-import type { Study } from '@types';
+import type { Study, StudyUser } from '@types';
 import { getCurrentUserEmail, Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 type Tab = 'sessions' | 'members' | 'progress' | 'completion';
@@ -31,12 +31,22 @@ const StudyDetailPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('sessions');
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+  const isMounted = useRef(true);
 
-  const fetchStudy = async () => {
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const fetchStudy = useCallback(async () => {
     if (!id) return;
     try {
       const result = await studyApi.getStudy(parseInt(id, 10));
-      const studyData = result.data || result;
+      if (!isMounted.current) return;
+
+      const studyData = result as unknown as Study;
       setStudy(studyData);
       document.title = `${studyData.title} | Leita`;
 
@@ -44,30 +54,34 @@ const StudyDetailPage = () => {
 
       if (userEmail) {
         setCurrentUserEmail(userEmail);
-        const me = studyData.members?.find((m: any) => m.email.toLowerCase().trim() === userEmail);
+        const me = studyData.members?.find((m: StudyUser) => m.email.toLowerCase().trim() === userEmail);
         setIsAdmin(me?.role === 'ADMIN');
         setIsMember(me?.role === 'MEMBER');
       }
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('스터디 정보를 불러오는 데 실패했습니다:', err);
-      setError('스터디 정보를 불러올 수 없습니다.');
+      if (isMounted.current) {
+        setError('스터디 정보를 불러올 수 없습니다.');
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchStudy();
-  }, [id]);
+  }, [fetchStudy]);
 
   if (loading)
-    return <div className="min-h-screen bg-[#1A1A1A] text-white text-center pt-20">스터디 정보를 불러오는 중...</div>;
-  if (error) return <div className="min-h-screen bg-[#1A1A1A] text-white text-center pt-20">{error}</div>;
+    return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">스터디 정보를 불러오는 중...</div>;
+  if (error) return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">{error}</div>;
   if (!study)
-    return <div className="min-h-screen bg-[#1A1A1A] text-white text-center pt-20">스터디를 찾을 수 없습니다.</div>;
+    return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">스터디를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#1A1A1A] text-white font-Pretendard">
+    <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] text-white font-Pretendard">
       <header className="pl-[10%] pr-[10%] w-full text-left pt-[3%]">
         <Header />
       </header>
@@ -76,7 +90,7 @@ const StudyDetailPage = () => {
         {/* 스터디 제목 + 수료 조건 배지 */}
         <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-[#CAFE33]">{study.title}</h1>
+            <h1 className="text-3xl font-bold text-[var(--color-brand)]">{study.title}</h1>
             <p className="text-gray-400 mt-2 text-sm">{study.description}</p>
           </div>
         </div>
@@ -92,7 +106,7 @@ const StudyDetailPage = () => {
               variant="ghost"
               onClick={() => setActiveTab(key)}
               className={`!px-6 !py-3 font-semibold border-b-2 -mb-[2px] !rounded-none ${
-                activeTab === key ? 'border-[#CAFE33] !text-[#CAFE33]' : 'border-transparent hover:text-white'
+                activeTab === key ? 'border-[var(--color-brand)] !text-[var(--color-brand)]' : 'border-transparent hover:text-white'
               }`}
             >
               {label}

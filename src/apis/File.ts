@@ -1,9 +1,9 @@
 import { AxiosInstance } from '@utils';
+import type { GeneratePARRequest, GeneratePARResponse } from '@types';
 
 export const fileApi = {
   // POST /files/par
-  generatePAR: async (objectName: string) => {
-    const response = await AxiosInstance.post(`/files/par`, { objectName });
-    return response.data;
+  generatePAR: async (data: GeneratePARRequest) => {
+    return AxiosInstance.post<GeneratePARResponse>(`/files/par`, data);
   },
 };

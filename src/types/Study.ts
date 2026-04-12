@@ -1,4 +1,79 @@
+import type { JudgeResultType } from './Judge';
+
 export type StudyMemberRole = 'ADMIN' | 'MEMBER' | 'PENDING';
+export type AttendanceStatus = 'OPEN' | 'CLOSED';
+export type AttendanceRecordStatus = 'PRESENT' | 'LATE' | 'ABSENT';
+export type AssignmentStatusType = 'COMPLETED' | 'PARTIAL' | 'INCOMPLETE';
+
+export interface StudyCreateRequest {
+  title: string;
+  description: string;
+  requirement: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface StudyCreateResponse {
+  id: number;
+  title: string;
+}
+
+export interface StudyUpdateRequest {
+  title: string;
+  description: string;
+  requirement: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface StudySessionCreateRequest {
+  studyId: number;
+  title: string;
+  description: string | null;
+  startDateTime: string;
+  endDateTime: string;
+}
+
+export interface StudySessionUpdateRequest {
+  title: string;
+  description: string | null;
+  startDateTime: string;
+  endDateTime: string;
+}
+
+export interface AttendanceOpenRequest {
+  openTime: string;
+  closeTime: string;
+  lateThresholdMinutes: number;
+}
+
+export interface AttendanceUpdateRequest {
+  closeTime: string | null;
+  lateThresholdMinutes: number | null;
+  status: AttendanceStatus | null;
+}
+
+export interface MemberAttendanceUpdateRequest {
+  status: AttendanceRecordStatus;
+}
+
+export interface MemberAssignmentUpdateRequest {
+  status: AssignmentStatusType;
+}
+
+export interface AssignmentCreateRequest {
+  description: string | null;
+  problemIds: number[];
+  startDateTime: string | null;
+  endDateTime: string;
+}
+
+export interface AssignmentUpdateRequest {
+  description: string | null;
+  problemIds: number[];
+  startDateTime: string | null;
+  endDateTime: string;
+}
 
 export interface StudyUser {
   userId: number;
@@ -17,8 +92,6 @@ export interface Study {
   startDate: string;
   endDate: string;
   members: StudyUser[];
-  maxAbsences?: number;
-  maxIncompleteAsg?: number;
 }
 
 export interface StudySession {
@@ -28,7 +101,7 @@ export interface StudySession {
   description: string | null;
   startDateTime: string;
   endDateTime: string;
-  attendanceStatus?: 'BEFORE' | 'OPEN' | 'CLOSED';
+  attendanceStatus?: AttendanceStatus;
   assignmentCreated?: boolean;
 }
 
@@ -40,7 +113,7 @@ export interface StudySessionDetail {
   startDateTime: string;
   endDateTime: string;
   attendance: AttendanceCheck | null;
-  assignment: Assignment | null;
+  assignment: AssignmentDetailResponse | null;
 }
 
 export interface AttendanceRecord {
@@ -48,7 +121,7 @@ export interface AttendanceRecord {
   userId: number;
   userName: string;
   userEmail: string;
-  status: 'PRESENT' | 'LATE' | 'ABSENT';
+  status: AttendanceRecordStatus;
   attendedAt: string | null;
 }
 
@@ -66,17 +139,34 @@ export interface AttendanceCheck {
   openTime: string;
   closeTime: string | null;
   lateThresholdMinutes: number;
-  status: 'OPEN' | 'CLOSED';
+  status: AttendanceStatus;
   records: AttendanceRecord[];
   attendanceRate: AttendanceRate;
 }
 
-export interface Assignment {
+export interface AssignmentResponse {
   id: number;
   studySessionId: number;
-  title: string;
   description: string | null;
   problemIds: number[];
+  startDateTime: string;
+  endDateTime: string;
+}
+
+export interface AssignmentProblemStatus {
+  problemId: number;
+  title: string;
+  result: JudgeResultType | null;
+}
+
+export interface AssignmentDetailResponse {
+  id: number;
+  studySessionId: number;
+  status: AssignmentStatusType | null;
+  description: string | null;
+  problems: AssignmentProblemStatus[];
+  startDateTime: string;
+  endDateTime: string;
 }
 
 export interface UserBrief {
@@ -89,8 +179,8 @@ export interface UserBrief {
 export interface SessionStatus {
   sessionId: number;
   sessionTitle: string;
-  attendanceStatus: string | null;
-  assignmentStatus: boolean | null;
+  attendanceStatus: AttendanceRecordStatus | null;
+  assignmentStatus: AssignmentStatusType | null;
 }
 
 export interface StudyMemberStatus {
@@ -101,7 +191,7 @@ export interface StudyMemberStatus {
 export interface AttendanceDetail {
   sessionId: number;
   sessionTitle: string;
-  status: string | null;
+  status: AttendanceRecordStatus | null;
   attendedAt: string | null;
 }
 
@@ -113,10 +203,10 @@ export interface StudyMemberAttendance {
 export interface AssignmentDetail {
   sessionId: number;
   sessionTitle: string;
+  status: AssignmentStatusType | null;
   solvedCount: number;
   totalCount: number;
-  isCompleted: boolean;
-  solvedProblemIds: number[];
+  problems: AssignmentProblemStatus[];
 }
 
 export interface StudyMemberAssignment {

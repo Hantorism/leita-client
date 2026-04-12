@@ -6,12 +6,13 @@ import {
   Footer,
   Header,
   JoinStudyModal,
+  Pagination,
   UpdateStudyModal,
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
-import { getCurrentUserEmail, Logger } from '@utils';
-import { useEffect, useState } from 'react';
+import { extractErrorMessage, getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface StudyWithDetail extends Study {
   adminNames: string[];
@@ -35,14 +36,24 @@ const StudyPage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [deleteTargetStudy, setDeleteTargetStudy] = useState<Study | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const isMounted = useRef(true);
 
-  const fetchStudies = async () => {
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const fetchStudies = useCallback(async () => {
     setLoading(true);
     try {
       const result = await studyApi.getStudies(page, 10);
-      const content: Study[] = result.data?.content || result.content || [];
+      if (!isMounted.current) return;
+
+      const { content, totalPages: total } = result as unknown as PagedResponse<Study>;
       setStudies(content);
-      setTotalPages(result.data?.totalPages || result.totalPages || 1);
+      setTotalPages(total);
 
       // 각 스터디의 상세 정보(members + roles)를 병렬로 가져옴
       const currentUserEmail = getCurrentUserEmail();
@@ -50,7 +61,7 @@ const StudyPage = () => {
         content.map(async (study: Study) => {
           try {
             const detail = await studyApi.getStudy(study.id);
-            const detailData = detail.data || detail;
+            const detailData = detail as unknown as Study;
             const members: StudyUser[] = detailData.members || [];
             const admins = members.filter((m) => m.role === 'ADMIN');
             const memberCount = members.filter((m) => m.role === 'MEMBER').length;
@@ -79,20 +90,29 @@ const StudyPage = () => {
           }
         }),
       );
-      setStudyDetails(Object.fromEntries(detailEntries));
-    } catch (err: any) {
+      
+      if (isMounted.current) {
+        setStudyDetails(Object.fromEntries(detailEntries));
+      }
+    } catch (err) {
       Logger.error('Failed to fetch studies:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
-  };
+  }, [page]);
+
+  useEffect(() => {
+    fetchStudies();
+  }, [fetchStudies]);
 
   const handleStudyClick = (study: Study) => {
     const detail = studyDetails[study.id];
     const currentUserEmail = getCurrentUserEmail();
     if (currentUserEmail && detail) {
-      const members: StudyUser[] = (detail as any).members || [];
+      const members = detail.members || [];
       const userInStudy = members.find((m) => m.email.toLowerCase().trim() === currentUserEmail);
       if (userInStudy?.role === 'ADMIN' || userInStudy?.role === 'MEMBER') {
         window.location.href = `/study/${study.id}`;
@@ -103,10 +123,6 @@ const StudyPage = () => {
     setShowJoinModal(true);
   };
 
-  useEffect(() => {
-    fetchStudies();
-  }, [page]);
-
   const handleDeleteStudy = async () => {
     if (!deleteTargetStudy) return;
     setIsDeleting(true);
@@ -115,16 +131,18 @@ const StudyPage = () => {
       setShowDeleteModal(false);
       setDeleteTargetStudy(null);
       fetchStudies();
-    } catch (err: any) {
+    } catch (err) {
       Logger.error('Delete Error:', err);
-      showAlert('error', '삭제 실패: ' + (err.response?.data?.message || err.message || '알 수 없는 오류'));
+      showAlert('error', '삭제 실패: ' + extractErrorMessage(err));
     } finally {
-      setIsDeleting(false);
+      if (isMounted.current) {
+        setIsDeleting(false);
+      }
     }
   };
 
   return (
-    <div className="flex flex-col items-start min-h-screen bg-[#1A1A1A] font-Pretendard">
+    <div className="flex flex-col items-start min-h-screen bg-[var(--color-bg-main)] font-Pretendard">
       <header className="pl-[10%] pr-[10%] w-full text-left">
         <Header />
       </header>
@@ -160,7 +178,7 @@ const StudyPage = () => {
               return (
                 <div
                   key={study.id}
-                  className="bg-[#2A2A2A] border border-gray-700 rounded-xl p-6 flex flex-col gap-3 cursor-pointer hover:border-[#CAFE33] hover:shadow-[0_0_14px_rgba(202,255,51,0.15)] transition-all duration-200"
+                  className="bg-[var(--color-bg-surface)] border border-gray-700 rounded-xl p-6 flex flex-col gap-3 cursor-pointer hover:border-[var(--color-brand)] hover:shadow-[0_0_14px_rgba(202,255,51,0.15)] transition-all duration-200"
                   onClick={() => handleStudyClick(study)}
                 >
                   {/* 상단 - 제목 + 수정 버튼 */}
@@ -172,10 +190,10 @@ const StudyPage = () => {
                           variant="secondary"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setUpdateTargetStudy(detail as unknown as Study);
+                             setUpdateTargetStudy(detail as unknown as Study);
                             setShowUpdateModal(true);
                           }}
-                          className="text-xs !px-3 !py-1 rounded-full hover:bg-[#CAFE33] hover:text-black"
+                          className="text-sm !px-3 !py-1 rounded-full hover:bg-[var(--color-brand)] hover:text-black"
                         >
                           수정
                         </Button>
@@ -186,7 +204,7 @@ const StudyPage = () => {
                             setDeleteTargetStudy(detail as unknown as Study);
                             setShowDeleteModal(true);
                           }}
-                          className="text-xs !px-3 !py-1 rounded-full hover:bg-red-600 hover:text-white"
+                          className="text-sm !px-3 !py-1 rounded-full hover:bg-red-600 hover:text-white"
                         >
                           삭제
                         </Button>
@@ -218,39 +236,13 @@ const StudyPage = () => {
           </div>
         )}
 
-        {/* 페이지네이션 */}
         {totalPages > 1 && (
-          <div className="flex justify-center mt-10 gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setPage((p) => Math.max(p - 1, 0))}
-              disabled={page === 0}
-              className="rounded-full"
-            >
-              이전
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <Button
-                key={i}
-                size="sm"
-                variant={page === i ? 'primary' : 'secondary'}
-                onClick={() => setPage(i)}
-                className="rounded-full"
-              >
-                {i + 1}
-              </Button>
-            ))}
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setPage((p) => Math.min(p + 1, totalPages - 1))}
-              disabled={page === totalPages - 1}
-              className="rounded-full"
-            >
-              다음
-            </Button>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            className="mt-10"
+          />
         )}
       </main>
 

@@ -68,7 +68,7 @@ const Header = () => {
               to="/"
               className={({ isActive }) =>
                 isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[#CAFE33] px-5 py-2 rounded-full whitespace-nowrap inline-block'
+                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
                   : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
               }
             >
@@ -80,7 +80,7 @@ const Header = () => {
               to="/problems"
               className={({ isActive }) =>
                 isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[#CAFE33] px-5 py-2 rounded-full whitespace-nowrap inline-block'
+                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
                   : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
               }
             >
@@ -92,11 +92,11 @@ const Header = () => {
               to="/judge"
               className={({ isActive }) =>
                 isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[#CAFE33] px-5 py-2 rounded-full whitespace-nowrap inline-block'
+                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
                   : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
               }
             >
-              Solved
+              Judge
             </NavLink>
           </li>
           <li className="flex-shrink-0">
@@ -104,7 +104,7 @@ const Header = () => {
               to="/study"
               className={({ isActive }) =>
                 isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[#CAFE33] px-5 py-2 rounded-full whitespace-nowrap inline-block'
+                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
                   : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
               }
             >
