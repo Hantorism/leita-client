@@ -1,8 +1,9 @@
 import { problemApi } from '@apis';
+import { Logo } from '@assets/images';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
-import { Logger, Profile, formatMemory, formatTime } from '@utils';
+import { Logger } from '@utils';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 interface TestCase {
   id?: number;
@@ -40,6 +41,7 @@ const ProblemDetailPage = () => {
   const isDragging = useRef<boolean>(false);
   const [code, setCode] = useState<string>('');
   const [copiedId, setCopiedId] = useState<number | string | null>(null);
+  const [activeTab, setActiveTab] = useState<'description' | 'code'>('description');
 
   const decodeText = (text: string): string => {
     try {
@@ -80,6 +82,20 @@ const ProblemDetailPage = () => {
   const startResizing = (e: ReactMouseEvent) => {
     e.preventDefault();
     isDragging.current = true;
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'ew-resize';
+    
+    const overlay = document.createElement('div');
+    overlay.id = 'resize-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.zIndex = '9999';
+    overlay.style.cursor = 'ew-resize';
+    document.body.appendChild(overlay);
+
     document.addEventListener('mousemove', handleResize);
     document.addEventListener('mouseup', stopResizing);
   };
@@ -93,6 +109,14 @@ const ProblemDetailPage = () => {
 
   const stopResizing = () => {
     isDragging.current = false;
+    document.body.style.userSelect = '';
+    document.body.style.cursor = '';
+    
+    const overlay = document.getElementById('resize-overlay');
+    if (overlay) {
+      document.body.removeChild(overlay);
+    }
+
     document.removeEventListener('mousemove', handleResize);
     document.removeEventListener('mouseup', stopResizing);
   };
@@ -104,136 +128,191 @@ const ProblemDetailPage = () => {
     });
   };
 
-  if (loading) return <div className="text-white text-center mt-10">👾 문제를 불러오는 중</div>;
-  if (!problem) return <div className="text-white text-center mt-10">👽 문제를 찾을 수 없습니다.</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen text-gray-500 font-black">👾 문제를 불러오는 중...</div>;
+  if (!problem) return <div className="flex items-center justify-center min-h-screen text-gray-500 font-black">👽 문제를 찾을 수 없습니다.</div>;
 
   return (
-    <div className="flex h-screen bg-[var(--color-bg-main)] text-white px-3 py-4 font-Pretendard">
-      <div
-        className="scrollbar-hide bg-[var(--color-bg-surface)] p-6 shadow-lg overflow-y-auto min-w-[300px] max-w-[70vw] relative rounded-lg m-4"
-        style={{ width: `${leftWidth}px`, height: 'calc(100vh - 60px)' }}
-      >
-        <h2 className="text-2xl font-bold text-gray-200 font-Pretendard">
-          # {problem.problemId} {problem.title}
-        </h2>
-
-        <div className="mt-3 flex flex-wrap gap-2">
-          {problem.category?.map((cat, i) => (
-            <span
-              key={i}
-              className="px-2 py-1 text-sm text-gray-200 border border-gray-500 rounded-full"
-            >
-              {cat}
-            </span>
-          ))}
-        </div>
-
-        <div className="mt-3">
-          <span className="text-gray-400 font-Pretendard">정답률:</span> {problem.solved?.rate?.toFixed(2)}%
-          <span className="ml-4 text-gray-400 font-Pretendard">풀이 제출 수:</span> {problem.solved?.totalCount}
-        </div>
-        <hr className="border-t border-gray-500 mt-2" />
-
-        <div className="mt-6">
-          <h2 className="text-lg font-normal pb-2 pt-1 font-Pretendard">문제 설명</h2>
-          {Profile.isNotProd() && (
-            <pre className="mt-2 text-gray-300 whitespace-pre-wrap font-Pretendard">{problem.description.problem}</pre>
-          )}
-          <ProblemDescriptionEditor
-            content={problem.description.problem}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
-            rows={3}
-            readonly
-          />
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">입력</h3>
-          {Profile.isNotProd() && (
-            <pre className="text-gray-300 pl-0 rounded-md mt-1 whitespace-pre-wrap font-Pretendard">
-              {decodeText(problem.description.input)}
-            </pre>
-          )}
-          <ProblemDescriptionEditor
-            content={problem.description.input}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
-            rows={3}
-            readonly
-          />
-        </div>
-
-        <div className="mt-4">
-          <h3 className="text-lg font-normal pb-1 pt-2 font-Pretendard">출력</h3>
-          {Profile.isNotProd() && (
-            <pre className="text-gray-300  rounded-md mt-1 whitespace-pre-wrap font-Pretendard">
-              {decodeText(problem.description.output)}
-            </pre>
-          )}
-          <ProblemDescriptionEditor
-            content={problem.description.output}
-            className="mt-2 p-3 w-full border bg-white bg-opacity-30 border-gray-700 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-[var(--color-brand)]"
-            rows={3}
-            readonly
-          />
-        </div>
-
-        <div className="pt-6">
-          <h2 className="text-xl font-normal pb-1 pt-3">예제 테스트 케이스</h2>
-          {problem.testCases.map((testCase, index) => (
-            <div
-              key={testCase.id || index}
-              className="mt-1 p-3 bg-black rounded-lg"
-            >
-              {testCase.input.trim() !== '' && (
-                <>
-                  <h3 className="text-sm text-gray-400">입력 {index + 1}</h3>
-                  <div className="relative">
-                    <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md pr-10">
-                      <div className="overflow-x-auto w-[calc(100%-30px)] scrollbar-hide">
-                        {decodeText(testCase.input)}
-                      </div>
-                    </pre>
-                    <button
-                      onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
-                      className="absolute top-2 right-2 px-2 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-white rounded-md"
-                    >
-                      {copiedId === (testCase.id || index) ? '복사완료!' : '복사하기'}
-                    </button>
-                  </div>
-                </>
-              )}
-
-              <h3 className="text-sm text-gray-400 mt-2">출력 {index + 1}</h3>
-              <pre className="font-[Hack] bg-[#1E1E1E] text-gray-300 p-2 rounded-md">{decodeText(testCase.output)}</pre>
+    <div className="flex flex-col h-screen bg-[#1A1A1A] text-white font-Pretendard overflow-hidden">
+      {/* Focused Mode Header */}
+      <header className="h-14 flex-shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#1A1A1A] z-50">
+        <div className="flex items-center gap-6">
+          <Link to="/problems" className="flex items-center gap-3 group">
+            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </div>
-          ))}
+            <img src={Logo} alt="Logo" className="h-5 opacity-80" />
+          </Link>
+          <div className="h-4 w-px bg-white/10" />
+          <div className="flex items-center gap-3">
+            <span className="text-gray-500 font-JetBrain text-sm font-bold">#{problem.problemId}</span>
+            <h1 className="text-sm sm:text-base font-black truncate max-w-[200px] sm:max-w-md">{problem.title}</h1>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4">
+           <div className="hidden sm:flex items-center gap-4 text-[11px] font-black text-gray-500 uppercase tracking-widest">
+              <div className="flex items-center gap-2">
+                 <span className="w-1.5 h-1.5 rounded-full bg-[#CAFE33]" />
+                 Time: {problem.limit.time}ms
+              </div>
+              <div className="flex items-center gap-2">
+                 <span className="w-1.5 h-1.5 rounded-full bg-[#CAFE33]" />
+                 Memory: {problem.limit.memory}KB
+              </div>
+           </div>
+        </div>
+      </header>
+
+      {/* Mobile Tab Navigation */}
+      <div className="lg:hidden flex border-b border-white/5 bg-[#1A1A1A] flex-shrink-0">
+        <button
+          onClick={() => setActiveTab('description')}
+          className={`flex-1 py-4 text-sm font-black transition-all ${activeTab === 'description' ? 'text-[#CAFE33] border-b-2 border-[#CAFE33]' : 'text-gray-500'}`}
+        >
+          문제 설명
+        </button>
+        <button
+          onClick={() => setActiveTab('code')}
+          className={`flex-1 py-4 text-sm font-black transition-all ${activeTab === 'code' ? 'text-[#CAFE33] border-b-2 border-[#CAFE33]' : 'text-gray-500'}`}
+        >
+          코드 에디터
+        </button>
+      </div>
+
+      <main className="flex-grow flex flex-col lg:flex-row overflow-hidden relative">
+        {/* Left Column (Description) */}
+        <div
+          className={`scrollbar-hide bg-[#1A1A1A] lg:bg-[#2A2A2A]/30 p-6 lg:p-10 overflow-y-auto w-full lg:max-w-[70vw] ${activeTab === 'description' ? 'block' : 'hidden lg:block'}`}
+          style={{ width: window.innerWidth >= 1024 ? `${leftWidth}px` : '100%' }}
+        >
+          <div className="max-w-4xl mx-auto lg:mx-0">
+            <div className="flex flex-wrap gap-2 mb-8">
+              {problem.category?.map((cat, i) => (
+                <span key={i} className="px-3 py-1.5 text-xs font-black text-gray-400 bg-white/5 rounded-xl uppercase tracking-wider">
+                  {cat}
+                </span>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-2 gap-6 mb-12 p-8 rounded-[2rem] bg-white/5 border border-white/5">
+              <div className="flex flex-col">
+                <span className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-2">정답률</span>
+                <span className="text-2xl font-black font-JetBrain">{problem.solved?.rate?.toFixed(1)}%</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-2">제출 수</span>
+                <span className="text-2xl font-black font-JetBrain">{problem.solved?.totalCount.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="space-y-16">
+              <section>
+                <h2 className="text-xl font-black mb-6 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#CAFE33]" />
+                  문제 설명
+                </h2>
+                <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed font-medium">
+                  <ProblemDescriptionEditor content={problem.description.problem} readonly />
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-black mb-6 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#CAFE33]" />
+                  입력
+                </h2>
+                <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed font-medium">
+                  <ProblemDescriptionEditor content={problem.description.input} readonly />
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-black mb-6 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#CAFE33]" />
+                  출력
+                </h2>
+                <div className="prose prose-invert max-w-none text-gray-300 leading-relaxed font-medium">
+                  <ProblemDescriptionEditor content={problem.description.output} readonly />
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-black mb-8 flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#CAFE33]" />
+                  예제 테스트 케이스
+                </h2>
+                <div className="space-y-8">
+                  {problem.testCases.map((testCase, index) => (
+                    <div key={testCase.id || index} className="p-8 rounded-[2rem] bg-white/5 border border-white/5 space-y-6">
+                      {testCase.input.trim() !== '' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-xs font-black text-gray-600 uppercase tracking-widest">입력 {index + 1}</span>
+                            <button
+                              onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
+                              className="text-xs font-bold text-[#CAFE33] hover:underline"
+                            >
+                              {copiedId === (testCase.id || index) ? '복사됨!' : '복사하기'}
+                            </button>
+                          </div>
+                          <pre className="font-JetBrain bg-black/40 p-6 rounded-2xl text-base text-gray-300 overflow-x-auto border border-white/5">
+                            {decodeText(testCase.input)}
+                          </pre>
+                        </div>
+                      )}
+                      <div>
+                        <span className="text-xs font-black text-gray-600 uppercase tracking-widest block mb-3">출력 {index + 1}</span>
+                        <pre className="font-JetBrain bg-black/40 p-6 rounded-2xl text-base text-gray-300 overflow-x-auto border border-white/5">
+                          {decodeText(testCase.output)}
+                        </pre>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="p-8 rounded-[2.5rem] bg-[#CAFE33]/5 border border-[#CAFE33]/10">
+                <h2 className="text-sm font-black text-[#CAFE33] mb-6 uppercase tracking-[0.2em]">제한 사항</h2>
+                <div className="grid grid-cols-2 gap-10 text-base">
+                  <div>
+                    <span className="text-gray-500 block mb-2 font-bold">메모리 제한</span>
+                    <span className="font-black font-JetBrain text-xl">{problem?.limit?.memory ?? '-'} KB</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500 block mb-2 font-bold">시간 제한</span>
+                    <span className="font-black font-JetBrain text-xl">{problem?.limit?.time ?? '-'} MS</span>
+                  </div>
+                </div>
+              </section>
+
+              <div className="pt-10 pb-20 text-xs font-bold text-gray-600 flex flex-col gap-2">
+                <p>출처: {problem.source}</p>
+                <p>작성자: {problem.authorName}</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-4">
-          <h3 className="text-lg font-normal pb-2 pt-3">제한 사항</h3>
-          <p className="text-gray-300">메모리 제한: {problem?.limit?.memory ? formatMemory(problem.limit.memory) : '정보 없음'}</p>
-          <p className="text-gray-300">시간 제한: {problem?.limit?.time ? formatTime(problem.limit.time) : '정보 없음'}</p>
+        {/* Resize Handle (Desktop only) */}
+        <div
+          className="hidden lg:flex w-2 bg-white/5 hover:bg-[#CAFE33]/30 cursor-ew-resize items-center justify-center transition-colors"
+          onMouseDown={startResizing}
+        >
+          <div className="w-0.5 h-12 bg-white/20 rounded-full" />
         </div>
 
-        <p className="text-sm text-gray-400 pt-6">출처: {problem.source}</p>
-        <p className="text-sm text-gray-400">작성자: {problem.authorName}</p>
-      </div>
-
-      <div
-        className="w-[8px] min-h-[60px] bg-gray-400 hover:bg-gray-200 cursor-ew-resize rounded-md mx-[-4px] flex items-center justify-center self-center z-50 transition-all duration-150 ease-in-out"
-        onMouseDown={startResizing}
-      >
-        <div className="w-[3px] h-[20px] bg-gray-600 rounded-full"></div>
-      </div>
-
-      <div className="flex-1 flex flex-col min-w-[300px] overflow-auto h-full max-h-full">
-        <CodeEditor
-          code={code}
-          setCode={setCode}
-          problemId={String(problem.problemId)}
-          testCases={problem.testCases}
-        />
-      </div>
+        {/* Right Column (Editor) */}
+        <div className={`flex-1 flex flex-col h-full overflow-hidden ${activeTab === 'code' ? 'block' : 'hidden lg:block'}`}>
+          <CodeEditor
+            code={code}
+            setCode={setCode}
+            problemId={String(problem.problemId)}
+            testCases={problem.testCases}
+          />
+        </div>
+      </main>
     </div>
   );
 };

@@ -1,65 +1,13 @@
 import { authApi } from '@apis';
-import { useAlert } from '@contexts';
+import { useAlert, useAuth } from '@contexts';
 import { googleLogout, type TokenResponse, useGoogleLogin } from '@react-oauth/google';
-import { type User } from '@types';
 import { Logger } from '@utils';
-import { type Dispatch, type SetStateAction, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface LoginProps {
-  user: User | null;
-  setUser: Dispatch<SetStateAction<User | null>>;
-}
-
-const Login = ({ user, setUser }: LoginProps) => {
+const Login = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-  const isMounted = useRef(true);
-
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const storedUser = localStorage.getItem('user');
-
-    if (!token) {
-      if (storedUser) {
-        localStorage.removeItem('user');
-      }
-      setUser(null);
-      return;
-    }
-
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-
-    // Use authApi to validate token and refresh user info
-    authApi
-      .getAuthInfo()
-      .then((res) => {
-        if (!isMounted.current) return;
-        const userData = res;
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-      })
-      .catch((err: unknown) => {
-        Logger.error('Token validation failed:', err);
-        const errorResp = (err as any).response;
-        if (errorResp?.status === 401) {
-          if (isMounted.current) {
-            setUser(null);
-          }
-          localStorage.removeItem('user');
-          localStorage.removeItem('accessToken');
-        }
-      });
-  }, [setUser]);
+  const { user, login, logout } = useAuth();
 
   const signInWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
@@ -72,15 +20,7 @@ const Login = ({ user, setUser }: LoginProps) => {
           return;
         }
 
-        localStorage.setItem('accessToken', accessToken);
-
-        const userRes = await authApi.getAuthInfo();
-        Logger.print(' User Info Response:', userRes);
-
-        const userData = userRes;
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-
+        await login(accessToken);
         navigate('/');
       } catch (error: unknown) {
         Logger.error(' Google login failed:', error);
@@ -97,21 +37,19 @@ const Login = ({ user, setUser }: LoginProps) => {
     },
   });
 
-  const logout = () => {
+  const handleLogout = () => {
     googleLogout();
-    setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
+    logout();
   };
 
   return (
     <div className="login-container">
       {user ? (
         <div className="flex items-center gap-2 lg:gap-3 flex-nowrap whitespace-nowrap">
-          <span className="text-white flex-shrink-0 font-light tracking-wide">Hello, {user.name} 👋</span>
+          <span className="text-white flex-shrink-0 font-light tracking-wide font-Pretendard">Hello, {user.data.name} 👋</span>
           <button
-            className="relative bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] font-light tracking-wide px-5 py-1.5 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030] flex-shrink-0 transition-colors"
-            onClick={logout}
+            className="relative bg-[#303030] text-[#ededed] font-light tracking-wide px-5 py-1.5 rounded-full border-none outline-none no-underline font-Pretendard hover:bg-[#ededed] hover:text-[#303030] flex-shrink-0 transition-colors"
+            onClick={handleLogout}
           >
             Logout
           </button>

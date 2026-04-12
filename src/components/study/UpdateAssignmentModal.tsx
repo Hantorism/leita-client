@@ -189,7 +189,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
                     }`}
                     onClick={() => !isSelected && handleSelectProblem(p)}
                   >
-                    <span className="truncate pr-4 font-NanumSquare">
+                    <span className="truncate pr-4 font-Pretendard">
                       {p.problemId}. {p.title}
                     </span>
                     {isSelected ? (

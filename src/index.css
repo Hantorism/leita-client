@@ -41,22 +41,23 @@
 
 html,
 body {
-  overflow-x: auto;
-  overflow-y: auto;
-  min-width: 560px;
+  overflow-x: hidden;
+  background-color: #1A1A1A;
+  color: white;
+  font-size: 16px; /* Base size for mobile */
+}
+
+@media (min-width: 768px) {
+  html, body {
+    font-size: 14px; /* Slightly smaller for desktop high-density layout */
+  }
 }
 
 body {
   margin: 0;
-  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-@font-face {
-  font-family: "NanumSquare Neo";
-  src: url("./assets/fonts/NanumSquareNeo.ttf") format("truetype");
-  font-style: normal;
+  line-height: 1.5;
 }
 
 @font-face {

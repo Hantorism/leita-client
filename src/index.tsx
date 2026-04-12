@@ -1,4 +1,4 @@
-import { AlertProvider } from '@contexts/AlertContext';
+import { AlertProvider, AuthProvider } from '@contexts';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
@@ -12,8 +12,10 @@ if (!container) {
 const root = ReactDOM.createRoot(container);
 root.render(
   <AlertProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </AlertProvider>,
 );

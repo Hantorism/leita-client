@@ -22,7 +22,7 @@ const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-start pt-20 z-[9999] font-NanumSquare animate-fadeIn p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-start pt-20 z-[9999] font-Pretendard animate-fadeIn p-4 overflow-y-auto"
       onClick={onClose}
     >
       <div

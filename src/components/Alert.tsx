@@ -33,7 +33,7 @@ const Alert = ({ type, message, onClose }: AlertProps) => {
   const { border, icon, title, buttonBg } = config[type];
 
   return createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[10000] font-NanumSquare animate-fadeIn pointer-events-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[10000] font-Pretendard animate-fadeIn pointer-events-auto">
       <div
         className={`bg-[var(--color-bg-card)] border ${border} rounded-2xl p-8 w-full max-w-sm shadow-2xl text-white text-center`}
         onClick={(e) => e.stopPropagation()}

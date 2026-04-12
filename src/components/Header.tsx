@@ -1,127 +1,130 @@
 import { Logo } from '@assets/images';
 import { Login } from '@components';
-import type { User } from '@types';
-import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '@contexts';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [menuWidth, setMenuWidth] = useState<number | string>('auto');
-  const menuRef = useRef<HTMLUListElement>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user } = useAuth();
 
-  // 메뉴 영역의 실제 내용물 너비를 측정하여 상단 라인의 너비로 설정
-  useEffect(() => {
-    const updateWidth = () => {
-      if (menuRef.current) {
-        const rect = menuRef.current.getBoundingClientRect();
-        setMenuWidth(rect.width);
-      }
-    };
+  const navLinkStyle = ({ isActive }: { isActive: boolean }) =>
+    `nav-link px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
+      isActive
+        ? 'text-[#CAFE33]'
+        : 'text-gray-400 hover:text-white'
+    }`;
 
-    const timer = setTimeout(updateWidth, 100);
-    window.addEventListener('resize', updateWidth);
-    return () => {
-      window.removeEventListener('resize', updateWidth);
-      clearTimeout(timer);
-    };
-  }, []);
+  const mobileNavLinkStyle = ({ isActive }: { isActive: boolean }) =>
+    `text-4xl font-black transition-all ${
+      isActive ? 'text-[#CAFE33] translate-x-2' : 'text-white'
+    }`;
 
   return (
-    <header className="font-Pretendard px-0 lg:px-4 pt-4">
-      <nav className="bg-white bg-opacity-30 p-2 lg:p-4 rounded-3xl lg:rounded-full flex flex-col lg:flex-row items-center justify-between gap-3 lg:gap-0 mx-2 lg:mx-0">
-        {/* 1단/상단 영역: 하단 메뉴 너비를 최대로 사용하며 양 끝으로 정렬 */}
-        <div
-          className="flex justify-between items-center mx-auto lg:mx-0 lg:w-auto lg:!max-w-none px-0"
-          style={{
-            // 1024px 미만일 때 하단 메뉴의 총합 너비를 그대로 가져옴
-            width: window.innerWidth < 1024 ? (typeof menuWidth === 'number' ? `${menuWidth}px` : '100%') : 'auto',
-          }}
-        >
-          {/* 로고 */}
-          <Link
-            to="/"
-            className="flex-shrink-0"
-          >
-            <img
-              src={Logo}
-              alt="LEITA Logo"
-              className="h-7 lg:h-8"
-            />
-          </Link>
+    <>
+      <header className="sticky top-0 z-[100] w-full bg-[#1A1A1A]/80 backdrop-blur-xl border-b border-white/5">
+        <nav className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Left: Logo */}
+          <div className="flex items-center gap-10">
+            <Link to="/" className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95">
+              <img src={Logo} alt="LEITA Logo" className="h-7 sm:h-8" />
+            </Link>
 
-          {/* 1024px 미만에서만 표시되는 사용자 정보 */}
-          <div className="lg:hidden flex-shrink-0">
-            <Login
-              user={user}
-              setUser={setUser}
-            />
+            {/* Desktop Menu */}
+            <ul className="hidden md:flex items-center gap-4 list-none m-0 p-0">
+              <li>
+                <NavLink to="/" className={navLinkStyle}>Home</NavLink>
+              </li>
+              <li>
+                <NavLink to="/problems" className={navLinkStyle}>Problems</NavLink>
+              </li>
+              <li>
+                <NavLink to="/judge" className={navLinkStyle}>Solved</NavLink>
+              </li>
+              <li>
+                <NavLink to="/study" className={navLinkStyle}>Study</NavLink>
+              </li>
+            </ul>
           </div>
-        </div>
 
-        {/* 2단/중앙 영역 */}
-        <ul
-          ref={menuRef}
-          className="w-fit mx-auto lg:mx-0 flex items-center justify-between list-none p-0 m-0 font-light tracking-wide overflow-x-auto no-scrollbar whitespace-nowrap gap-4 lg:gap-1 py-1"
-        >
-          <li className="flex-shrink-0">
-            <NavLink
-              to="/"
-              className={({ isActive }) =>
-                isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
-                  : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
-              }
+          {/* Right: Login & Hamburger */}
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:block">
+              <Login />
+            </div>
+            
+            {/* Hamburger Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-3 text-white hover:bg-white/5 rounded-2xl transition-colors z-[110] relative"
+              aria-label="Toggle Menu"
             >
-              Home
-            </NavLink>
-          </li>
-          <li className="flex-shrink-0">
-            <NavLink
-              to="/problems"
-              className={({ isActive }) =>
-                isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
-                  : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
-              }
-            >
-              Problems
-            </NavLink>
-          </li>
-          <li className="flex-shrink-0">
-            <NavLink
-              to="/judge"
-              className={({ isActive }) =>
-                isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
-                  : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
-              }
-            >
-              Judge
-            </NavLink>
-          </li>
-          <li className="flex-shrink-0">
-            <NavLink
-              to="/study"
-              className={({ isActive }) =>
-                isActive
-                  ? 'nav-link bg-black bg-opacity-50 text-[var(--color-brand)] px-5 py-2 rounded-full whitespace-nowrap inline-block'
-                  : 'nav-link text-white px-5 py-2 rounded-full whitespace-nowrap inline-block'
-              }
-            >
-              Study
-            </NavLink>
-          </li>
-        </ul>
+              <div className="w-7 h-5 relative flex flex-col justify-between">
+                <span className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-[8px]' : ''}`} />
+                <span className={`w-full h-1 bg-white rounded-full transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
+                <span className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-[8px]' : ''}`} />
+              </div>
+            </button>
+          </div>
+        </nav>
+      </header>
 
-        {/* 1024px 이상일 때만 우측에 고정되는 로그인 영역 */}
-        <div className="hidden lg:block flex-shrink-0 ml-4">
-          <Login
-            user={user}
-            setUser={setUser}
-          />
-        </div>
-      </nav>
-    </header>
+      {/* Mobile Menu Overlay - Moved outside header to ensure absolute layering */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <div className="fixed inset-0 z-[200] md:hidden">
+            {/* Background Dim Overlay (Solid Black) */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+            />
+            
+            {/* Slide-out Menu (Solid Background) */}
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="absolute top-0 right-0 bottom-0 w-[85%] max-w-[360px] bg-[#1A1A1A] border-l border-white/10 flex flex-col p-10 pt-32 shadow-2xl shadow-black"
+            >
+              <div className="flex flex-col gap-12">
+                <NavLink to="/" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Home</NavLink>
+                <NavLink to="/problems" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Problems</NavLink>
+                <NavLink to="/judge" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Solved</NavLink>
+                <NavLink to="/study" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Study</NavLink>
+              </div>
+
+              {/* Mobile Footer Info inside Menu */}
+              <div className="mt-auto pt-10 flex flex-col gap-10">
+                <div className="sm:hidden border-t border-white/10 pt-10">
+                  <Login />
+                </div>
+                
+                <div className="space-y-6">
+                  <div className="flex flex-col gap-3">
+                    <Link to="/terms" onClick={() => setIsMenuOpen(false)} className="text-base font-bold text-gray-400 hover:text-white">이용약관</Link>
+                    <Link to="/privacy" onClick={() => setIsMenuOpen(false)} className="text-base font-bold text-gray-400 hover:text-white">개인정보 처리방침</Link>
+                  </div>
+                  <div className="pt-6 border-t border-white/5">
+                    <p className="text-xs font-black text-gray-600 uppercase tracking-widest mb-3">Developed by</p>
+                    <p className="text-sm font-bold text-gray-400 leading-relaxed">
+                      아주대학교 소프트웨어학과<br />
+                      이장원, 조성연, 오태림
+                    </p>
+                    <p className="text-sm font-bold text-[#CAFE33] mt-3">leitaajou@gmail.com</p>
+                  </div>
+                  <p className="text-xs font-bold text-gray-700">© 2025 LEITA. All rights reserved.</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 

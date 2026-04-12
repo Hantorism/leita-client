@@ -3,7 +3,6 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        NanumSquare: ['NanumSquare Neo', 'sans-serif'],
         Pretendard: ['Pretendard', 'sans-serif'],
         JetBrain: ['JetBrain Mono', 'monospace'],
       },

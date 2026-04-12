@@ -8,8 +8,8 @@ import {
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudySession } from '@types';
-import { Logger, type PagedResponse } from '@utils';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Logger, formatDateTime } from '@utils';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface StudySessionTabProps {
@@ -180,8 +180,8 @@ const StudySessionTab = ({ study, isMember, isAdmin, currentUserEmail }: StudySe
                   )}
                 </div>
                 <p className="text-sm text-gray-400 mt-1">
-                  시작: {new Date(session.startDateTime).toLocaleString()} <br />
-                  종료: {new Date(session.endDateTime).toLocaleString()}
+                  시작: {formatDateTime(session.startDateTime)} <br />
+                  종료: {formatDateTime(session.endDateTime)}
                 </p>
               </div>
 
