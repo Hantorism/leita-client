@@ -88,15 +88,9 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Content Section */}
-        <section className="w-full py-20 px-5 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="mb-12 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-             <div>
-                <h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">가장 많이 풀린 문제</h2>
-             </div>
-          </div>
+        <div className="pl-[10%] pr-[10%] w-full text-left">
           <PopularProblems />
-        </section>
+        </div>
       </main>
 
       <Footer />

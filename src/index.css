@@ -17,6 +17,7 @@
 
   /* Typography */
   --font-main: "Pretendard", sans-serif;
+  --font-title: "NanumSquare Neo", sans-serif;
   --font-code: "JetBrain Mono", monospace;
 
   /* Layout */
@@ -40,24 +41,22 @@
 
 html,
 body {
-  overflow-x: hidden;
-  background-color: #1A1A1A;
-  color: white;
-  font-size: 16px; /* Base size for mobile */
-  font-family: var(--font-main);
-}
-
-@media (min-width: 768px) {
-  html, body {
-    font-size: 14px; /* Slightly smaller for desktop high-density layout */
-  }
+  overflow-x: auto;
+  overflow-y: auto;
+  min-width: 560px;
 }
 
 body {
   margin: 0;
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.5;
+}
+
+@font-face {
+  font-family: "NanumSquare Neo";
+  src: url("./assets/fonts/NanumSquareNeo.ttf") format("truetype");
+  font-style: normal;
 }
 
 @font-face {
