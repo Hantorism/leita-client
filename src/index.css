@@ -225,22 +225,12 @@ html {
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  display: none;
 }
 
-.scrollbar-hide::-webkit-scrollbar-track {
-  background: var(--color-bg-surface);
-  border-radius: 4px;
-}
-
-.scrollbar-hide::-webkit-scrollbar-thumb {
-  background: #555;
-  border-radius: 4px;
-}
-
-.scrollbar-hide::-webkit-scrollbar-thumb:hover {
-  background: #777;
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 .resizer {
