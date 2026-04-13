@@ -11,13 +11,13 @@ const HomePage = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">
+    <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard">
       <Header />
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="relative w-full py-12 sm:py-20 lg:py-32 px-5 sm:px-6 lg:px-8 max-w-7xl mx-auto overflow-hidden">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
+        <section className="relative w-full py-12 sm:py-20 lg:py-32 px-5 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20 overflow-visible">
             {/* Text Side */}
             <div className="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left z-10 w-full">
               <motion.div
@@ -72,17 +72,17 @@ const HomePage = () => {
 
             {/* Visual Side */}
             <motion.div
+              className="flex-1 w-full relative max-w-[600px] overflow-visible"
               initial={{ opacity: 0, x: 40, rotate: 2 }}
               animate={{ opacity: 1, x: 0, rotate: 0 }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-              className="flex-1 w-full relative max-w-xl lg:max-w-none group"
+              transition={{ duration: 1.5, ease: 'easeOut' }}
             >
               {/* Subtle background glow */}
-              <div className="absolute inset-0 bg-[#CAFE33]/10 blur-[120px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
+              <div className="absolute inset-[-10%] bg-[#CAFE33]/15 blur-[100px] rounded-full opacity-70 group-hover:opacity-100 transition-opacity duration-1000" />
               <img
                 src={Tabs}
                 alt="LEITA Preview"
-                className="relative w-full rounded-[2.5rem] shadow-2xl border border-white/5 transform hover:scale-[1.02] transition-all duration-700"
+                className="relative w-full rounded-[2.5rem] transform hover:scale-[1.02] transition-all duration-700"
               />
             </motion.div>
           </div>
