@@ -73,7 +73,6 @@ const CompletionAdmin = ({ study }: CompletionAdminProps) => {
   const evaluatedAttendances = sessions.filter((s) => s.attendanceStatus === 'CLOSED').length;
   const pastSessions = sessions.filter((s) => new Date(s.endDateTime) < new Date() && s.assignmentCreated);
 
-
   return (
     <div className="w-full flex flex-col gap-6 animate-fadeIn">
       <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 shadow-xl">

@@ -8,7 +8,7 @@
  */
 export const formatMemory = (kb: number): string => {
   if (kb <= 0) return '0 KB';
-  
+
   const units = ['KB', 'MB', 'GB', 'TB'];
   let size = kb;
   let unitIndex = 0;
@@ -35,7 +35,7 @@ export const formatTime = (ms: number): string => {
     const formattedS = s % 1 === 0 ? s.toString() : s.toFixed(2);
     return `${formattedS} s`;
   }
-  
+
   return `${ms} ms`;
 };
 

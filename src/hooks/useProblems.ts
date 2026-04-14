@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
 import { problemApi } from '@apis';
-import { type ProblemDetail } from '@types';
+import type { ProblemDetail } from '@types';
 import { Logger, type PagedResponse } from '@utils';
+import { useEffect, useState } from 'react';
 
 export const useProblems = (currentPage: number, problemsPerPage: number, searchQuery: string, filter?: string) => {
   const [problems, setProblems] = useState<ProblemDetail[]>([]);

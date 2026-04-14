@@ -1,7 +1,14 @@
-import { type ProblemTestCase } from './Problem';
+import type { ProblemTestCase } from './Problem';
 
 export type JudgeLanguage = 'C' | 'CPP' | 'JAVA' | 'PYTHON' | 'JAVASCRIPT' | 'GO' | 'KOTLIN' | 'SWIFT';
-export type JudgeResultType = 'CORRECT' | 'WRONG' | 'COMPILE_ERROR' | 'RUNTIME_ERROR' | 'TIME_OUT' | 'MEMORY_OUT' | 'UNKNOWN';
+export type JudgeResultType =
+  | 'CORRECT'
+  | 'WRONG'
+  | 'COMPILE_ERROR'
+  | 'RUNTIME_ERROR'
+  | 'TIME_OUT'
+  | 'MEMORY_OUT'
+  | 'UNKNOWN';
 
 export interface SubmitRequest {
   code: string;

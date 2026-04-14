@@ -1,5 +1,5 @@
-import { AxiosInstance } from '@utils';
 import type { InfoResponse, JwtResponse, OAuthRequest } from '@types';
+import { AxiosInstance } from '@utils';
 
 export const authApi = {
   // GET /auth/info

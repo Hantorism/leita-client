@@ -1,25 +1,19 @@
 import { Logo } from '@assets/images';
 import { Login } from '@components';
-import { useAuth } from '@contexts';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user } = useAuth();
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }) =>
     `nav-link px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
-      isActive
-        ? 'text-[#CAFE33]'
-        : 'text-gray-400 hover:text-white'
+      isActive ? 'text-[#CAFE33]' : 'text-gray-400 hover:text-white'
     }`;
 
   const mobileNavLinkStyle = ({ isActive }: { isActive: boolean }) =>
-    `text-4xl font-black transition-all ${
-      isActive ? 'text-[#CAFE33] translate-x-2' : 'text-white'
-    }`;
+    `text-4xl font-black transition-all ${isActive ? 'text-[#CAFE33] translate-x-2' : 'text-white'}`;
 
   return (
     <>
@@ -27,23 +21,50 @@ const Header = () => {
         <nav className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Left: Logo */}
           <div className="flex items-center gap-10">
-            <Link to="/" className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95">
-              <img src={Logo} alt="LEITA Logo" className="h-7 sm:h-8" />
+            <Link
+              to="/"
+              className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95"
+            >
+              <img
+                src={Logo}
+                alt="LEITA Logo"
+                className="h-7 sm:h-8"
+              />
             </Link>
 
             {/* Desktop Menu */}
             <ul className="hidden md:flex items-center gap-4 list-none m-0 p-0">
               <li>
-                <NavLink to="/" className={navLinkStyle}>Home</NavLink>
+                <NavLink
+                  to="/"
+                  className={navLinkStyle}
+                >
+                  Home
+                </NavLink>
               </li>
               <li>
-                <NavLink to="/problems" className={navLinkStyle}>Problems</NavLink>
+                <NavLink
+                  to="/problems"
+                  className={navLinkStyle}
+                >
+                  Problems
+                </NavLink>
               </li>
               <li>
-                <NavLink to="/judge" className={navLinkStyle}>Solved</NavLink>
+                <NavLink
+                  to="/judge"
+                  className={navLinkStyle}
+                >
+                  Solved
+                </NavLink>
               </li>
               <li>
-                <NavLink to="/study" className={navLinkStyle}>Study</NavLink>
+                <NavLink
+                  to="/study"
+                  className={navLinkStyle}
+                >
+                  Study
+                </NavLink>
               </li>
             </ul>
           </div>
@@ -53,7 +74,7 @@ const Header = () => {
             <div className="hidden sm:block">
               <Login />
             </div>
-            
+
             {/* Hamburger Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -61,9 +82,15 @@ const Header = () => {
               aria-label="Toggle Menu"
             >
               <div className="w-7 h-5 relative flex flex-col justify-between">
-                <span className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-[8px]' : ''}`} />
-                <span className={`w-full h-1 bg-white rounded-full transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`} />
-                <span className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-[8px]' : ''}`} />
+                <span
+                  className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-[8px]' : ''}`}
+                />
+                <span
+                  className={`w-full h-1 bg-white rounded-full transition-opacity duration-300 ${isMenuOpen ? 'opacity-0' : 'opacity-100'}`}
+                />
+                <span
+                  className={`w-full h-1 bg-white rounded-full transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-[8px]' : ''}`}
+                />
               </div>
             </button>
           </div>
@@ -82,7 +109,7 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
               className="absolute inset-0 bg-black/90 backdrop-blur-xl"
             />
-            
+
             {/* Slide-out Menu (Solid Background) */}
             <motion.div
               initial={{ x: '100%' }}
@@ -92,10 +119,34 @@ const Header = () => {
               className="absolute top-0 right-0 bottom-0 w-[85%] max-w-[360px] bg-[#1A1A1A] border-l border-white/10 flex flex-col p-10 pt-32 shadow-2xl shadow-black"
             >
               <div className="flex flex-col gap-12">
-                <NavLink to="/" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Home</NavLink>
-                <NavLink to="/problems" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Problems</NavLink>
-                <NavLink to="/judge" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Solved</NavLink>
-                <NavLink to="/study" className={mobileNavLinkStyle} onClick={() => setIsMenuOpen(false)}>Study</NavLink>
+                <NavLink
+                  to="/"
+                  className={mobileNavLinkStyle}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </NavLink>
+                <NavLink
+                  to="/problems"
+                  className={mobileNavLinkStyle}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Problems
+                </NavLink>
+                <NavLink
+                  to="/judge"
+                  className={mobileNavLinkStyle}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Solved
+                </NavLink>
+                <NavLink
+                  to="/study"
+                  className={mobileNavLinkStyle}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Study
+                </NavLink>
               </div>
 
               {/* Mobile Footer Info inside Menu */}
@@ -103,16 +154,29 @@ const Header = () => {
                 <div className="sm:hidden border-t border-white/10 pt-10">
                   <Login />
                 </div>
-                
+
                 <div className="space-y-6">
                   <div className="flex flex-col gap-3">
-                    <Link to="/terms" onClick={() => setIsMenuOpen(false)} className="text-base font-bold text-gray-400 hover:text-white">이용약관</Link>
-                    <Link to="/privacy" onClick={() => setIsMenuOpen(false)} className="text-base font-bold text-gray-400 hover:text-white">개인정보 처리방침</Link>
+                    <Link
+                      to="/terms"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-base font-bold text-gray-400 hover:text-white"
+                    >
+                      이용약관
+                    </Link>
+                    <Link
+                      to="/privacy"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-base font-bold text-gray-400 hover:text-white"
+                    >
+                      개인정보 처리방침
+                    </Link>
                   </div>
                   <div className="pt-6 border-t border-white/5">
                     <p className="text-xs font-black text-gray-600 uppercase tracking-widest mb-3">Developed by</p>
                     <p className="text-sm font-bold text-gray-400 leading-relaxed">
-                      아주대학교 소프트웨어학과<br />
+                      아주대학교 소프트웨어학과
+                      <br />
                       이장원, 조성연, 오태림
                     </p>
                     <p className="text-sm font-bold text-[#CAFE33] mt-3">leitaajou@gmail.com</p>

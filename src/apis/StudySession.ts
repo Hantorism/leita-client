@@ -1,17 +1,17 @@
 import type {
-  StudySession,
-  StudySessionDetail,
-  AttendanceCheck,
-  AssignmentResponse,
+  AssignmentCreateRequest,
   AssignmentDetailResponse,
-  StudySessionCreateRequest,
-  StudySessionUpdateRequest,
+  AssignmentResponse,
+  AssignmentUpdateRequest,
+  AttendanceCheck,
   AttendanceOpenRequest,
   AttendanceUpdateRequest,
-  AssignmentCreateRequest,
-  AssignmentUpdateRequest,
-  MemberAttendanceUpdateRequest,
   MemberAssignmentUpdateRequest,
+  MemberAttendanceUpdateRequest,
+  StudySession,
+  StudySessionCreateRequest,
+  StudySessionDetail,
+  StudySessionUpdateRequest,
 } from '@types';
 import { AxiosInstance, type PagedResponse } from '@utils';
 
@@ -85,6 +85,9 @@ export const studySessionApi = {
 
   // PUT /study-session/{studySessionId}/assignment/members/{memberId}
   updateMemberAssignment: async (studySessionId: number, memberId: number, data: MemberAssignmentUpdateRequest) => {
-    return AxiosInstance.put<AssignmentDetailResponse>(`/study-session/${studySessionId}/assignment/members/${memberId}`, data);
+    return AxiosInstance.put<AssignmentDetailResponse>(
+      `/study-session/${studySessionId}/assignment/members/${memberId}`,
+      data,
+    );
   },
 };

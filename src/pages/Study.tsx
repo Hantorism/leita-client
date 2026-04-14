@@ -11,9 +11,9 @@ import {
 } from '@components';
 import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
-import { getCurrentUserEmail, Logger, type PagedResponse, extractErrorMessage } from '@utils';
+import { extractErrorMessage, getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const StudyPage = () => {
   const { showAlert } = useAlert();
@@ -31,6 +31,13 @@ const StudyPage = () => {
   const [deleteTargetStudy, setDeleteTargetStudy] = useState<Study | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const fetchStudies = useCallback(async () => {
     setLoading(true);
@@ -68,7 +75,6 @@ const StudyPage = () => {
   useEffect(() => {
     fetchStudies();
   }, [fetchStudies]);
-
   const handleDeleteStudy = async () => {
     if (!deleteTargetStudy) return;
     setIsDeleting(true);
@@ -148,7 +154,9 @@ const StudyPage = () => {
                   onClick={() => handleStudyClick(study)}
                 >
                   <div className="flex justify-between items-start gap-4">
-                    <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight group-hover:text-[#CAFE33] transition-colors">{study.title}</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight group-hover:text-[#CAFE33] transition-colors">
+                      {study.title}
+                    </h2>
                     {isCurrentUserAdmin && (
                       <div className="flex items-center gap-2 shrink-0">
                         <button
@@ -159,7 +167,16 @@ const StudyPage = () => {
                           }}
                           className="p-3 rounded-2xl bg-white/5 hover:bg-[#CAFE33] hover:text-black transition-all text-gray-400"
                         >
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                           </svg>
@@ -172,7 +189,16 @@ const StudyPage = () => {
                           }}
                           className="p-3 rounded-2xl bg-white/5 hover:bg-red-500 hover:text-white transition-all text-gray-400"
                         >
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                          <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
                             <polyline points="3 6 5 6 21 6" />
                             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                           </svg>
@@ -187,7 +213,9 @@ const StudyPage = () => {
 
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-auto pt-8 border-t border-white/5 gap-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xs font-black text-gray-500">AD</div>
+                      <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-xs font-black text-gray-500">
+                        AD
+                      </div>
                       <div className="flex flex-col">
                         <span className="text-xs font-black text-gray-600 uppercase tracking-widest">Admin</span>
                         <span className="text-sm sm:text-base font-bold text-gray-400">
@@ -215,8 +243,8 @@ const StudyPage = () => {
                 key={i}
                 onClick={() => setPage(i)}
                 className={`w-14 h-14 rounded-3xl font-black font-JetBrain text-lg transition-all duration-300 ${
-                  page === i 
-                    ? 'bg-[#CAFE33] text-black shadow-[0_10px_30px_-5px_rgba(202,254,51,0.3)]' 
+                  page === i
+                    ? 'bg-[#CAFE33] text-black shadow-[0_10px_30px_-5px_rgba(202,254,51,0.3)]'
                     : 'bg-white/5 text-gray-600 hover:text-white hover:bg-white/10'
                 }`}
               >

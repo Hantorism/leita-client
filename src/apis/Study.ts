@@ -2,11 +2,11 @@ import type {
   Study,
   StudyCreateRequest,
   StudyCreateResponse,
+  StudyMemberAssignment,
+  StudyMemberAttendance,
+  StudyMemberStatus,
   StudyUpdateRequest,
   StudyUser,
-  StudyMemberStatus,
-  StudyMemberAttendance,
-  StudyMemberAssignment,
 } from '@types';
 import { AxiosInstance, type PagedResponse } from '@utils';
 

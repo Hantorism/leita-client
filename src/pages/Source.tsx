@@ -1,6 +1,6 @@
 import { Footer, Header } from '@components';
-import { useNavigate } from 'react-router-dom';
 import { formatMemory, formatTime } from '@utils';
+import { useNavigate } from 'react-router-dom';
 
 const SourcePage = () => {
   const navigate = useNavigate();
@@ -52,7 +52,9 @@ int main() {
         <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 shadow-xl overflow-hidden p-6 mb-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 border-b border-gray-800 pb-4 gap-4">
             <div className="flex flex-wrap items-center gap-3">
-              <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-md text-sm font-bold inline-block">정답</span>
+              <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1 rounded-md text-sm font-bold inline-block">
+                정답
+              </span>
               <span className="text-gray-300 text-sm">언어: C</span>
               <span className="text-gray-500 text-sm">|</span>
               <span className="text-gray-300 text-sm">메모리: {formatMemory(1024)}</span>
@@ -69,9 +71,14 @@ int main() {
               복사하기
             </button>
           </div>
-          
+
           <div className="bg-[#1a1a1a] p-5 rounded-lg overflow-x-auto border border-gray-800">
-            <pre className="text-gray-300 text-sm leading-relaxed whitespace-pre" style={{ fontFamily: '"JetBrains Mono", source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace' }}>
+            <pre
+              className="text-gray-300 text-sm leading-relaxed whitespace-pre"
+              style={{
+                fontFamily: '"JetBrains Mono", source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace',
+              }}
+            >
               {dummyCode}
             </pre>
           </div>
