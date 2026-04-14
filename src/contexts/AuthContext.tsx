@@ -1,7 +1,7 @@
 import { authApi } from '@apis';
 import type { User } from '@types';
-import { Logger } from '@utils';
-import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import { AuthStorage, AUTH_EVENT, Logger } from '@utils';
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState, useCallback } from 'react';
 
 interface AuthContextType {
   user: User | null;
@@ -17,34 +17,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const logout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
+  const logout = useCallback(() => {
+    AuthStorage.clear();
     setUser(null);
-  };
+  }, []);
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = useCallback(async () => {
     try {
       const res = await authApi.getAuthInfo();
       setUser(res);
-      localStorage.setItem('user', JSON.stringify(res));
+      AuthStorage.setUser(res);
     } catch (err: any) {
       Logger.error('Auth check failed:', err);
+      // If 401, Axios interceptor will handle it via event
       if (err.response?.status === 401) {
         logout();
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [logout]);
 
-  const login = async (accessToken: string) => {
+  const login = useCallback(async (accessToken: string) => {
     setLoading(true);
     try {
-      localStorage.setItem('accessToken', accessToken);
+      AuthStorage.setAccessToken(accessToken);
       const res = await authApi.getAuthInfo();
       setUser(res);
-      localStorage.setItem('user', JSON.stringify(res));
+      AuthStorage.setUser(res);
     } catch (error) {
       Logger.error('Login processing failed:', error);
       logout();
@@ -52,22 +52,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [logout]);
 
+  // Handle external auth events (e.g. from Axios interceptor)
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const storedUser = localStorage.getItem('user');
+    const handleAuthEvent = (event: any) => {
+      if (event.detail?.action === 'LOGOUT') {
+        logout();
+      }
+    };
+
+    window.addEventListener(AUTH_EVENT, handleAuthEvent);
+    
+    // Initial load
+    const token = AuthStorage.getAccessToken();
+    const storedUser = AuthStorage.getUser();
 
     if (token) {
       if (storedUser) {
-        setUser(JSON.parse(storedUser));
+        setUser(storedUser);
       }
       fetchUserInfo();
     } else {
       setLoading(false);
       setUser(null);
     }
-  }, []);
+
+    return () => {
+      window.removeEventListener(AUTH_EVENT, handleAuthEvent);
+    };
+  }, [logout, fetchUserInfo]);
 
   const value = useMemo(
     () => ({
@@ -77,7 +91,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       logout,
       isAuthenticated: !!user,
     }),
-    [user, loading, logout],
+    [user, loading, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,4 +1,5 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type AxiosInstance as OriginalAxiosInstance } from 'axios';
+import { AuthStorage, notifyAuthChange } from './Auth';
 import { Environment } from './Environment';
 
 const API_URL = Environment.API_URL;
@@ -36,7 +37,7 @@ export const extractErrorMessage = (err: unknown, defaultMessage: string = '알 
 
 AxiosInstance.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = AuthStorage.getAccessToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -66,8 +67,8 @@ AxiosInstance.interceptors.response.use(
   },
   (err: AxiosError) => {
     if (err.response?.status === 401) {
-      localStorage.removeItem('user');
-      localStorage.removeItem('accessToken');
+      AuthStorage.clear();
+      notifyAuthChange('LOGOUT');
     }
     return Promise.reject(err);
   },
