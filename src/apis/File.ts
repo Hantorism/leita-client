@@ -1,5 +1,5 @@
-import { AxiosInstance } from '@utils';
 import type { GeneratePARRequest, GeneratePARResponse } from '@types';
+import { AxiosInstance } from '@utils';
 
 export const fileApi = {
   // POST /files/par

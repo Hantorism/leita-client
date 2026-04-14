@@ -1,8 +1,8 @@
 import { judgeApi, problemApi } from '@apis';
 import { CustomDropdown } from '@components';
 import { useAlert } from '@contexts';
-import type { JudgeLanguage } from '@types';
 import MonacoEditor, { type Monaco } from '@monaco-editor/react';
+import type { JudgeLanguage } from '@types';
 import { Logger } from '@utils';
 import type * as monacoEditor from 'monaco-editor';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
@@ -61,7 +61,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
     if (monacoInstance && language === 'javascript') {
-      // @ts-ignore
+      // @ts-expect-error
       const monaco = monacoInstance as any;
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -124,7 +124,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     localStorage.setItem('selectedLanguage', newLanguage);
 
     if (monacoInstance && newLanguage === 'javascript') {
-      // @ts-ignore
+      // @ts-expect-error
       const monaco = monacoInstance as any;
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -300,7 +300,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
     // JavaScript 에러 검증 비활성화
     if (language === 'javascript') {
-      // @ts-ignore
+      // @ts-expect-error
       const m = monaco as any;
       m.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -405,7 +405,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
             language={language}
             handleLanguageChange={handleLanguageChange}
           />
-          <div className={`transition-opacity duration-500 text-xs text-gray-400 flex items-center gap-1 ${isSaved ? 'opacity-100' : 'opacity-0'}`}>
+          <div
+            className={`transition-opacity duration-500 text-xs text-gray-400 flex items-center gap-1 ${isSaved ? 'opacity-100' : 'opacity-0'}`}
+          >
             <span className="text-[#CAFE33]">✅</span> 임시 저장됨
           </div>
 

@@ -1,12 +1,5 @@
+import type { JudgeData, ReviewRequest, RunRequest, RunResponse, SubmitRequest, SubmitResponse } from '@types';
 import { AxiosInstance } from '@utils';
-import type { 
-  JudgeData, 
-  SubmitRequest, 
-  SubmitResponse, 
-  RunRequest, 
-  RunResponse, 
-  ReviewRequest 
-} from '@types';
 
 export const judgeApi = {
   // POST /judge/submit/{problemId}

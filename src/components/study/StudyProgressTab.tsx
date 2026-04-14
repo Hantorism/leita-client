@@ -3,7 +3,15 @@ import { Button } from '@components';
 import { useAlert } from '@contexts';
 import { useAssignmentProgress } from '@hooks';
 import type { Study, StudySession } from '@types';
-import { formatDate, formatDateTime, getCurrentUserEmail, getProblemStatusDetail, getSessionAssignmentStatus, Logger, type PagedResponse } from '@utils';
+import {
+  formatDate,
+  formatDateTime,
+  getCurrentUserEmail,
+  getProblemStatusDetail,
+  getSessionAssignmentStatus,
+  Logger,
+  type PagedResponse,
+} from '@utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 // ── Searchable Dropdown Helper ──
@@ -105,10 +113,7 @@ const StudyProgressDetail = ({
   const currentLoggedInEmail = getCurrentUserEmail();
   const isAdmin = study.members.find((m) => m.email.toLowerCase().trim() === currentLoggedInEmail)?.role === 'ADMIN';
 
-  const assignmentProblemIds = useMemo(
-    () => assignment?.problems?.map((p: any) => p.problemId) || [],
-    [assignment],
-  );
+  const assignmentProblemIds = useMemo(() => assignment?.problems?.map((p: any) => p.problemId) || [], [assignment]);
   const hookData = useAssignmentProgress(assignmentProblemIds);
   const isCurrentUser = selectedMemberEmail === currentLoggedInEmail;
 
@@ -260,9 +265,13 @@ const StudyProgressDetail = ({
   const isNotSelected = !selectedMemberEmail || selectedSessionId === '';
   const assignmentStatus = assignment
     ? getSessionAssignmentStatus(
-        isCurrentUser ? hookData.progress.solvedCount : (assignment.problems?.filter((p: any) => p.result === 'CORRECT')?.length || 0),
-        isCurrentUser ? hookData.progress.totalCount : (assignment.problems?.length || 0),
-        isCurrentUser ? hookData.progress.isAttemptedAll : (assignment.problems?.every((p: any) => p.result !== null) || false),
+        isCurrentUser
+          ? hookData.progress.solvedCount
+          : assignment.problems?.filter((p: any) => p.result === 'CORRECT')?.length || 0,
+        isCurrentUser ? hookData.progress.totalCount : assignment.problems?.length || 0,
+        isCurrentUser
+          ? hookData.progress.isAttemptedAll
+          : assignment.problems?.every((p: any) => p.result !== null) || false,
       )
     : null;
 

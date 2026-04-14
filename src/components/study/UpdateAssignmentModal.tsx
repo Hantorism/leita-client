@@ -1,7 +1,7 @@
 import { problemApi, studySessionApi } from '@apis';
 import { Button, Modal } from '@components';
 import { useAlert } from '@contexts';
-import { type ProblemDetail } from '@types';
+import type { ProblemDetail } from '@types';
 import { Logger, type PagedResponse } from '@utils';
 import { useEffect, useState } from 'react';
 
@@ -37,8 +37,9 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
           const res = await Promise.all(
             initialData.problemIds.map((pid: number) => problemApi.getProblem(pid).catch(() => null)),
           );
-          const initialProbs = (res.filter((p) => p !== null) as ProblemDetail[])
-            .map((p) => ({ problemId: p.problemId, title: p.title } as ProblemDetail));
+          const initialProbs = (res.filter((p) => p !== null) as ProblemDetail[]).map(
+            (p) => ({ problemId: p.problemId, title: p.title }) as ProblemDetail,
+          );
           setSelectedProblems(initialProbs);
         } catch (err) {
           Logger.error('Failed to fetch initial assignment problems', err);

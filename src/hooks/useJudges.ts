@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
 import { judgeApi } from '@apis';
-import { type JudgeData } from '@types';
-import { Logger } from '@utils';
 import { useAlert } from '@contexts';
+import type { JudgeData } from '@types';
+import { Logger } from '@utils';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export const useJudges = () => {

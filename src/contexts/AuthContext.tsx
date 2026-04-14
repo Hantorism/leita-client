@@ -1,7 +1,7 @@
 import { authApi } from '@apis';
 import type { User } from '@types';
 import { Logger } from '@utils';
-import { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 
 interface AuthContextType {
   user: User | null;
@@ -80,11 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [user, loading, logout],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

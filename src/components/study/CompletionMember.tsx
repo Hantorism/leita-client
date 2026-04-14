@@ -35,11 +35,15 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
         setSessions(sessionsData);
 
         const attData = (attRes as unknown as StudyMemberAttendance[]) || [];
-        const myAtt = Array.isArray(attData) ? attData.find((a: StudyMemberAttendance) => a.user.email === me.email) : null;
+        const myAtt = Array.isArray(attData)
+          ? attData.find((a: StudyMemberAttendance) => a.user.email === me.email)
+          : null;
         setAttendance(myAtt || null);
 
         const asgData = (asgRes as unknown as StudyMemberAssignment[]) || [];
-        const myAsg = Array.isArray(asgData) ? asgData.find((a: StudyMemberAssignment) => a.user.email === me.email) : null;
+        const myAsg = Array.isArray(asgData)
+          ? asgData.find((a: StudyMemberAssignment) => a.user.email === me.email)
+          : null;
         setAssignment(myAsg || null);
       } catch (error) {
         Logger.error('Failed to fetch completion data for member', error);
@@ -97,7 +101,6 @@ const CompletionMember = ({ study, currentUserEmail }: CompletionMemberProps) =>
   const pastSessions = sessions.filter((s) => new Date(s.endDateTime) < new Date() && s.assignmentCreated);
   const currentIncompleteAsg = Math.max(0, pastSessions.length - completedAssignments.length);
   const remainingIncompleteAsgBeforeFail = maxAllowedIncompleteAsg - currentIncompleteAsg + 1;
-
 
   return (
     <div className="w-full flex flex-col gap-6 animate-fadeIn">

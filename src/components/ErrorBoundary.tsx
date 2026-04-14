@@ -41,7 +41,8 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             <div className="text-5xl mb-4">⚠️</div>
             <h1 className="text-2xl font-bold text-[var(--color-brand)] mb-3">오류가 발생했습니다</h1>
             <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-              예기치 않은 문제가 발생했습니다.<br />
+              예기치 않은 문제가 발생했습니다.
+              <br />
               아래 버튼을 눌러 홈으로 돌아가 주세요.
             </p>
             {this.state.error && (

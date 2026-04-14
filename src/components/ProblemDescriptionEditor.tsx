@@ -29,7 +29,8 @@ interface MenuButtonProps {
 }
 
 const MenuButton = ({ onClick, disabled, isActive, children }: MenuButtonProps) => {
-  const baseClasses = 'px-2 py-1 rounded-md transition bg-[var(--color-bg-surface)] text-white text-sm hover:text-[var(--color-brand)]';
+  const baseClasses =
+    'px-2 py-1 rounded-md transition bg-[var(--color-bg-surface)] text-white text-sm hover:text-[var(--color-brand)]';
   const activeClasses = 'bg-[var(--color-brand)] !text-black';
 
   return (
@@ -114,7 +115,13 @@ const MenuBar = ({ editor, onInsertMath, onInsertImage }: MenuBarProps) => {
   );
 };
 
-const ProblemDescriptionEditor = ({ content, onChange, className = '', rows, readonly }: ProblemDescriptionEditorProps) => {
+const ProblemDescriptionEditor = ({
+  content,
+  onChange,
+  className = '',
+  rows,
+  readonly,
+}: ProblemDescriptionEditorProps) => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   const createMathClickHandler = (type: 'inline' | 'block') => (node: any, pos: number) => {

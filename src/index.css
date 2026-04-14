@@ -17,6 +17,7 @@
 
   /* Typography */
   --font-main: "Pretendard", sans-serif;
+  --font-title: "NanumSquare Neo", sans-serif;
   --font-code: "JetBrain Mono", monospace;
 
   /* Layout */
@@ -53,6 +54,7 @@ body {
 
 body {
   margin: 0;
+  font-family: var(--font-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -230,8 +232,8 @@ html {
 }
 
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
 
 .resizer {

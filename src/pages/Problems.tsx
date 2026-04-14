@@ -1,10 +1,10 @@
 import { Solved } from '@assets/images';
 import { Button, Footer, Header } from '@components';
 import { useAlert } from '@contexts';
-import { useProblems, useJudges, useDebounce } from '@hooks';
+import { useDebounce, useJudges, useProblems } from '@hooks';
+import { getCurrentUserEmail } from '@utils';
 import { motion } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { getCurrentUserEmail } from '@utils';
 
 const PROBLEMS_PER_PAGE = 10;
 
@@ -16,12 +16,7 @@ const ProblemsPage = () => {
   const [filter, setFilter] = useState<'ALL' | 'SOLVED' | 'UNSOLVED'>('ALL');
 
   // 커스텀 훅을 사용하여 데이터 페칭 및 상태 관리
-  const { problems, totalPages, loading } = useProblems(
-    currentPage,
-    PROBLEMS_PER_PAGE,
-    debouncedSearchQuery,
-    filter
-  );
+  const { problems, totalPages, loading } = useProblems(currentPage, PROBLEMS_PER_PAGE, debouncedSearchQuery, filter);
 
   const { judges } = useJudges();
 
@@ -66,7 +61,7 @@ const ProblemsPage = () => {
               >
                 <h1 className="text-4xl sm:text-5xl font-black mb-2 tracking-tighter">문제 목록</h1>
               </motion.div>
-              
+
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -82,9 +77,7 @@ const ProblemsPage = () => {
                     key={key}
                     onClick={() => setFilter(key as 'ALL' | 'SOLVED' | 'UNSOLVED')}
                     className={`px-6 py-2.5 text-xs sm:text-sm font-black rounded-2xl transition-all duration-300 ${
-                      filter === key 
-                        ? 'bg-white/10 text-[#CAFE33] shadow-lg' 
-                        : 'text-gray-500 hover:text-white'
+                      filter === key ? 'bg-white/10 text-[#CAFE33] shadow-lg' : 'text-gray-500 hover:text-white'
                     }`}
                   >
                     {label}
@@ -106,7 +99,12 @@ const ProblemsPage = () => {
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="3"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
               <input
                 type="text"
@@ -148,10 +146,21 @@ const ProblemsPage = () => {
                     </div>
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-4">
-                        <h2 className="text-xl sm:text-3xl font-black tracking-tight group-hover:text-[#CAFE33] transition-colors">{problem.title || '제목 없음'}</h2>
+                        <h2 className="text-xl sm:text-3xl font-black tracking-tight group-hover:text-[#CAFE33] transition-colors">
+                          {problem.title || '제목 없음'}
+                        </h2>
                         {isProblemSolved(problem.problemId) && (
                           <div className="bg-[#CAFE33]/10 p-2 rounded-full">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CAFE33" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#CAFE33"
+                              strokeWidth="5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
                           </div>
@@ -159,23 +168,37 @@ const ProblemsPage = () => {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {problem.category?.map((cat, i) => (
-                          <span key={i} className="text-xs sm:text-[11px] font-black text-gray-500 px-3 py-1 bg-white/5 rounded-lg uppercase tracking-wider">
+                          <span
+                            key={i}
+                            className="text-xs sm:text-[11px] font-black text-gray-500 px-3 py-1 bg-white/5 rounded-lg uppercase tracking-wider"
+                          >
                             #{cat}
                           </span>
                         ))}
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center justify-between md:justify-end gap-10 border-t md:border-t-0 border-white/5 pt-8 md:pt-0">
                     <div className="flex flex-col items-start md:items-end">
-                      <span className="text-xs font-black text-gray-600 uppercase tracking-[0.2em] mb-2">Success Rate</span>
+                      <span className="text-xs font-black text-gray-600 uppercase tracking-[0.2em] mb-2">
+                        Success Rate
+                      </span>
                       <span className="text-xl sm:text-2xl font-black text-gray-400 font-JetBrain group-hover:text-white transition-colors">
                         {problem.solved?.rate != null ? `${problem.solved.rate.toFixed(1)}%` : '-'}
                       </span>
                     </div>
                     <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#CAFE33] group-hover:text-black transition-all duration-500 shadow-xl group-hover:shadow-[#CAFE33]/20">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <polyline points="9 18 15 12 9 6" />
                       </svg>
                     </div>
@@ -201,8 +224,8 @@ const ProblemsPage = () => {
                   key={i}
                   onClick={() => handlePageChange(i)}
                   className={`w-14 h-14 rounded-3xl font-black font-JetBrain text-lg transition-all duration-300 ${
-                    currentPage === i 
-                      ? 'bg-[#CAFE33] text-black shadow-[0_10px_30px_-5px_rgba(202,254,51,0.3)]' 
+                    currentPage === i
+                      ? 'bg-[#CAFE33] text-black shadow-[0_10px_30px_-5px_rgba(202,254,51,0.3)]'
                       : 'bg-white/5 text-gray-600 hover:text-white hover:bg-white/10'
                   }`}
                 >

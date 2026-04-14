@@ -8,18 +8,18 @@ import {
   UpdateAssignmentModal,
   UpdateAttendanceModal,
 } from '@components';
-import {
-  type Study,
-  type StudyMemberAssignment,
-  type StudyMemberAttendance,
-  type StudySession,
-  type StudySessionDetail,
-  type AttendanceCheck,
-  type AttendanceRecord,
-} from '@types';
 import { useAlert } from '@contexts';
+import type {
+  AttendanceCheck,
+  AttendanceRecord,
+  Study,
+  StudyMemberAssignment,
+  StudyMemberAttendance,
+  StudySession,
+  StudySessionDetail,
+} from '@types';
 import { formatDateTime, getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
-import { useEffect, useCallback, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const StudySessionDetailPage = () => {
@@ -51,14 +51,15 @@ const StudySessionDetailPage = () => {
     if (!id || !sessionId) return;
     setLoading(true);
     try {
-      const [studyRes, sessionRes, sessionsRes, assignmentsRes, attendancesRes, attendanceDetailRes] = await Promise.all([
-        studyApi.getStudy(Number(id)),
-        studySessionApi.getStudySession(Number(sessionId)),
-        studySessionApi.getStudySessions(Number(id)),
-        studyApi.getMemberAssignment(Number(id), Number(sessionId)),
-        studyApi.getMemberAttendance(Number(id), Number(sessionId)),
-        studySessionApi.getAttendance(Number(sessionId)).catch(() => null),
-      ]);
+      const [studyRes, sessionRes, sessionsRes, assignmentsRes, attendancesRes, attendanceDetailRes] =
+        await Promise.all([
+          studyApi.getStudy(Number(id)),
+          studySessionApi.getStudySession(Number(sessionId)),
+          studySessionApi.getStudySessions(Number(id)),
+          studyApi.getMemberAssignment(Number(id), Number(sessionId)),
+          studyApi.getMemberAttendance(Number(id), Number(sessionId)),
+          studySessionApi.getAttendance(Number(sessionId)).catch(() => null),
+        ]);
 
       if (!isMounted.current) return;
 
@@ -176,7 +177,11 @@ const StudySessionDetailPage = () => {
   };
 
   if (loading)
-    return <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center text-white">로딩 중...</div>;
+    return (
+      <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center text-white">
+        로딩 중...
+      </div>
+    );
   if (!session)
     return (
       <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center text-white">
@@ -249,9 +254,7 @@ const StudySessionDetailPage = () => {
                     <div className="pt-4 border-t border-gray-800 lg:border-t-0 lg:pt-0">
                       <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">출석 마감</span>
                       <span className="text-lg font-medium text-gray-300">
-                        {session.attendance.closeTime
-                          ? formatDateTime(session.attendance.closeTime)
-                          : '미정'}
+                        {session.attendance.closeTime ? formatDateTime(session.attendance.closeTime) : '미정'}
                       </span>
                     </div>
                   </div>
@@ -264,13 +267,16 @@ const StudySessionDetailPage = () => {
                     <div className="flex flex-col items-start w-full lg:w-auto shrink-0 font-Pretendard tabular-nums">
                       <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">
                         {memberAttendances.some(
-                          (r: StudyMemberAttendance) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
+                          (r: StudyMemberAttendance) =>
+                            r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
                         )
                           ? '출석 상태'
                           : ''}
                       </span>
                       {(() => {
-                        const memberRecord = memberAttendances.find((r: StudyMemberAttendance) => r.user.email === currentUserEmail);
+                        const memberRecord = memberAttendances.find(
+                          (r: StudyMemberAttendance) => r.user.email === currentUserEmail,
+                        );
                         const myAttendance = memberRecord?.attendances?.[0];
 
                         // 1. 출석 한 경우
@@ -282,9 +288,7 @@ const StudySessionDetailPage = () => {
                               >
                                 {myAttendance.status === 'LATE' ? '지각' : '정상 출석'}
                               </span>
-                              <span className="text-sm text-gray-400">
-                                {formatDateTime(myAttendance.attendedAt)}
-                              </span>
+                              <span className="text-sm text-gray-400">{formatDateTime(myAttendance.attendedAt)}</span>
                             </div>
                           );
                         }
@@ -406,7 +410,8 @@ const StudySessionDetailPage = () => {
               <div className="flex items-center gap-4">
                 {session.assignment && (
                   <p className="text-sm text-gray-400">
-                    총 <span className="font-bold text-[var(--color-brand)]">{session.assignment.problems.length}</span>문제
+                    총 <span className="font-bold text-[var(--color-brand)]">{session.assignment.problems.length}</span>
+                    문제
                   </p>
                 )}
                 {isAdmin && (
@@ -462,7 +467,9 @@ const StudySessionDetailPage = () => {
                               </div>
                             </div>
                           </div>
-                          <span className="text-lg font-bold text-[var(--color-brand)] leading-none">{progressPercentage}%</span>
+                          <span className="text-lg font-bold text-[var(--color-brand)] leading-none">
+                            {progressPercentage}%
+                          </span>
                         </div>
 
                         <div className="w-full">
@@ -528,7 +535,7 @@ const StudySessionDetailPage = () => {
           sessionId={Number(sessionId)}
           initialData={{
             description: session.assignment.description || undefined,
-            problemIds: session.assignment.problems.map(p => p.problemId),
+            problemIds: session.assignment.problems.map((p) => p.problemId),
           }}
           onSuccess={fetchData}
           onClose={() => setShowUpdateAssignmentModal(false)}

@@ -1,8 +1,8 @@
-import React, { Suspense } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { ErrorBoundary, PrivateRoute, Loader } from '@components';
+import { ErrorBoundary, Loader, PrivateRoute } from '@components';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Environment } from '@utils';
+import React, { Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
 
 // 정적 임포트를 동적 임포트(React.lazy)로 변환 (Code Splitting)
 const HomePage = React.lazy(() => import('@pages/Home'));
@@ -23,57 +23,57 @@ const App = () => {
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <ErrorBoundary>
-      <Suspense fallback={<Loader />}>
-        <Routes>
-          {/* 공개 라우트 */}
-          <Route
-            path="/"
-            element={<HomePage />}
-          />
-          <Route
-            path="/terms"
-            element={<TermPage />}
-          />
-          <Route
-            path="/privacy"
-            element={<PrivacyPage />}
-          />
-          <Route
-            path="/problems"
-            element={<ProblemsPage />}
-          />
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            {/* 공개 라우트 */}
+            <Route
+              path="/"
+              element={<HomePage />}
+            />
+            <Route
+              path="/terms"
+              element={<TermPage />}
+            />
+            <Route
+              path="/privacy"
+              element={<PrivacyPage />}
+            />
+            <Route
+              path="/problems"
+              element={<ProblemsPage />}
+            />
 
-          {/* 보호된 라우트 */}
-          <Route
-            path="/problems/:id"
-            element={<PrivateRoute element={<ProblemDetailPage />} />}
-          />
-          <Route
-            path="/judge"
-            element={<PrivateRoute element={<JudgePage />} />}
-          />
-          <Route
-            path="/source"
-            element={<PrivateRoute element={<SourcePage />} />}
-          />
-          <Route
-            path="/create-problem"
-            element={<PrivateRoute element={<CreateProblemPage />} />}
-          />
-          <Route
-            path="/study"
-            element={<PrivateRoute element={<StudyPage />} />}
-          />
-          <Route
-            path="/study/:id"
-            element={<PrivateRoute element={<StudyDetailPage />} />}
-          />
-          <Route
-            path="/study/:id/session/:sessionId"
-            element={<PrivateRoute element={<StudySessionDetailPage />} />}
-          />
-        </Routes>
-      </Suspense>
+            {/* 보호된 라우트 */}
+            <Route
+              path="/problems/:id"
+              element={<PrivateRoute element={<ProblemDetailPage />} />}
+            />
+            <Route
+              path="/judge"
+              element={<PrivateRoute element={<JudgePage />} />}
+            />
+            <Route
+              path="/source"
+              element={<PrivateRoute element={<SourcePage />} />}
+            />
+            <Route
+              path="/create-problem"
+              element={<PrivateRoute element={<CreateProblemPage />} />}
+            />
+            <Route
+              path="/study"
+              element={<PrivateRoute element={<StudyPage />} />}
+            />
+            <Route
+              path="/study/:id"
+              element={<PrivateRoute element={<StudyDetailPage />} />}
+            />
+            <Route
+              path="/study/:id/session/:sessionId"
+              element={<PrivateRoute element={<StudySessionDetailPage />} />}
+            />
+          </Routes>
+        </Suspense>
       </ErrorBoundary>
     </GoogleOAuthProvider>
   );

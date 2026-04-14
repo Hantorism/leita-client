@@ -21,7 +21,7 @@ export const formatDateTime = (
 
   try {
     const date = new Date(dateStr);
-    
+
     // 유효하지 않은 날짜 처리
     if (isNaN(date.getTime())) {
       return '-';

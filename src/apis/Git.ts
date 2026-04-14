@@ -1,5 +1,5 @@
+import type { GitInstallResponse, RepositoryResponse } from '@types';
 import { AxiosInstance } from '@utils';
-import type { RepositoryResponse, GitInstallResponse } from '@types';
 
 export const gitApi = {
   // GET /git/repositories

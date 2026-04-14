@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosInstance as OriginalAxiosInstance, type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosError, type AxiosRequestConfig, type AxiosInstance as OriginalAxiosInstance } from 'axios';
 import { Environment } from './Environment';
 
 const API_URL = Environment.API_URL;

@@ -1,10 +1,5 @@
+import type { CreateProblemRequest, CreateProblemResponse, DeleteProblemResponse, ProblemDetail } from '@types';
 import { AxiosInstance, type PagedResponse } from '@utils';
-import type {
-  ProblemDetail,
-  CreateProblemRequest,
-  CreateProblemResponse,
-  DeleteProblemResponse,
-} from '@types';
 
 export const problemApi = {
   // GET /problem

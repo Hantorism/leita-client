@@ -104,7 +104,7 @@ const StudyMemberTab = ({ study, isAdmin, onMemberUpdated }: StudyMemberTabProps
                     <span className="block text-sm text-gray-400 truncate">{user.email}</span>
                   </div>
                 </div>
-         
+
                 <div className="flex gap-2 shrink-0">
                   <Button
                     size="sm"

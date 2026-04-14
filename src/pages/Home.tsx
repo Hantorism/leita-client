@@ -27,7 +27,16 @@ const HomePage = () => {
                 className="inline-flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full mb-6 sm:mb-8 backdrop-blur-sm"
               >
                 <div className="bg-[#CAFE33] rounded-full p-0.5">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="black"
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </div>
@@ -53,7 +62,7 @@ const HomePage = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="text-gray-400 text-base sm:text-xl mb-10 sm:mb-12 max-w-lg leading-relaxed font-medium"
               >
-                다양한 프로그래밍 문제를 풀고 실시간 채점을 통해 <br className="hidden sm:block" /> 
+                다양한 프로그래밍 문제를 풀고 실시간 채점을 통해 <br className="hidden sm:block" />
                 여러분의 코딩 실력을 한 단계 성장시켜 보세요.
               </motion.p>
 

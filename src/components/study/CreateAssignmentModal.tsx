@@ -1,7 +1,7 @@
 import { problemApi, studySessionApi } from '@apis';
 import { Button, Modal } from '@components';
 import { useAlert } from '@contexts';
-import { type ProblemDetail } from '@types';
+import type { ProblemDetail } from '@types';
 import { Logger, type PagedResponse } from '@utils';
 import { useEffect, useState } from 'react';
 

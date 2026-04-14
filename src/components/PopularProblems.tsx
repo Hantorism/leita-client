@@ -1,5 +1,5 @@
 import { problemApi } from '@apis';
-import { type ProblemDetail } from '@types';
+import type { ProblemDetail } from '@types';
 import { Logger, type PagedResponse } from '@utils';
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -25,7 +25,7 @@ const PopularProblems = () => {
         const animate = (time: number) => {
             if (!startTime) startTime = time;
             const progress = Math.min((time - startTime) / SCROLL_DURATION, 1);
-            const ease = 1 - Math.pow(1 - progress, 3);
+            const ease = 1 - (1 - progress) ** 3;
             container.scrollLeft = start + scrollAmount * ease;
 
             if (progress < 1) {
@@ -83,9 +83,7 @@ const PopularProblems = () => {
                 transition={{ duration: 0.6 }}
                 className="flex items-center gap-3 mb-8"
             >
-                <h2 className="text-3xl font-extrabold text-white tracking-tight font-Pretendard">
-                    인기 문제
-                </h2>
+                <h2 className="text-3xl font-extrabold text-white tracking-tight font-Pretendard">인기 문제</h2>
                 <span className="text-2xl">🔥</span>
             </motion.div>
 
@@ -100,7 +98,16 @@ const PopularProblems = () => {
             hover:bg-[#3a3a3a] hover:border-[#CAFE33]/40 transition-all duration-200
             text-gray-400 hover:text-white shadow-lg"
                 >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
                         <polyline points="15 18 9 12 15 6" />
                     </svg>
                 </button>
@@ -114,7 +121,16 @@ const PopularProblems = () => {
             hover:bg-[#3a3a3a] hover:border-[#CAFE33]/40 transition-all duration-200
             text-gray-400 hover:text-white shadow-lg"
                 >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
                         <polyline points="9 18 15 12 9 6" />
                     </svg>
                 </button>
@@ -145,10 +161,12 @@ const PopularProblems = () => {
                             >
                                 {/* Rank Badge */}
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center
+                                    <div
+                                        className="w-10 h-10 rounded-xl flex items-center justify-center
                   bg-[#CAFE33] text-black
                   font-JetBrain font-black text-sm
-                  transition-transform duration-300 group-hover:scale-110">
+                  transition-transform duration-300 group-hover:scale-110"
+                                    >
                                         {String(index + 1).padStart(2, '0')}
                                     </div>
                                 </div>
@@ -166,8 +184,8 @@ const PopularProblems = () => {
                                                 key={cat}
                                                 className="text-[10px] font-semibold text-gray-400 bg-white/5 px-2 py-0.5 rounded-md"
                                             >
-                      {cat}
-                    </span>
+                        {cat}
+                      </span>
                                         ))}
                                     </div>
                                 )}
@@ -177,12 +195,8 @@ const PopularProblems = () => {
                                     {/* Success Rate */}
                                     <div>
                                         <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-gray-500 font-Pretendard">
-                      정답률
-                    </span>
-                                            <span className="text-sm font-bold text-white font-Pretendard">
-                      {successRate.toFixed(1)}%
-                    </span>
+                                            <span className="text-sm font-semibold text-gray-500 font-Pretendard">정답률</span>
+                                            <span className="text-sm font-bold text-white font-Pretendard">{successRate.toFixed(1)}%</span>
                                         </div>
                                         <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
                                             <motion.div
@@ -196,12 +210,10 @@ const PopularProblems = () => {
 
                                     {/* Solved Count */}
                                     <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-500 font-Pretendard">
-                    제출 수
-                  </span>
+                                        <span className="text-sm font-semibold text-gray-500 font-Pretendard">제출 수</span>
                                         <span className="text-sm font-bold text-white font-Pretendard">
-                    {(problem.solved?.totalCount || 0).toLocaleString()}회
-                  </span>
+                      {(problem.solved?.totalCount || 0).toLocaleString()}회
+                    </span>
                                     </div>
                                 </div>
                             </motion.div>

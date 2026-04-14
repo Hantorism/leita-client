@@ -75,10 +75,18 @@ const StudyDetailPage = () => {
   }, [fetchStudy]);
 
   if (loading)
-    return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">스터디 정보를 불러오는 중...</div>;
+    return (
+      <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">
+        스터디 정보를 불러오는 중...
+      </div>
+    );
   if (error) return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">{error}</div>;
   if (!study)
-    return <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">스터디를 찾을 수 없습니다.</div>;
+    return (
+      <div className="min-h-screen bg-[var(--color-bg-main)] text-white text-center pt-20">
+        스터디를 찾을 수 없습니다.
+      </div>
+    );
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] text-white font-Pretendard">
@@ -106,7 +114,9 @@ const StudyDetailPage = () => {
               variant="ghost"
               onClick={() => setActiveTab(key)}
               className={`!px-6 !py-3 font-semibold border-b-2 -mb-[2px] !rounded-none ${
-                activeTab === key ? 'border-[var(--color-brand)] !text-[var(--color-brand)]' : 'border-transparent hover:text-white'
+                activeTab === key
+                  ? 'border-[var(--color-brand)] !text-[var(--color-brand)]'
+                  : 'border-transparent hover:text-white'
               }`}
             >
               {label}
