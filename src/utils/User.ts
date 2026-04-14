@@ -1,14 +1,6 @@
-import { Logger } from './Logger';
+import { AuthStorage } from './Auth';
 
 export const getCurrentUserEmail = (): string | null => {
-  const storedUser = localStorage.getItem('user');
-  if (!storedUser) return null;
-
-  try {
-    const user = JSON.parse(storedUser);
-    return user?.email?.toLowerCase().trim() || null;
-  } catch (error) {
-    Logger.error('Failed to parse user from localStorage', error);
-    return null;
-  }
+  const user = AuthStorage.getUser();
+  return user?.email?.toLowerCase().trim() || null;
 };

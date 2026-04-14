@@ -1,3 +1,4 @@
+export * from './Auth';
 export * from './AxiosInstance';
 export * from './Base64';
 export * from './Date';
