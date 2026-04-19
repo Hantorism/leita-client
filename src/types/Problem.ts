@@ -22,7 +22,7 @@ export interface ProblemTestCase {
 }
 
 export interface ProblemDetail {
-  problemId: number;
+  problemId: string;
   title: string;
   authorName: string;
   description: ProblemDescription;
@@ -51,7 +51,7 @@ export interface CreateProblemRequest {
 }
 
 export interface CreateProblemResponse {
-  problemId: number;
+  problemId: string;
 }
 
 export interface DeleteProblemResponse {

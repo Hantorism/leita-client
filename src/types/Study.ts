@@ -63,14 +63,14 @@ export interface MemberAssignmentUpdateRequest {
 
 export interface AssignmentCreateRequest {
   description: string | null;
-  problemIds: number[];
+  problemIds: string[];
   startDateTime: string | null;
   endDateTime: string;
 }
 
 export interface AssignmentUpdateRequest {
   description: string | null;
-  problemIds: number[];
+  problemIds: string[];
   startDateTime: string | null;
   endDateTime: string;
 }
@@ -150,13 +150,13 @@ export interface AssignmentResponse {
   id: number;
   studySessionId: number;
   description: string | null;
-  problemIds: number[];
+  problemIds: string[];
   startDateTime: string;
   endDateTime: string;
 }
 
 export interface AssignmentProblemStatus {
-  problemId: number;
+  problemId: string;
   title: string;
   result: JudgeResultType | null;
 }

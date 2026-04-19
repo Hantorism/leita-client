@@ -41,7 +41,7 @@ export interface ReviewRequest {
 
 export interface JudgeData {
   id: number;
-  problemId: number;
+  problemId: string;
   problemTitle?: string;
   user: {
     name: string;
