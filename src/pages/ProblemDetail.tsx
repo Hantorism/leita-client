@@ -1,7 +1,7 @@
 import { problemApi } from '@apis';
 import { Logo } from '@assets/images';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
-import { Logger } from '@utils';
+import { DecodeBase64, Logger } from '@utils';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -46,7 +46,7 @@ const ProblemDetailPage = () => {
   const decodeText = (text: string): string => {
     try {
       if (!text) return '';
-      return decodeURIComponent(text);
+      return DecodeBase64(text);
     } catch (error) {
       return text;
     }

@@ -3,7 +3,7 @@ import { CustomDropdown } from '@components';
 import { useAlert } from '@contexts';
 import MonacoEditor, { type Monaco } from '@monaco-editor/react';
 import type { JudgeLanguage } from '@types';
-import { Logger } from '@utils';
+import { DecodeBase64, Logger } from '@utils';
 import type * as monacoEditor from 'monaco-editor';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -95,23 +95,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   const decodeText = (text: string) => {
     try {
       if (!text) return '';
-
-      const urlDecoded = decodeURIComponent(text);
-      if (urlDecoded !== text) return urlDecoded;
-
-      try {
-        const binary = atob(text);
-        const bytes = new Uint8Array([...binary].map((ch) => ch.charCodeAt(0)));
-        const decoded = new TextDecoder().decode(bytes);
-        return decoded;
-      } catch (e) {
-        // 무시
-      }
-
-      const jsonParsed = JSON.parse(text);
-      if (typeof jsonParsed === 'string') return jsonParsed;
-
-      return text;
+      return DecodeBase64(text);
     } catch (error) {
       return text;
     }
