@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = useCallback(() => {
     AuthStorage.clear();
     setUser(null);
+    window.location.reload();
   }, []);
 
   const fetchUserInfo = useCallback(async () => {
