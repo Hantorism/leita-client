@@ -153,7 +153,11 @@ const PopularProblems = () => {
                                 initial={{ opacity: 0, y: 24 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                                onClick={() => window.open(`problems/${problem.problemId}`, '_blank')}
+                                onClick={() => {
+                                    if (problem.problemId) {
+                                        window.open(`/problems/${problem.problemId}`, '_blank');
+                                    }
+                                }}
                                 className="group relative cursor-pointer rounded-2xl p-6
                 bg-[var(--color-bg-surface)] border border-white/5
                 hover:border-[#CAFE33]/40 hover:shadow-[0_0_24px_rgba(202,254,51,0.15)]

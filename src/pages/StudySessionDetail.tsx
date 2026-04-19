@@ -535,7 +535,7 @@ const StudySessionDetailPage = () => {
           sessionId={Number(sessionId)}
           initialData={{
             description: session.assignment.description || undefined,
-            problemIds: session.assignment.problems.map((p) => p.problemId),
+            problemIds: session.assignment.problems.map((p) => String(p.problemId)),
           }}
           onSuccess={fetchData}
           onClose={() => setShowUpdateAssignmentModal(false)}

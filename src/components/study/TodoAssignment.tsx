@@ -44,7 +44,7 @@ const TodoAssignment = ({ studyId, sessionId, currentUserEmail }: TodoAssignment
     fetchSessionData();
   }, [studyId, sessionId]);
 
-  const problemIds = useMemo(() => nextSession?.assignment?.problems?.map((p) => p.problemId) || [], [nextSession]);
+  const problemIds = useMemo(() => nextSession?.assignment?.problems?.map((p) => String(p.problemId)) || [], [nextSession]);
   const { problems, progress, loading: hookLoading } = useAssignmentProgress(problemIds);
 
   if (loading || hookLoading) return null;

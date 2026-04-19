@@ -17,6 +17,7 @@ const JudgeDetailPage = () => {
 
   useEffect(() => {
     const fetchDetail = async () => {
+      if (!judgeId) return;
       try {
         setLoading(true);
         const res = await judgeApi.getJudgeDetail(Number(judgeId));

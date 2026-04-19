@@ -39,8 +39,8 @@ const ProblemsPage = () => {
     }
   };
 
-  const isProblemSolved = (problemId: string) => {
-    return solvedProblemIds.has(problemId);
+  const isProblemSolved = (problemId: string | number) => {
+    return solvedProblemIds.has(String(problemId));
   };
 
   // hook에서 이미 검색 및 필터링이 처리된 데이터를 반환함
@@ -136,7 +136,7 @@ const ProblemsPage = () => {
                       showAlert('error', '로그인이 필요합니다.');
                       return;
                     }
-                    window.open(`problems/${problem.problemId}`, '_blank');
+                    window.open(`/problems/${problem.problemId}`, '_blank');
                   }}
                   className="group flex flex-col md:flex-row md:items-center justify-between px-6 py-4 rounded-[1.5rem] bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/10 transition-all duration-300 cursor-pointer gap-4 active:scale-[0.99]"
                 >

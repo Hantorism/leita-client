@@ -43,7 +43,7 @@ const StudyDetailPage = () => {
   const fetchStudy = useCallback(async () => {
     if (!id) return;
     try {
-      const result = await studyApi.getStudy(parseInt(id, 10));
+      const result = await studyApi.getStudy(Number(id));
       if (!isMounted.current) return;
 
       const studyData = result as unknown as Study;

@@ -78,7 +78,8 @@ const JudgePage = () => {
       const lowerQuery = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (judge) =>
-          judge.problemTitle?.toLowerCase().includes(lowerQuery) || judge.problemId.toString().includes(lowerQuery),
+          (judge.problemTitle && judge.problemTitle.toLowerCase().includes(lowerQuery)) ||
+          (judge.problemId && judge.problemId.toLowerCase().includes(lowerQuery)),
       );
     }
 
