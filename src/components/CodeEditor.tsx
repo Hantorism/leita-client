@@ -194,7 +194,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     setResult(null);
 
     try {
-      const result = await judgeApi.submitCode(Number(problemId), {
+      const result = await judgeApi.submitCode(problemId, {
         code: encodeBase64(code),
         language: language.toUpperCase() as JudgeLanguage,
       });
@@ -229,7 +229,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     setResult(null);
 
     try {
-      const problemRes = await problemApi.getProblem(Number(problemId));
+      const problemRes = await problemApi.getProblem(problemId);
       const problemData = problemRes as any;
       const testCases = problemData?.testCases || [];
 
@@ -241,7 +241,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       const combinedTestCases = [...initialTestCases, ...testCases.slice(initialTestCases.length)];
 
-      const result = await judgeApi.runCode(Number(problemId), {
+      const result = await judgeApi.runCode(problemId, {
         code: encodeBase64(code),
         language: language.toUpperCase() as JudgeLanguage,
         testCases: combinedTestCases.map(({ input, output }) => ({
@@ -323,7 +323,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     const testCase = testCases[index];
 
     try {
-      const result = await judgeApi.runCode(Number(problemId), {
+      const result = await judgeApi.runCode(problemId, {
         code: encodeBase64(code),
         language: language.toUpperCase() as JudgeLanguage,
         testCases: [

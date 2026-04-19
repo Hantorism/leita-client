@@ -15,17 +15,17 @@ export const problemApi = {
   },
 
   // GET /problem/{id}
-  getProblem: async (id: number) => {
+  getProblem: async (id: string) => {
     return AxiosInstance.get<ProblemDetail>(`/problem/${id}`);
   },
 
   // PATCH /problem/{id}
-  updateProblem: async (id: number, data: CreateProblemRequest) => {
+  updateProblem: async (id: string, data: CreateProblemRequest) => {
     return AxiosInstance.patch<CreateProblemResponse>(`/problem/${id}`, data);
   },
 
   // DELETE /problem/{id}
-  deleteProblem: async (id: number) => {
+  deleteProblem: async (id: string) => {
     return AxiosInstance.delete<DeleteProblemResponse>(`/problem/${id}`);
   },
 };

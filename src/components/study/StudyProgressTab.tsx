@@ -248,7 +248,7 @@ const StudyProgressDetail = ({
     }
   };
 
-  const getProblemStatus = (problemId: number) => {
+  const getProblemStatus = (problemId: string) => {
     if (!assignment) return 'UNATTEMPTED';
 
     if (isCurrentUser) {
@@ -502,7 +502,7 @@ interface SessionProgress {
   attendanceStatus: string;
   assignmentCreated: boolean;
   attendanceRecords: Record<string, string>;
-  problemIds: number[];
+  problemIds: string[];
   assignmentRecords: Record<
     string,
     { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
@@ -556,7 +556,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
               }
             }
 
-            let problemIds: number[] = [];
+            let problemIds: string[] = [];
             const assignmentRecords: Record<
               string,
               { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
@@ -579,7 +579,7 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
                     // 현재 사용자인 경우, judgeApi의 실제 제출/실행 데이터를 바탕으로 미시도 여부 직접 계산
                     if (email.toLowerCase().trim() === currentUserEmail && problemIds.length > 0) {
                       const attemptedIds = new Set();
-                      problemIds.forEach((pid: number) => {
+                      problemIds.forEach((pid: string) => {
                         if (myJudges.some((j: any) => j.problemId === pid)) {
                           attemptedIds.add(pid);
                         }

@@ -23,7 +23,7 @@ const ProblemsPage = () => {
 
   // 해결한 문제 ID를 Set으로 메모이제이션 하여 성능 최적화
   const solvedProblemIds = useMemo(() => {
-    const ids = new Set<number>();
+    const ids = new Set<string>();
     if (!judges) return ids;
     for (const judge of judges) {
       if (judge.result === 'CORRECT') {
@@ -39,7 +39,7 @@ const ProblemsPage = () => {
     }
   };
 
-  const isProblemSolved = (problemId: number) => {
+  const isProblemSolved = (problemId: string) => {
     return solvedProblemIds.has(problemId);
   };
 

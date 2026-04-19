@@ -3,17 +3,17 @@ import { AxiosInstance } from '@utils';
 
 export const judgeApi = {
   // POST /judge/submit/{problemId}
-  submitCode: async (problemId: number, data: SubmitRequest) => {
+  submitCode: async (problemId: string, data: SubmitRequest) => {
     return AxiosInstance.post<SubmitResponse>(`/judge/submit/${problemId}`, data);
   },
 
   // POST /judge/run/{problemId}
-  runCode: async (problemId: number, data: RunRequest) => {
+  runCode: async (problemId: string, data: RunRequest) => {
     return AxiosInstance.post<RunResponse[]>(`/judge/run/${problemId}`, data);
   },
 
   // GET /judge
-  getJudges: async (problemId?: number) => {
+  getJudges: async (problemId?: string) => {
     return AxiosInstance.get<JudgeData[]>(`/judge`, { params: { problemId } });
   },
 

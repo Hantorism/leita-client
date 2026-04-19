@@ -64,7 +64,7 @@ const CreateAssignmentModal = ({ studyId, sessionId, onClose, onSuccess }: Creat
     }
   };
 
-  const handleRemoveProblem = (problemId: number) => {
+  const handleRemoveProblem = (problemId: string) => {
     setSelectedProblems(selectedProblems.filter((p) => p.problemId !== problemId));
   };
 

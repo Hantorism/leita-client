@@ -18,7 +18,7 @@ export interface AssignmentProgress {
   loading: boolean;
 }
 
-export const useAssignmentProgress = (problemIds: number[]): AssignmentProgress => {
+export const useAssignmentProgress = (problemIds: string[]): AssignmentProgress => {
   const [loading, setLoading] = useState(true);
   const [problems, setProblems] = useState<AssignmentProblem[]>([]);
   const [progress, setProgress] = useState({
@@ -46,7 +46,7 @@ export const useAssignmentProgress = (problemIds: number[]): AssignmentProgress 
             problemApi
               .getProblem(id)
               .then((res) => res as unknown as ProblemDetail)
-              .catch(() => ({ problemId: id, title: `문제 ${id}` }) as ProblemDetail),
+              .catch(() => ({ problemId: id, title: `문제 ${id}` }) as unknown as ProblemDetail),
           ),
         );
 

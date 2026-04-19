@@ -55,7 +55,7 @@ const ProblemDetailPage = () => {
   useEffect(() => {
     const fetchProblem = async () => {
       try {
-        const res = await problemApi.getProblem(Number(id));
+        const res = await problemApi.getProblem(id as string);
         const data = res as unknown as ProblemDetailType;
 
         if (!data) {

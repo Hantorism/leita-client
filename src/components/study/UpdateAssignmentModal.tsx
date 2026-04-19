@@ -10,7 +10,7 @@ interface UpdateAssignmentModalProps {
   sessionId: number;
   initialData: {
     description?: string;
-    problemIds: number[];
+    problemIds: string[];
   };
   onClose: () => void;
   onSuccess?: () => void;
@@ -35,10 +35,10 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
       if (initialData.problemIds && initialData.problemIds.length > 0) {
         try {
           const res = await Promise.all(
-            initialData.problemIds.map((pid: number) => problemApi.getProblem(pid).catch(() => null)),
+            initialData.problemIds.map((pid: string) => problemApi.getProblem(pid).catch(() => null)),
           );
           const initialProbs = (res.filter((p) => p !== null) as ProblemDetail[]).map(
-            (p) => ({ problemId: p.problemId, title: p.title }) as ProblemDetail,
+            (p) => ({ problemId: p.problemId, title: p.title } as unknown as ProblemDetail),
           );
           setSelectedProblems(initialProbs);
         } catch (err) {
@@ -88,7 +88,7 @@ const UpdateAssignmentModal = ({ studyId, sessionId, initialData, onClose, onSuc
     }
   };
 
-  const handleRemoveProblem = (problemId: number) => {
+  const handleRemoveProblem = (problemId: string) => {
     setSelectedProblems(selectedProblems.filter((p) => p.problemId !== problemId));
   };
 
