@@ -89,78 +89,76 @@ const StudyDetailPage = () => {
     );
 
   return (
-    <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] text-white font-Pretendard">
-      <header className="pl-[10%] pr-[10%] w-full text-left pt-[3%]">
-        <Header />
-      </header>
+    <div className="flex flex-col min-h-screen bg-[#1A1A1A] text-white font-Pretendard overflow-x-hidden">
+      <Header />
 
-      <main className="flex-grow flex flex-col items-center py-10 px-5 max-w-5xl mx-auto w-full">
-        {/* 스터디 제목 + 수료 조건 배지 */}
-        <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3 mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-[var(--color-brand)]">{study.title}</h1>
-            <p className="text-gray-400 mt-2 text-sm">{study.description}</p>
+      <main className="flex-grow w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-20">
+        <div className="flex flex-col gap-10">
+          {/* 스터디 제목 + 수료 조건 배지 */}
+          <div className="w-full flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+            <div className="flex flex-col gap-4">
+              <h1 className="text-4xl sm:text-5xl font-black tracking-tighter italic uppercase text-[#CAFE33]">
+                {study.title}
+              </h1>
+              <p className="text-gray-500 text-lg font-medium leading-relaxed max-w-3xl">
+                {study.description || '스터디에 대한 상세 설명이 준비되지 않았습니다.'}
+              </p>
+            </div>
+          </div>
+
+          {/* 탭 네비게이션 */}
+          <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/5 w-fit">
+            {TAB_LABELS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`px-6 py-2.5 text-xs font-black rounded-xl transition-all duration-300 ${
+                  activeTab === key ? 'bg-white/10 text-[#CAFE33] shadow-lg' : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <div className="w-full">
+            {/* ── 탭 1: 세션 목록 ── */}
+            {activeTab === 'sessions' && (
+              <div className="w-full animate-fadeIn">
+                <StudySessionTab
+                  study={study}
+                  isMember={isMember}
+                  isAdmin={isAdmin}
+                  currentUserEmail={currentUserEmail}
+                />
+              </div>
+            )}
+
+            {/* ── 탭 2: 멤버 조회 ── */}
+            {activeTab === 'members' && (
+              <StudyMemberTab
+                study={study}
+                isAdmin={isAdmin}
+                onMemberUpdated={fetchStudy}
+              />
+            )}
+
+            {/* ── 탭 3: 출석/과제 현황 ── */}
+            {activeTab === 'progress' && <StudyProgressTab study={study} />}
+
+            {/* ── 탭 4: 수료 확인 ── */}
+            {activeTab === 'completion' && (
+              <StudyCompletionTab
+                study={study}
+                isAdmin={isAdmin}
+                currentUserEmail={currentUserEmail}
+              />
+            )}
           </div>
         </div>
-
-        {/* 탭 네비게이션 */}
-        <div
-          id="study-tabs-nav"
-          className="w-full flex border-b border-gray-700 mb-8"
-        >
-          {TAB_LABELS.map(({ key, label }) => (
-            <Button
-              key={key}
-              variant="ghost"
-              onClick={() => setActiveTab(key)}
-              className={`!px-6 !py-3 font-semibold border-b-2 -mb-[2px] !rounded-none ${
-                activeTab === key
-                  ? 'border-[var(--color-brand)] !text-[var(--color-brand)]'
-                  : 'border-transparent hover:text-white'
-              }`}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
-
-        {/* ── 탭 1: 세션 목록 ── */}
-        {activeTab === 'sessions' && (
-          <div className="w-full animate-fadeIn">
-            <StudySessionTab
-              study={study}
-              isMember={isMember}
-              isAdmin={isAdmin}
-              currentUserEmail={currentUserEmail}
-            />
-          </div>
-        )}
-
-        {/* ── 탭 2: 멤버 조회 ── */}
-        {activeTab === 'members' && (
-          <StudyMemberTab
-            study={study}
-            isAdmin={isAdmin}
-            onMemberUpdated={fetchStudy}
-          />
-        )}
-
-        {/* ── 탭 3: 출석/과제 현황 ── */}
-        {activeTab === 'progress' && <StudyProgressTab study={study} />}
-
-        {/* ── 탭 4: 수료 확인 ── */}
-        {activeTab === 'completion' && (
-          <StudyCompletionTab
-            study={study}
-            isAdmin={isAdmin}
-            currentUserEmail={currentUserEmail}
-          />
-        )}
       </main>
 
-      <footer className="w-full text-left mt-10">
-        <Footer />
-      </footer>
+      <Footer />
     </div>
   );
 };

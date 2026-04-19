@@ -92,6 +92,8 @@ export interface Study {
   startDate: string;
   endDate: string;
   members: StudyUser[];
+  isJoined?: boolean;
+  memberCount?: number;
 }
 
 export interface StudySession {
