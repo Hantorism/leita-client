@@ -141,7 +141,7 @@ const PopularProblems = () => {
                     ref={scrollRef}
                     onKeyDown={handleKeyDown}
                     tabIndex={0}
-                    className="flex gap-5 overflow-x-auto pb-6 scrollbar-hide outline-none px-1"
+                    className="flex flex-col md:flex-row gap-5 md:overflow-x-auto pb-6 scrollbar-hide outline-none px-1"
                     style={{ scrollSnapType: 'x mandatory' }}
                 >
                     {problems.map((problem, index) => {
@@ -158,8 +158,8 @@ const PopularProblems = () => {
                 bg-[var(--color-bg-surface)] border border-white/5
                 hover:border-[#CAFE33]/40 hover:shadow-[0_0_24px_rgba(202,254,51,0.15)]
                 transition-all duration-300 active:scale-[0.97]
-                flex flex-col justify-between min-h-[320px] shrink-0
-                w-[85%] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3*1.25rem)/4)]"
+                flex flex-col justify-between min-h-[280px] md:min-h-[320px] shrink-0
+                w-full md:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3*1.25rem)/4)]"
                                 style={{ scrollSnapAlign: 'start' }}
                             >
                                 {/* Rank Badge */}
