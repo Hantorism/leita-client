@@ -182,7 +182,8 @@ const JudgePage = () => {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.03 }}
-                  className="group flex flex-col md:flex-row md:items-center justify-between px-6 py-4 rounded-[1.5rem] bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 gap-4 active:scale-[0.99]"
+                  className="group flex flex-col md:flex-row md:items-center justify-between px-6 py-4 rounded-[1.5rem] bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 gap-4 active:scale-[0.99] cursor-pointer"
+                  onClick={() => navigate(`/judge/${judge.id}`)}
                 >
                   <div className="flex items-center gap-6">
                     <div className="flex-shrink-0 min-w-[4rem] px-3 h-12 rounded-xl bg-white/5 flex items-center justify-center text-lg font-black text-gray-500 font-JetBrain group-hover:bg-white/10 group-hover:text-[#CAFE33] transition-all duration-300">

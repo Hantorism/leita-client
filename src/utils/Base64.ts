@@ -1,6 +1,5 @@
 export const EncodeBase64 = (str: string): string => {
-  const trimmed = str.trimEnd();
-  const utf8Bytes = new TextEncoder().encode(trimmed);
+  const utf8Bytes = new TextEncoder().encode(str);
   const binary = Array.from(utf8Bytes)
     .map((byte) => String.fromCharCode(byte))
     .join('');

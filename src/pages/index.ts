@@ -1,6 +1,7 @@
 export { default as CreateProblemPage } from './CreateProblem';
 export { default as HomePage } from './Home';
 export { default as JudgePage } from './Judge';
+export { default as JudgeDetailPage } from './JudgeDetail';
 export { default as PrivacyPage } from './Privacy';
 export { default as ProblemDetailPage } from './ProblemDetail';
 export { default as ProblemsPage } from './Problems';

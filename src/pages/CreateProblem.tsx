@@ -144,7 +144,7 @@ const CreateProblemPage = () => {
                         ...testCases.slice(index + 1),
                       ])
                     }
-                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] font-mono"
                     rows={3}
                   />
                 </div>
@@ -159,7 +159,7 @@ const CreateProblemPage = () => {
                         ...testCases.slice(index + 1),
                       ])
                     }
-                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
+                    className="w-full p-3 border text-white bg-white bg-opacity-30 border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)] font-mono"
                     rows={3}
                   />
                 </div>

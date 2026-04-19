@@ -11,6 +11,7 @@ const PrivacyPage = React.lazy(() => import('@pages/Privacy'));
 const ProblemsPage = React.lazy(() => import('@pages/Problems'));
 const ProblemDetailPage = React.lazy(() => import('@pages/ProblemDetail'));
 const JudgePage = React.lazy(() => import('@pages/Judge'));
+const JudgeDetailPage = React.lazy(() => import('@pages/JudgeDetail'));
 const SourcePage = React.lazy(() => import('@pages/Source'));
 const CreateProblemPage = React.lazy(() => import('@pages/CreateProblem'));
 const StudyPage = React.lazy(() => import('@pages/Study'));
@@ -51,6 +52,10 @@ const App = () => {
             <Route
               path="/judge"
               element={<PrivateRoute element={<JudgePage />} />}
+            />
+            <Route
+              path="/judge/:judgeId"
+              element={<PrivateRoute element={<JudgeDetailPage />} />}
             />
             <Route
               path="/source"

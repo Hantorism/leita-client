@@ -40,6 +40,7 @@ export interface ReviewRequest {
 }
 
 export interface JudgeData {
+  id: number;
   problemId: number;
   problemTitle?: string;
   user: {
@@ -55,4 +56,10 @@ export interface JudgeData {
   };
   sizeOfCode: number;
   type: string;
+  codeUrl?: string;
+  createdAt?: string;
+}
+
+export interface JudgeDetailData extends JudgeData {
+  codeUrl: string;
 }
