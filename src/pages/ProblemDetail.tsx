@@ -12,7 +12,7 @@ interface TestCase {
 }
 
 interface ProblemDetailType {
-  problemId: number;
+  problemId: string;
   title: string;
   category: string[];
   solved: {

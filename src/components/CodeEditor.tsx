@@ -229,24 +229,12 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     setResult(null);
 
     try {
-      const problemRes = await problemApi.getProblem(problemId);
-      const problemData = problemRes as any;
-      const testCases = problemData?.testCases || [];
-
-      if (testCases.length === 0) {
-        setResult({ message: '테스트 케이스가 없습니다.', isSubmit: false });
-        setIsRunningCode(false);
-        return;
-      }
-
-      const combinedTestCases = [...initialTestCases, ...testCases.slice(initialTestCases.length)];
-
       const result = await judgeApi.runCode(problemId, {
         code: encodeBase64(code),
         language: language.toUpperCase() as JudgeLanguage,
-        testCases: combinedTestCases.map(({ input, output }) => ({
-          input,
-          output,
+        testCases: testCases.map(({ input, output }) => ({
+          input: input.startsWith('http') ? input : encodeBase64(input),
+          output: output.startsWith('http') ? output : encodeBase64(output),
           isShow: true,
         })),
       });
@@ -256,10 +244,10 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         message: resultData.message || '🛠 실행 완료!',
         isSubmit: false,
         testCases:
-          resultData?.map((testResult: any, index: number) => ({
-            actualOutput: testResult.result || '',
+          resultData?.map((testResult: any) => ({
+            actualOutput: testResult.output || '',
             error: testResult.error || null,
-            isPassed: testResult.result === combinedTestCases[index].output,
+            isPassed: testResult.result === 'CORRECT',
           })) || [],
       });
     } catch (error) {
@@ -293,16 +281,21 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   };
 
   //     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
-  //     // const [selectedTestCase, setSelectedTestCase] = useState(0);
+  //     const [selectedTestCase, setSelectedTestCase] = useState(0);
   const [testCases, setTestCases] = useState(initialTestCases);
+
+  useEffect(() => {
+    setTestCases(initialTestCases);
+  }, [initialTestCases]);
+
   // // 새로운 테스트 케이스 추가 함수
   const addTestCase = () => {
     setTestCases((prevTestCases) => {
-      const newTestCases = [...prevTestCases, { input: '', output: '' }];
+      const newTestCases = [...prevTestCases, { input: '', output: '', isShow: true }];
       return newTestCases;
     });
 
-    setSelectedTestCase((prevIndex) => prevIndex + 1);
+    setSelectedTestCase(testCases.length);
   };
 
   const handleTestCaseChange = (index: number, field: 'input' | 'output', value: string) => {
@@ -328,8 +321,8 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         language: language.toUpperCase() as JudgeLanguage,
         testCases: [
           {
-            input: testCase.input,
-            output: testCase.output,
+            input: testCase.input.startsWith('http') ? testCase.input : encodeBase64(testCase.input),
+            output: testCase.output.startsWith('http') ? testCase.output : encodeBase64(testCase.output),
             isShow: true,
           },
         ],
@@ -341,9 +334,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         isSubmit: false,
         testCases:
           resultData?.map((item: any) => ({
-            actualOutput: item.result || '',
+            actualOutput: item.output || '',
             error: item.error || null,
-            isPassed: item.status === 'CORRECT',
+            isPassed: item.result === 'CORRECT',
           })) || [],
       });
     } catch (error) {
