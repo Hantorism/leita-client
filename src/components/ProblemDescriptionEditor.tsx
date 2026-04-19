@@ -170,7 +170,6 @@ const ProblemDescriptionEditor = ({
     content: content,
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
-      Logger.print(content);
       if (onChange) {
         onChange(content);
       }

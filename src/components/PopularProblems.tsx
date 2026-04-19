@@ -14,9 +14,11 @@ const PopularProblems = () => {
     const scroll = useCallback((direction: 'left' | 'right') => {
         if (!scrollRef.current) return;
         const container = scrollRef.current;
+        const card = container.querySelector<HTMLDivElement>('div > div');
         const gap = 20;
-        const cardWidth = (container.clientWidth - 3 * gap) / 4;
-        const scrollAmount = direction === 'right' ? cardWidth + gap : -(cardWidth + gap);
+        const scrollAmount = direction === 'right' 
+            ? (card?.clientWidth || container.clientWidth / 4) + gap 
+            : -((card?.clientWidth || container.clientWidth / 4) + gap);
         const start = container.scrollLeft;
         let startTime: number | null = null;
 
@@ -88,15 +90,15 @@ const PopularProblems = () => {
             </motion.div>
 
             {/* Problem Cards - Horizontal Scroll */}
-            <div className="relative">
+            <div className="relative group/container">
                 {/* Left Button */}
                 <button
                     onClick={() => scroll('left')}
                     className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10
             w-10 h-10 rounded-full bg-[var(--color-bg-surface)] border border-white/10
-            flex items-center justify-center
+            hidden md:flex items-center justify-center
             hover:bg-[#3a3a3a] hover:border-[#CAFE33]/40 transition-all duration-200
-            text-gray-400 hover:text-white shadow-lg"
+            text-gray-400 hover:text-white shadow-lg opacity-0 group-hover/container:opacity-100"
                 >
                     <svg
                         width="16"
@@ -117,9 +119,9 @@ const PopularProblems = () => {
                     onClick={() => scroll('right')}
                     className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10
             w-10 h-10 rounded-full bg-[var(--color-bg-surface)] border border-white/10
-            flex items-center justify-center
+            hidden md:flex items-center justify-center
             hover:bg-[#3a3a3a] hover:border-[#CAFE33]/40 transition-all duration-200
-            text-gray-400 hover:text-white shadow-lg"
+            text-gray-400 hover:text-white shadow-lg opacity-0 group-hover/container:opacity-100"
                 >
                     <svg
                         width="16"
@@ -139,7 +141,7 @@ const PopularProblems = () => {
                     ref={scrollRef}
                     onKeyDown={handleKeyDown}
                     tabIndex={0}
-                    className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide outline-none"
+                    className="flex gap-5 overflow-x-auto pb-6 scrollbar-hide outline-none px-1"
                     style={{ scrollSnapType: 'x mandatory' }}
                 >
                     {problems.map((problem, index) => {
@@ -156,8 +158,9 @@ const PopularProblems = () => {
                 bg-[var(--color-bg-surface)] border border-white/5
                 hover:border-[#CAFE33]/40 hover:shadow-[0_0_24px_rgba(202,254,51,0.15)]
                 transition-all duration-300 active:scale-[0.97]
-                flex flex-col justify-between min-h-[320px] shrink-0"
-                                style={{ width: 'calc((100% - 3 * 1.25rem) / 4)', scrollSnapAlign: 'start' }}
+                flex flex-col justify-between min-h-[320px] shrink-0
+                w-[85%] sm:w-[calc((100%-1.25rem)/2)] lg:w-[calc((100%-3*1.25rem)/4)]"
+                                style={{ scrollSnapAlign: 'start' }}
                             >
                                 {/* Rank Badge */}
                                 <div className="flex items-start justify-between mb-4">

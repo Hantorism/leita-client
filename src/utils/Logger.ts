@@ -3,7 +3,6 @@ import { Profile } from './Profile';
 export const Logger = {
   print: (...args: any[]) => {
     if (Profile.isNotProd()) {
-      console.log(...args);
     }
   },
   error: (...args: any[]) => {

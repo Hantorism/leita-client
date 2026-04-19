@@ -13,7 +13,6 @@ const Login = () => {
     onSuccess: async (tokenResponse: Omit<TokenResponse, 'error' | 'error_uri' | 'error_description'>) => {
       try {
         const res = await authApi.oauthRegister({ accessToken: tokenResponse.access_token });
-        Logger.print(' Google Login Response:', res);
 
         const accessToken = res.accessToken;
         if (!accessToken) {

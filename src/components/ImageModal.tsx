@@ -39,7 +39,6 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
   const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const rawFile = event.target.files?.[0];
     if (!rawFile) return;
-    Logger.print(rawFile);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
     if (!allowedTypes.includes(rawFile.type)) {
@@ -52,7 +51,6 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
       const oneMB = 1024 * 1024;
       const file = rawFile.size > oneMB ? await compressFile(rawFile) : rawFile;
 
-      Logger.print(file);
       setSelectedFile(file);
 
       const reader = new FileReader();

@@ -61,7 +61,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
     if (monacoInstance && language === 'javascript') {
-      // @ts-expect-error
       const monaco = monacoInstance as any;
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -108,7 +107,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     localStorage.setItem('selectedLanguage', newLanguage);
 
     if (monacoInstance && newLanguage === 'javascript') {
-      // @ts-expect-error
       const monaco = monacoInstance as any;
       monaco.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -284,7 +282,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
     // JavaScript 에러 검증 비활성화
     if (language === 'javascript') {
-      // @ts-expect-error
       const m = monaco as any;
       m.languages.typescript.javascriptDefaults.setDiagnosticsOptions({
         noSemanticValidation: true,
@@ -293,10 +290,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     }
 
     // container가 제대로 참조되는지 확인하기 위한 로그
-    if (container) {
-      Logger.print('Editor container:', container);
-      Logger.print(container.getBoundingClientRect()); // getBoundingClientRect() 사용 가능
-    }
   };
 
   //     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
