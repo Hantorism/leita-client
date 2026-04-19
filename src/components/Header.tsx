@@ -21,15 +21,8 @@ const Header = () => {
         <nav className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Left: Logo */}
           <div className="flex items-center gap-10">
-            <Link
-              to="/"
-              className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95"
-            >
-              <img
-                src={Logo}
-                alt="LEITA Logo"
-                className="h-7 sm:h-8"
-              />
+            <Link to="/" className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95">
+              <img src={Logo} alt="Leita Logo" className="h-7 sm:h-8" />
             </Link>
 
             {/* Desktop Menu */}
@@ -175,13 +168,12 @@ const Header = () => {
                   <div className="pt-6 border-t border-white/5">
                     <p className="text-xs font-black text-gray-600 uppercase tracking-widest mb-3">Developed by</p>
                     <p className="text-sm font-bold text-gray-400 leading-relaxed">
-                      아주대학교 소프트웨어학과
-                      <br />
+                      아주대학교<br />
                       이장원, 조성연, 오태림
                     </p>
                     <p className="text-sm font-bold text-[#CAFE33] mt-3">leitaajou@gmail.com</p>
                   </div>
-                  <p className="text-xs font-bold text-gray-700">© 2025 LEITA. All rights reserved.</p>
+                  <p className="text-xs font-bold text-gray-700">© 2025 Leita. All rights reserved.</p>
                 </div>
               </div>
             </motion.div>

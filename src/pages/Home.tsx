@@ -53,7 +53,7 @@ const HomePage = () => {
               >
                 START YOUR <br />
                 <span className="text-[#CAFE33]">CODING JOURNEY</span> <br />
-                WITH LEITA! 🚀
+                WITH Leita! 🚀
               </motion.h1>
 
               <motion.p
@@ -90,8 +90,8 @@ const HomePage = () => {
               <div className="absolute inset-[-10%] bg-[#CAFE33]/15 blur-[100px] rounded-full opacity-70 group-hover:opacity-100 transition-opacity duration-1000" />
               <img
                 src={Tabs}
-                alt="LEITA Preview"
-                className="relative w-full rounded-[2.5rem] transform hover:scale-[1.02] transition-all duration-700"
+                alt="Leita Preview"
+                className="relative w-full rounded-[2.5rem] shadow-2xl border border-white/5 transform hover:scale-[1.02] transition-all duration-700"
               />
             </motion.div>
           </div>
