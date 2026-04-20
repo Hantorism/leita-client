@@ -23,30 +23,8 @@ const Header = () => {
     <>
       <header className="sticky top-0 z-[100] w-full bg-[#1A1A1A]/80 backdrop-blur-xl border-b border-white/5">
         <nav className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Left: Logo & Back Button */}
-          <div className="flex items-center gap-6 sm:gap-10">
-            {!isHome && (
-              <button
-                onClick={() => navigate(-1)}
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-[#CAFE33] hover:border-[#CAFE33]/30 hover:bg-[#CAFE33]/5 transition-all active:scale-90 group"
-                aria-label="Go Back"
-              >
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="group-hover:-translate-x-0.5 transition-transform"
-                >
-                  <polyline points="15 18 9 12 15 6" />
-                </svg>
-              </button>
-            )}
-
+          {/* Left: Logo */}
+          <div className="flex items-center gap-10">
             <Link to="/" className="flex-shrink-0 transition-transform hover:scale-105 active:scale-95">
               <img src={Logo} alt="Leita Logo" className="h-7 sm:h-8" />
             </Link>

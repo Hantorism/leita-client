@@ -16,6 +16,8 @@ export interface JwtResponse {
 }
 
 export interface UpdateInfoRequest {
+  name: string | null;
+  profileImage: string | null;
   mainLanguage: string | null;
   department: string | null;
 }

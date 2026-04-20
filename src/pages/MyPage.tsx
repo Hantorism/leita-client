@@ -1,31 +1,33 @@
-import { authApi, gitApi } from '@apis';
+import { authApi, fileApi, gitApi } from '@apis';
 import { Button, Footer, Header } from '@components';
 import { useAlert, useAuth } from '@contexts';
-import { useJudges, useDebounce } from '@hooks';
-import { Logger, formatCodeSize, formatMemory, formatTime, formatDateTime } from '@utils';
+import { useJudges } from '@hooks';
+import { Logger, formatMemory, formatTime, formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
   const { user, fetchUserInfo } = useAuth();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<'profile' | 'history'>('profile');
+  const [name, setName] = useState(user?.name || '');
+  const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [department, setDepartment] = useState(user?.department || '');
   const [mainLanguage, setMainLanguage] = useState(user?.mainLanguage || 'undefined');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Fetch only current user's judges
   const { judges: userJudges, loading: historyLoading } = useJudges(true);
 
-  // useJudges hook check
-  // Actually, useJudges is in @hooks
-  // Let me fix imports
-
   useEffect(() => {
     if (user) {
+      setName(user.name || '');
+      setProfileImage(user.profileImage || '');
       setDepartment(user.department || '');
       setMainLanguage(user.mainLanguage || 'undefined');
     }
@@ -35,6 +37,8 @@ const MyPage = () => {
     try {
       setIsSaving(true);
       await authApi.updateAuthInfo({
+        name: name || null,
+        profileImage: profileImage || null,
         department: department || null,
         mainLanguage: mainLanguage === 'undefined' ? null : mainLanguage,
       });
@@ -53,6 +57,41 @@ const MyPage = () => {
       showAlert('error', '저장에 실패했습니다.');
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showAlert('error', '파일 크기는 5MB를 초과할 수 없습니다.');
+      return;
+    }
+
+    try {
+      setIsUploading(true);
+      const extension = file.name.split('.').pop();
+      const objectName = `profiles/${user?.email}_${Date.now()}.${extension}`;
+      
+      // 1. Generate PAR
+      const res = await fileApi.generatePAR({ objectName });
+      
+      // 2. Upload file to OCI
+      await fetch(res.url, {
+        method: 'PUT',
+        body: file,
+      });
+
+      // 3. Construct final URL
+      const finalUrl = `https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axujpj9ptdme/b/test-leita-bucket/o/${objectName}`;
+      setProfileImage(finalUrl);
+      showAlert('success', '프로필 이미지가 업로드되었습니다. 저장 버튼을 눌러 확정하세요.');
+    } catch (error) {
+      Logger.error('Profile image upload failed', error);
+      showAlert('error', '이미지 업로드에 실패했습니다.');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -94,7 +133,7 @@ const MyPage = () => {
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">
       <Header />
 
-      <main className="flex-grow w-full max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-20">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-20">
         <div className="flex flex-col gap-10">
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-black text-white tracking-tight">마이페이지</h1>
@@ -105,14 +144,36 @@ const MyPage = () => {
           <div className="bg-white/5 border border-white/10 rounded-3xl p-8 sm:p-10 flex flex-col sm:flex-row items-center gap-10 shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#CAFE33]/5 blur-[100px] -mr-32 -mt-32 rounded-full" />
             
-            <div className="w-28 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-xl relative z-10">
-              {user.profileImage ? (
-                <img src={user.profileImage} alt="Profile" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-[#CAFE33] text-black flex items-center justify-center text-4xl font-black">
-                  {user.name.charAt(0)}
-                </div>
-              )}
+            <div className="relative group/avatar">
+              <div className="w-28 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-xl relative z-10 bg-black/20">
+                {profileImage ? (
+                  <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-[#CAFE33] text-black flex items-center justify-center text-4xl font-black">
+                    {name.charAt(0) || user.name.charAt(0)}
+                  </div>
+                )}
+                {isUploading && (
+                  <div className="absolute inset-0 bg-black/60 z-20 flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-[#CAFE33]/20 border-t-[#CAFE33] rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-0 right-0 w-10 h-10 bg-[#CAFE33] rounded-full z-30 flex items-center justify-center text-black border-4 border-[#1A1A1A] hover:scale-110 transition-transform shadow-lg"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>
+                </svg>
+              </button>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
             </div>
 
             <div className="flex flex-col gap-3 text-center sm:text-left relative z-10">
@@ -166,6 +227,17 @@ const MyPage = () => {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="flex flex-col gap-3">
+                          <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">이름</label>
+                          <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="사용자 이름"
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#CAFE33] transition-all font-semibold"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-3">
                           <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">학과 이름</label>
                           <input
                             type="text"
@@ -175,25 +247,25 @@ const MyPage = () => {
                             className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#CAFE33] transition-all font-semibold"
                           />
                         </div>
+                      </div>
 
-                        <div className="flex flex-col gap-3">
-                          <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">주 언어 (기본 설정)</label>
-                          <div className="relative">
-                            <select
-                              value={mainLanguage}
-                              onChange={(e) => setMainLanguage(e.target.value)}
-                              className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#CAFE33] transition-all font-semibold appearance-none cursor-pointer"
-                            >
-                              <option value="undefined">선택 안 함</option>
-                              {languages.map((lang) => (
-                                <option key={lang.value} value={lang.value}>
-                                  {lang.label}
-                                </option>
-                              ))}
-                            </select>
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                              ▼
-                            </div>
+                      <div className="flex flex-col gap-3">
+                        <label className="text-sm font-bold text-gray-400 uppercase tracking-widest">주 언어 (기본 설정)</label>
+                        <div className="relative">
+                          <select
+                            value={mainLanguage}
+                            onChange={(e) => setMainLanguage(e.target.value)}
+                            className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-[#CAFE33] transition-all font-semibold appearance-none cursor-pointer"
+                          >
+                            <option value="undefined">선택 안 함</option>
+                            {languages.map((lang) => (
+                              <option key={lang.value} value={lang.value}>
+                                {lang.label}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                            ▼
                           </div>
                         </div>
                       </div>
@@ -305,17 +377,17 @@ const MyPage = () => {
                               </td>
                               <td className="px-6 py-5">
                                 <span className="text-sm font-bold font-JetBrain text-gray-500 group-hover:text-white">
-                                  {judge.used.memory.toLocaleString()} <small className="text-[10px] text-gray-600">KB</small>
+                                  {formatMemory(judge.used.memory)}
                                 </span>
                               </td>
                               <td className="px-6 py-5">
                                 <span className="text-sm font-bold font-JetBrain text-gray-500 group-hover:text-white">
-                                  {judge.used.time} <small className="text-[10px] text-gray-600">ms</small>
+                                  {formatTime(judge.used.time)}
                                 </span>
                               </td>
                               <td className="px-6 py-5 text-right">
                                 <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">
-                                  {formatDateTime(judge.createdAt).split(' (')[0]}
+                                  {formatDateTime(judge.createdAt)}
                                 </span>
                               </td>
                             </tr>

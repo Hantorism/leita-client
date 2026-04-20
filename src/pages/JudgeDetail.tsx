@@ -63,7 +63,28 @@ const JudgeDetailPage = () => {
       <main className="flex-grow w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col gap-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-black">제출 상세 정보</h1>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => navigate(-1)}
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-gray-400 hover:text-[#CAFE33] hover:border-[#CAFE33]/30 hover:bg-[#CAFE33]/5 transition-all active:scale-90 group"
+                aria-label="Go Back"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="group-hover:-translate-x-0.5 transition-transform"
+                >
+                  <polyline points="15 18 9 12 15 6" />
+                </svg>
+              </button>
+              <h1 className="text-3xl font-black">제출 상세 정보</h1>
+            </div>
             <div className="flex gap-4">
                <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Result</span>
