@@ -1,4 +1,4 @@
-import type { InfoResponse, JwtResponse, OAuthRequest } from '@types';
+import type { InfoResponse, JwtResponse, OAuthRequest, UpdateInfoRequest } from '@types';
 import { AxiosInstance } from '@utils';
 
 export const authApi = {
@@ -10,5 +10,10 @@ export const authApi = {
   // POST /auth/oauth
   oauthRegister: async (data: OAuthRequest) => {
     return AxiosInstance.post<JwtResponse>(`/auth/oauth`, data);
+  },
+
+  // PATCH /auth/info
+  updateAuthInfo: async (data: UpdateInfoRequest) => {
+    return AxiosInstance.patch<InfoResponse>(`/auth/info`, data);
   },
 };

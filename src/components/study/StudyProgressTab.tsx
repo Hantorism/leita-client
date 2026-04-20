@@ -210,7 +210,7 @@ const StudyProgressDetail = ({
     if (!targetMember) return;
 
     try {
-      const res = await studySessionApi.updateMemberAttendance(Number(selectedSessionId), targetMember.userId, {
+      const res = await studySessionApi.updateMemberAttendance(Number(selectedSessionId), targetMember.memberId, {
         status: newStatus as any,
       });
       const updatedAttData = res as any;
@@ -236,7 +236,7 @@ const StudyProgressDetail = ({
     if (!targetMember) return;
 
     try {
-      const res = await studySessionApi.updateMemberAssignment(Number(selectedSessionId), targetMember.userId, {
+      const res = await studySessionApi.updateMemberAssignment(Number(selectedSessionId), targetMember.memberId, {
         status: statusMap[statusLabel] as any,
       });
       const updatedAsgData = res as any;

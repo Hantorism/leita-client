@@ -76,6 +76,7 @@ export interface AssignmentUpdateRequest {
 }
 
 export interface StudyUser {
+  memberId: number;
   userId: number;
   name: string;
   email: string;

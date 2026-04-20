@@ -5,7 +5,7 @@ import { Logger } from '@utils';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const useJudges = () => {
+export const useJudges = (userOnly: boolean = false) => {
   const [judges, setJudges] = useState<JudgeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export const useJudges = () => {
     const fetchJudges = async () => {
       try {
         setLoading(true);
-        const result = await judgeApi.getJudges();
+        const result = await judgeApi.getJudges(undefined, userOnly);
         if (isMounted) {
           const data = (result as unknown as JudgeData[]) || [];
           setJudges(data);
@@ -47,7 +47,7 @@ export const useJudges = () => {
     return () => {
       isMounted = false;
     };
-  }, [showAlert, navigate]);
+  }, [showAlert, navigate, userOnly]);
 
   return { judges, loading, error };
 };

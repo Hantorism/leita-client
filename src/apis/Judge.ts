@@ -13,8 +13,8 @@ export const judgeApi = {
   },
 
   // GET /judge
-  getJudges: async (problemId?: string) => {
-    return AxiosInstance.get<JudgeData[]>(`/judge`, { params: { problemId } });
+  getJudges: async (problemId?: string, userOnly: boolean = false) => {
+    return AxiosInstance.get<JudgeData[]>(`/judge`, { params: { problemId, userOnly } });
   },
 
   // GET /judge/{judgeId}
