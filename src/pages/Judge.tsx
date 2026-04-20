@@ -162,7 +162,7 @@ const JudgePage = () => {
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">{judge.used.language}</span>
                         <span className="w-0.5 h-0.5 rounded-full bg-gray-800"></span>
-                        <span className="text-[10px] font-bold text-gray-700">{formatDateTime(judge.createdAt).split(' (')[0]}</span>
+                        <span className="text-[10px] font-bold text-gray-400 group-hover:text-gray-200 transition-colors">{formatDateTime(judge.createdAt).split(' (')[0]}</span>
                       </div>
                     </div>
                   </div>

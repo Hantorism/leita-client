@@ -386,7 +386,7 @@ const MyPage = () => {
                                 </span>
                               </td>
                               <td className="px-6 py-5 text-right">
-                                <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">
+                                <span className="text-[11px] font-medium text-gray-400 group-hover:text-[#CAFE33] transition-colors">
                                   {formatDateTime(judge.createdAt)}
                                 </span>
                               </td>
