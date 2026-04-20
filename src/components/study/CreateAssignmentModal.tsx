@@ -1,5 +1,5 @@
 import { problemApi, studySessionApi } from '@apis';
-import { Button, Modal } from '@components';
+import { Button, Modal, Pagination } from '@components';
 import { useAlert } from '@contexts';
 import type { ProblemDetail } from '@types';
 import { Logger, type PagedResponse } from '@utils';
@@ -18,6 +18,11 @@ const CreateAssignmentModal = ({ studyId, sessionId, onClose, onSuccess }: Creat
 
   const [searchQuery, setSearchQuery] = useState('');
   const [problems, setProblems] = useState<ProblemDetail[]>([]);
+
+  // ✅ 검색어가 변경되면 1페이지로 리셋
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [searchQuery]);
   const [selectedProblems, setSelectedProblems] = useState<ProblemDetail[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -187,47 +192,12 @@ const CreateAssignmentModal = ({ studyId, sessionId, onClose, onSuccess }: Creat
 
           {/* Pagination UI */}
           {totalPages > 0 && !isSearching && problems.length > 0 && (
-            <div className="flex flex-col items-center gap-3 mt-4">
-              <div className="flex items-center gap-1.5 flex-wrap justify-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-                  disabled={currentPage === 0}
-                  className="!px-2 !py-1 text-sm text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
-                >
-                  이전
-                </Button>
-
-                {Array.from({ length: totalPages }, (_, i) => {
-                  // 현재 페이지 주변 5개만 표시하도록 로직을 짤 수 있으나, 일단 심플하게 전체 표시 (페이지가 아주 많을 경우를 대비해 처리 필요)
-                  // 여기서는 일단 유저 요청대로 1 2 3 4 형태로 렌더링
-                  const isPageActive = currentPage === i;
-                  return (
-                    <Button
-                      key={i}
-                      variant="ghost"
-                      onClick={() => setCurrentPage(i)}
-                      className={`!px-2.5 !py-1 text-sm rounded-md min-w-[28px] ${
-                        isPageActive
-                          ? '!bg-[var(--color-brand)] !text-black font-bold !opacity-100 hover:!bg-[var(--color-brand)] hover:!text-black transition-none scale-110 shadow-[0_0_10px_rgba(202,255,51,0.3)]'
-                          : 'text-gray-500 hover:text-white hover:bg-white/10 bg-transparent shadow-none border-none'
-                      }`}
-                    >
-                      {i + 1}
-                    </Button>
-                  );
-                })}
-
-                <Button
-                  variant="ghost"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
-                  disabled={currentPage >= totalPages - 1}
-                  className="!px-2 !py-1 text-sm text-gray-400 hover:text-white disabled:opacity-20 bg-transparent shadow-none border-none"
-                >
-                  다음
-                </Button>
-              </div>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+              className="mt-4"
+            />
           )}
         </div>
       </div>

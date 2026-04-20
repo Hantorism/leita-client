@@ -36,6 +36,11 @@ const StudyPage = () => {
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
+  // ✅ 탭이 변경되면 1페이지로 리셋
+  useEffect(() => {
+    setPage(0);
+  }, [activeTab]);
+
   useEffect(() => {
     isMounted.current = true;
     return () => {
@@ -256,9 +261,10 @@ const StudyPage = () => {
           {/* 페이지네이션 */}
           {!loading && totalPages > 1 && (
             <Pagination
-              currentPage={page + 1}
+              currentPage={page}
               totalPages={totalPages}
-              onPageChange={(p) => setPage(p - 1)}
+              onPageChange={(p) => setPage(p)}
+              className="mt-12"
             />
           )}
         </div>

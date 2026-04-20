@@ -1,9 +1,9 @@
 import { Solved } from '@assets/images';
-import { Button, Footer, Header } from '@components';
+import { Button, Footer, Header, Pagination } from '@components';
 import { useAlert, useAuth } from '@contexts';
 import { useProblems, useJudges, useDebounce } from '@hooks';
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 const PROBLEMS_PER_PAGE = 10;
 
@@ -19,7 +19,7 @@ const ProblemsPage = () => {
   // 커스텀 훅을 사용하여 데이터 페칭 및 상태 관리
   const { problems, totalPages, loading } = useProblems(currentPage, PROBLEMS_PER_PAGE, debouncedSearchQuery, filter);
 
-  const { judges } = useJudges();
+  const { judges } = useJudges(true);
 
   // 해결한 문제 ID를 Set으로 메모이제이션 하여 성능 최적화
   const solvedProblemIds = useMemo(() => {
@@ -38,6 +38,11 @@ const ProblemsPage = () => {
       setCurrentPage(page);
     }
   };
+
+  // ✅ 검색어나 필터가 변경되면 1페이지로 리셋
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [debouncedSearchQuery, filter]);
 
   const isProblemSolved = (problemId: string | number) => {
     return solvedProblemIds.has(String(problemId));
@@ -148,11 +153,15 @@ const ProblemsPage = () => {
                       <div className="flex items-center gap-3">
                         <h2 className="text-lg font-black group-hover:text-[#CAFE33] transition-colors line-clamp-1">{problem.title || '제목 없음'}</h2>
                         {isProblemSolved(problem.problemId) && (
-                          <div className="bg-[#CAFE33]/10 p-1.5 rounded-full shrink-0">
+                          <motion.div 
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            className="bg-[#CAFE33]/10 p-1.5 rounded-full shrink-0 border border-[#CAFE33]/20"
+                          >
                             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#CAFE33" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
                               <polyline points="20 6 9 17 4 12" />
                             </svg>
-                          </div>
+                          </motion.div>
                         )}
                       </div>
                       <div className="flex flex-wrap gap-1.5">
@@ -193,21 +202,12 @@ const ProblemsPage = () => {
 
           {/* Pagination */}
           {!loading && totalPages > 1 && (
-            <div className="flex justify-center items-center gap-4 mt-12">
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => handlePageChange(i)}
-                  className={`w-14 h-14 rounded-3xl font-black font-JetBrain text-lg transition-all duration-300 ${
-                    currentPage === i
-                      ? 'bg-[#CAFE33] text-black shadow-[0_10px_30px_-5px_rgba(202,254,51,0.3)]'
-                      : 'bg-white/5 text-gray-600 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => handlePageChange(page)}
+              className="mt-12"
+            />
           )}
         </div>
       </main>

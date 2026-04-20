@@ -1,66 +1,27 @@
-import { Button, Footer, Header } from '@components';
+import { Button, Footer, Header, Pagination } from '@components';
 import { useAlert } from '@contexts';
 import { useJudges } from '@hooks';
 import { formatCodeSize, formatMemory, formatTime } from '@utils';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const ITEMS_PER_PAGE = 15;
 
-const getResultBadge = (result: string) => {
-  switch (result) {
-    case 'CORRECT':
-      return (
-        <span className="bg-green-500/10 text-green-400 border border-green-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          정답
-        </span>
-      );
-    case 'WRONG':
-      return (
-        <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          오답
-        </span>
-      );
-    case 'COMPILE_ERROR':
-      return (
-        <span className="bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          컴파일 에러
-        </span>
-      );
-    case 'RUNTIME_ERROR':
-      return (
-        <span className="bg-orange-500/10 text-orange-400 border border-orange-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          런타임 에러
-        </span>
-      );
-    case 'TIME_OUT':
-      return (
-        <span className="bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          시간 초과
-        </span>
-      );
-    case 'MEMORY_OUT':
-      return (
-        <span className="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          메모리 초과
-        </span>
-      );
-    default:
-      return (
-        <span className="bg-gray-500/10 text-gray-400 border border-gray-500/20 px-2.5 py-1.5 rounded-md text-sm font-bold inline-block min-w-[70px] text-center">
-          {result}
-        </span>
-      );
-  }
-};
-
 const JudgePage = () => {
-  const { judges: allJudges, loading, error } = useJudges();
-  const [currentPage, setCurrentPage] = useState(1);
+  const { judges: allJudges, loading, error } = useJudges(false);
+  const [currentPage, setCurrentPage] = useState(0); // 0-indexed
   const [filter, setFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  // 이메일 마스킹 처리 (abc***@ajou.ac.kr)
+  const maskEmail = (email?: string) => {
+    if (!email) return '알 수 없음';
+    const [localPart, domain] = email.split('@');
+    if (localPart.length <= 3) return `${localPart}***@${domain}`;
+    return `${localPart.substring(0, 3)}***@${domain}`;
+  };
 
   // 필터링 및 검색 로직 (Memoization)
   const filteredJudges = useMemo(() => {
@@ -89,13 +50,13 @@ const JudgePage = () => {
   const totalPages = Math.ceil(filteredJudges.length / ITEMS_PER_PAGE);
 
   const paginatedJudges = useMemo(() => {
-    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    const start = currentPage * ITEMS_PER_PAGE;
     return filteredJudges.slice(start, start + ITEMS_PER_PAGE);
   }, [filteredJudges, currentPage]);
 
   // 필터나 검색어가 바뀌면 1페이지로 이동
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(0);
   }, [filter, searchQuery]);
 
   if (error) return <div className="flex items-center justify-center min-h-screen text-red-500 font-bold">{error}</div>;
@@ -184,20 +145,22 @@ const JudgePage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: index * 0.03 }}
                   className="group flex flex-col md:flex-row md:items-center justify-between px-6 py-4 rounded-[1.5rem] bg-white/5 border border-white/5 hover:bg-white/10 transition-all duration-300 gap-4 active:scale-[0.99] cursor-pointer"
-                  onClick={() => navigate(`/judge/${judge.id}`)}
+                  onClick={() => navigate(`/problems/${judge.problemId}`)}
                 >
                   <div className="flex items-center gap-6">
                     <div className="flex-shrink-0 min-w-[4rem] px-3 h-12 rounded-xl bg-white/5 flex items-center justify-center text-lg font-black text-gray-500 font-JetBrain group-hover:bg-white/10 group-hover:text-[#CAFE33] transition-all duration-300">
                       #{judge.problemId}
                     </div>
                     <div className="flex flex-col gap-0.5">
-                      <div className={`text-xl sm:text-2xl font-black tracking-tighter italic uppercase ${judge.result === 'CORRECT' ? 'text-[#CAFE33]' : 'text-red-500'}`}>
-                        {judge.result}
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-black text-[#CAFE33]">{maskEmail(judge.user?.email)}</span>
+                        <span className="w-0.5 h-0.5 rounded-full bg-gray-800"></span>
+                        <span className={`text-xs font-bold ${judge.result === 'CORRECT' ? 'text-green-400' : 'text-red-400'}`}>
+                          {judge.result}
+                        </span>
                       </div>
                       <div className="flex items-center gap-2">
                          <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">{judge.used.language}</span>
-                         <span className="w-0.5 h-0.5 rounded-full bg-gray-800"></span>
-                         <span className="text-[10px] font-bold text-gray-600 font-JetBrain">{judge.sizeOfCode} Bytes</span>
                       </div>
                     </div>
                   </div>
@@ -205,13 +168,13 @@ const JudgePage = () => {
                   <div className="grid grid-cols-2 md:flex items-center gap-8 border-t md:border-t-0 border-white/5 pt-3 md:pt-0">
                     <div className="flex flex-col items-start md:items-end">
                       <span className="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-0.5">Memory</span>
-                      <span className="text-lg font-black text-gray-500 font-JetBrain group-hover:text-white transition-colors">
+                      <span className="text-base font-black text-gray-500 font-JetBrain group-hover:text-white transition-colors">
                         {judge.used.memory.toLocaleString()} <span className="text-[10px] font-normal text-gray-700">KB</span>
                       </span>
                     </div>
                     <div className="flex flex-col items-start md:items-end">
                       <span className="text-[10px] font-black text-gray-700 uppercase tracking-widest mb-0.5">Time</span>
-                      <span className="text-lg font-black text-gray-500 font-JetBrain group-hover:text-white transition-colors">
+                      <span className="text-base font-black text-gray-500 font-JetBrain group-hover:text-white transition-colors">
                         {judge.used.time} <span className="text-[10px] font-normal text-gray-700">ms</span>
                       </span>
                     </div>
@@ -231,29 +194,12 @@ const JudgePage = () => {
 
           {/* Pagination */}
           {!loading && totalPages > 1 && (
-            <div className="w-full flex justify-center items-center gap-4 mt-12">
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                variant="ghost"
-                className="px-8 py-4 text-gray-600 font-black hover:bg-white/10 hover:text-white disabled:opacity-30 rounded-2xl"
-              >
-                이전
-              </Button>
-
-              <div className="px-8 py-4 text-white font-black font-JetBrain bg-white/5 rounded-2xl border border-white/5">
-                {currentPage} <span className="text-gray-700 font-normal mx-2">/</span> {totalPages}
-              </div>
-
-              <Button
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                variant="ghost"
-                className="px-8 py-4 text-gray-600 font-black hover:bg-white/10 hover:text-white disabled:opacity-30 rounded-2xl"
-              >
-                다음
-              </Button>
-            </div>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => setCurrentPage(page)}
+              className="mt-12"
+            />
           )}
         </div>
       </main>
