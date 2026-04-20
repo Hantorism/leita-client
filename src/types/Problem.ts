@@ -1,3 +1,5 @@
+export type PopularPeriod = 'ALL' | 'WEEK' | 'MONTH';
+
 export interface ProblemDescription {
   problem: string;
   input: string;

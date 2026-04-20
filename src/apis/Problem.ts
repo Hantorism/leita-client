@@ -1,16 +1,24 @@
-import type { CreateProblemRequest, CreateProblemResponse, DeleteProblemResponse, ProblemDetail } from '@types';
+import type { CreateProblemRequest, CreateProblemResponse, DeleteProblemResponse, PopularPeriod, ProblemDetail } from '@types';
 import { AxiosInstance, type PagedResponse } from '@utils';
 
 export const problemApi = {
   // GET /problem
-  getProblems: async (page = 0, size = 10, search?: string, filter?: 'SOLVED' | 'UNSOLVED') => {
+  getProblems: async (page: number, size: number, search?: string, filter?: string) => {
     return AxiosInstance.get<PagedResponse<ProblemDetail>>(`/problem`, {
       params: { page, size, search, filter },
     });
   },
 
+  // GET /problem/popular
+  getPopularProblems: async (period: PopularPeriod = 'ALL', limit: number = 10) => {
+    return AxiosInstance.get<ProblemDetail[]>(`/problem/popular`, {
+      params: { period, limit },
+    });
+  },
+
   // POST /problem
   createProblem: async (data: CreateProblemRequest) => {
+
     return AxiosInstance.post<CreateProblemResponse>(`/problem`, data);
   },
 
