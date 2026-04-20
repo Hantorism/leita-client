@@ -3,7 +3,7 @@ import { CustomDropdown } from '@components';
 import { useAlert } from '@contexts';
 import MonacoEditor, { type Monaco } from '@monaco-editor/react';
 import type { JudgeLanguage } from '@types';
-import { DecodeBase64, Logger } from '@utils';
+import { AuthStorage, DecodeBase64, Logger } from '@utils';
 import type * as monacoEditor from 'monaco-editor';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -54,7 +54,10 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   const resizeHandlerRef = useRef<HTMLDivElement>(null);
   const [isSubmitMode, setIsSubmitMode] = useState(false);
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('selectedLanguage') || 'undefined';
+    const saved = localStorage.getItem('selectedLanguage');
+    if (saved && saved !== 'undefined') return saved;
+    const user = AuthStorage.getUser();
+    return user?.mainLanguage?.toLowerCase() || 'undefined';
   });
   const [isSaved, setIsSaved] = useState(false);
 

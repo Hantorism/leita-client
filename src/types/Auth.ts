@@ -4,11 +4,20 @@ export interface InfoResponse {
   email: string;
   name: string;
   role: SecurityRole;
+  profileImage: string | null;
+  mainLanguage: string | null;
+  department: string | null;
+  isGithubLinked: boolean;
+  githubUserName: string | null;
 }
 
 export interface JwtResponse {
   accessToken: string;
-  refreshToken: string;
+}
+
+export interface UpdateInfoRequest {
+  mainLanguage: string | null;
+  department: string | null;
 }
 
 export interface OAuthRequest {

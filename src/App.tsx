@@ -16,7 +16,9 @@ const SourcePage = React.lazy(() => import('@pages/Source'));
 const CreateProblemPage = React.lazy(() => import('@pages/CreateProblem'));
 const StudyPage = React.lazy(() => import('@pages/Study'));
 const StudyDetailPage = React.lazy(() => import('@pages/StudyDetail'));
-const StudySessionDetailPage = React.lazy(() => import('@pages/StudySessionDetail'));
+const StudySessionDetailPage = React.lazy(() => import('./pages/StudySessionDetail'));
+const MyPage = React.lazy(() => import('./pages/MyPage'));
+
 
 const clientId = Environment.GOOGLE_AUTH_CLIENT_ID;
 
@@ -76,6 +78,10 @@ const App = () => {
             <Route
               path="/study/:id/session/:sessionId"
               element={<PrivateRoute element={<StudySessionDetailPage />} />}
+            />
+            <Route
+              path="/mypage"
+              element={<PrivateRoute element={<MyPage />} />}
             />
           </Routes>
         </Suspense>

@@ -9,6 +9,7 @@ interface AuthContextType {
   login: (accessToken: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  fetchUserInfo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -91,8 +92,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       login,
       logout,
       isAuthenticated: !!user,
+      fetchUserInfo,
     }),
-    [user, loading, login, logout],
+    [user, loading, login, logout, fetchUserInfo],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
