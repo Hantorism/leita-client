@@ -1,7 +1,7 @@
 import { Button, Footer, Header, Pagination } from '@components';
 import { useAlert } from '@contexts';
 import { useJudges } from '@hooks';
-import { formatCodeSize, formatMemory, formatTime } from '@utils';
+import { formatCodeSize, formatMemory, formatTime, formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -160,7 +160,9 @@ const JudgePage = () => {
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                         <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">{judge.used.language}</span>
+                        <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">{judge.used.language}</span>
+                        <span className="w-0.5 h-0.5 rounded-full bg-gray-800"></span>
+                        <span className="text-[10px] font-bold text-gray-700">{formatDateTime(judge.createdAt).split(' (')[0]}</span>
                       </div>
                     </div>
                   </div>

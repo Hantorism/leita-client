@@ -2,7 +2,7 @@ import { authApi, gitApi } from '@apis';
 import { Button, Footer, Header } from '@components';
 import { useAlert, useAuth } from '@contexts';
 import { useJudges, useDebounce } from '@hooks';
-import { Logger, formatCodeSize, formatMemory, formatTime } from '@utils';
+import { Logger, formatCodeSize, formatMemory, formatTime, formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -280,6 +280,7 @@ const MyPage = () => {
                             <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-widest">결과</th>
                             <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-widest">메모리</th>
                             <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-widest">시간</th>
+                            <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-widest text-right">제출 일시</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -310,6 +311,11 @@ const MyPage = () => {
                               <td className="px-6 py-5">
                                 <span className="text-sm font-bold font-JetBrain text-gray-500 group-hover:text-white">
                                   {judge.used.time} <small className="text-[10px] text-gray-600">ms</small>
+                                </span>
+                              </td>
+                              <td className="px-6 py-5 text-right">
+                                <span className="text-[11px] font-medium text-gray-600 group-hover:text-gray-400 transition-colors">
+                                  {formatDateTime(judge.createdAt).split(' (')[0]}
                                 </span>
                               </td>
                             </tr>
