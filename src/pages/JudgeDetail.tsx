@@ -21,7 +21,7 @@ const JudgeDetailPage = () => {
       try {
         setLoading(true);
         const res = await judgeApi.getJudgeDetail(Number(judgeId));
-        const data = res.data as unknown as JudgeData;
+        const data = res as unknown as JudgeData;
         setJudge(data);
 
         if (data.codeUrl) {
