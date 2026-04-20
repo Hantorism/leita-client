@@ -97,7 +97,7 @@ const HomePage = () => {
           </div>
         </section>
 
-        <div className="pl-[10%] pr-[10%] w-full text-left">
+        <div className="w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 text-left pb-20">
           <PopularProblems />
         </div>
       </main>
