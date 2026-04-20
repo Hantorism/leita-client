@@ -83,9 +83,8 @@ const MyPage = () => {
         body: file,
       });
 
-      // 3. Construct final URL
-      const finalUrl = `https://objectstorage.ap-chuncheon-1.oraclecloud.com/n/axujpj9ptdme/b/test-leita-bucket/o/${objectName}`;
-      setProfileImage(finalUrl);
+      // 3. Use final URL from backend
+      setProfileImage(res.finalUrl);
       showAlert('success', '프로필 이미지가 업로드되었습니다. 저장 버튼을 눌러 확정하세요.');
     } catch (error) {
       Logger.error('Profile image upload failed', error);

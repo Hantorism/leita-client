@@ -4,4 +4,5 @@ export interface GeneratePARRequest {
 
 export interface GeneratePARResponse {
   url: string;
+  finalUrl: string;
 }
