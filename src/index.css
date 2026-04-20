@@ -43,7 +43,6 @@ html,
 body {
   overflow-x: auto;
   overflow-y: auto;
-  min-width: 560px;
   font-family: var(--font-main);
 }
 
@@ -200,7 +199,6 @@ body,
 html {
   background-color: var(--color-bg-main);
   color: var(--color-text-primary);
-  min-width: 560px;
 }
 
 .App {
