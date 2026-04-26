@@ -18,7 +18,7 @@ import type {
   StudySession,
   StudySessionDetail,
 } from '@types';
-import { formatDateTime, getCurrentUserEmail, Logger, type PagedResponse } from '@utils';
+import { formatDateTime, getCurrentUserEmail, Logger, type PagedResponse, extractErrorMessage } from '@utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -30,9 +30,7 @@ const StudySessionDetailPage = () => {
 
   const [study, setStudy] = useState<Study | null>(null);
   const [session, setSession] = useState<StudySessionDetail | null>(null);
-  const [attendanceDetail, setAttendanceDetail] = useState<AttendanceCheck | null>(null);
   const [memberAssignments, setMemberAssignments] = useState<StudyMemberAssignment[]>([]);
-  const [memberAttendances, setMemberAttendances] = useState<StudyMemberAttendance[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isMember, setIsMember] = useState(false);
@@ -51,15 +49,12 @@ const StudySessionDetailPage = () => {
     if (!id || !sessionId) return;
     setLoading(true);
     try {
-      const [studyRes, sessionRes, sessionsRes, assignmentsRes, attendancesRes, attendanceDetailRes] =
-        await Promise.all([
-          studyApi.getStudy(Number(id)),
-          studySessionApi.getStudySession(Number(sessionId)),
-          studySessionApi.getStudySessions(Number(id)),
-          studyApi.getMemberAssignment(Number(id), Number(sessionId)),
-          studyApi.getMemberAttendance(Number(id), Number(sessionId)),
-          studySessionApi.getAttendance(Number(sessionId)).catch(() => null),
-        ]);
+      const [studyRes, sessionRes, sessionsRes, assignmentsRes] = await Promise.all([
+        studyApi.getStudy(Number(id)),
+        studySessionApi.getStudySession(Number(sessionId)),
+        studySessionApi.getStudySessions(Number(id)),
+        studyApi.getMemberAssignment(Number(id), Number(sessionId)),
+      ]);
 
       if (!isMounted.current) return;
 
@@ -71,13 +66,6 @@ const StudySessionDetailPage = () => {
 
       const assignmentsData = (assignmentsRes as unknown as StudyMemberAssignment[]) || [];
       setMemberAssignments(assignmentsData);
-
-      const attendancesData = (attendancesRes as unknown as StudyMemberAttendance[]) || [];
-      setMemberAttendances(attendancesData);
-
-      if (attendanceDetailRes) {
-        setAttendanceDetail(attendanceDetailRes);
-      }
 
       if (!sessionNumber) {
         const { content: allSessions } = sessionsRes as unknown as PagedResponse<StudySession>;
@@ -153,26 +141,13 @@ const StudySessionDetailPage = () => {
   const handleAttend = async () => {
     if (!session) return;
 
-    if (!session.attendance || session.attendance.status !== 'OPEN') {
-      showAlert('info', '현재 출석이 가능하지 않습니다.');
-      return;
-    }
-
-    const now = new Date();
-    const startTime = new Date(session.attendance.openTime);
-    const endTime = session.attendance.closeTime ? new Date(session.attendance.closeTime) : null;
-
-    if (now < startTime || (endTime && now > endTime)) {
-      showAlert('info', '출석 가능 시간이 아닙니다.');
-      return;
-    }
-
     try {
       await studySessionApi.attend(session.id);
       showAlert('success', '출석 처리가 완료되었습니다.');
       fetchData();
-    } catch (err) {
-      showAlert('error', '출석 처리에 실패했습니다.');
+    } catch (err: any) {
+      const msg = extractErrorMessage(err);
+      showAlert('error', msg || '출석 처리에 실패했습니다.');
     }
   };
 
@@ -261,23 +236,21 @@ const StudySessionDetailPage = () => {
 
                   {/* Right: Personal Status / Countdown */}
                   {timeLeft !== null ||
-                  memberAttendances.some(
-                    (r: StudyMemberAttendance) => r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
+                  session.attendance.records.some(
+                    (r: AttendanceRecord) => r.userEmail === currentUserEmail && r.attendedAt,
                   ) ? (
                     <div className="flex flex-col items-start w-full lg:w-auto shrink-0 font-Pretendard tabular-nums">
                       <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">
-                        {memberAttendances.some(
-                          (r: StudyMemberAttendance) =>
-                            r.user.email === currentUserEmail && r.attendances?.[0]?.attendedAt,
+                        {session.attendance.records.some(
+                          (r: AttendanceRecord) => r.userEmail === currentUserEmail && r.attendedAt,
                         )
                           ? '출석 상태'
                           : ''}
                       </span>
                       {(() => {
-                        const memberRecord = memberAttendances.find(
-                          (r: StudyMemberAttendance) => r.user.email === currentUserEmail,
+                        const myAttendance = session.attendance?.records.find(
+                          (r: AttendanceRecord) => r.userEmail === currentUserEmail,
                         );
-                        const myAttendance = memberRecord?.attendances?.[0];
 
                         // 1. 출석 한 경우
                         if (myAttendance?.attendedAt) {
@@ -331,13 +304,13 @@ const StudySessionDetailPage = () => {
                 </div>
 
                 {/* attendance order list */}
-                {attendanceDetail?.records?.some((r: any) => r.attendedAt) && (
+                {session.attendance.records.some((r: any) => r.attendedAt) && (
                   <div className="mt-10 pt-8 border-t border-gray-800/50">
                     <h4 className="text-sm font-semibold text-gray-400 mb-6 flex items-center gap-2">
                       <span className="text-base">🎖️</span> 출석 순서
                     </h4>
                     <div className="flex flex-nowrap overflow-x-auto custom-scrollbar gap-x-12 pb-6 px-1">
-                      {[...(attendanceDetail.records || [])]
+                      {[...(session.attendance.records || [])]
                         .filter((r) => {
                           if (!r.attendedAt) return false;
                           const member = study?.members.find((m) => m.userId === r.userId);

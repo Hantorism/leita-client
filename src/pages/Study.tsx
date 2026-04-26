@@ -10,11 +10,14 @@ import {
   UpdateStudyModal,
 } from '@components';
 import { useAlert, useAuth } from '@contexts';
+import { useDebounce } from '@hooks';
 import type { Study, StudyUser } from '@types';
 import { Logger, type PagedResponse, extractErrorMessage } from '@utils';
 import { motion } from 'framer-motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+const STUDY_PER_PAGE = 20;
 
 const StudyPage = () => {
   const { showAlert } = useAlert();
@@ -33,13 +36,15 @@ const StudyPage = () => {
   const [deleteTargetStudy, setDeleteTargetStudy] = useState<Study | null>(null);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'ALL' | 'MY' | 'AVAILABLE'>('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 400);
   const isMounted = useRef(true);
   const navigate = useNavigate();
 
-  // ✅ 탭이 변경되면 1페이지로 리셋
+  // ✅ 탭이나 검색어가 변경되면 1페이지로 리셋
   useEffect(() => {
     setPage(0);
-  }, [activeTab]);
+  }, [activeTab, debouncedSearchQuery]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -51,7 +56,7 @@ const StudyPage = () => {
   const fetchStudies = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await studyApi.getStudies(page, 20);
+      const result = await studyApi.getStudies(page, STUDY_PER_PAGE, debouncedSearchQuery);
       if (!isMounted.current) return;
 
       const { content, totalPages: total } = result as unknown as PagedResponse<Study>;
@@ -68,7 +73,7 @@ const StudyPage = () => {
         setLoading(false);
       }
     }
-  }, [page]);
+  }, [page, debouncedSearchQuery]);
 
   const filteredStudies = studies.filter((study) => {
     if (activeTab === 'MY') return study.isJoined;
@@ -115,19 +120,46 @@ const StudyPage = () => {
 
       <main className="flex-grow w-full max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-20">
         <div className="flex flex-col gap-10">
-          {/* 타이틀 & Create 버튼 */}
-          <div className="flex flex-row justify-between items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              <h1 className="text-4xl sm:text-5xl font-black tracking-tighter">스터디</h1>
-            </motion.div>
+          {/* 타이틀 & Search & Create 버튼 */}
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-6 flex-grow">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="shrink-0"
+              >
+                <h1 className="text-4xl sm:text-5xl font-black tracking-tighter">스터디</h1>
+              </motion.div>
+
+              {/* Compact Search Bar next to title */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="relative flex-grow max-w-md"
+              >
+                <svg
+                  className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="스터디 검색..."
+                  className="w-full pl-12 pr-6 py-3.5 rounded-2xl bg-white/5 border border-white/5 text-base text-white placeholder-gray-600 focus:outline-none focus:border-[#CAFE33]/30 transition-all font-bold"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </motion.div>
+            </div>
             <Button
               variant="primary"
               onClick={() => setShowCreateModal(true)}
-              className="rounded-2xl !px-6 !py-3.5 font-black shadow-2xl shadow-[#CAFE33]/20 active:scale-95 text-sm sm:text-base"
+              className="rounded-2xl !px-6 !py-3.5 font-black shadow-2xl shadow-[#CAFE33]/20 active:scale-95 text-sm sm:text-base shrink-0"
             >
               + 스터디 생성
             </Button>

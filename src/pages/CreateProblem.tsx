@@ -131,7 +131,25 @@ const CreateProblemPage = () => {
                 key={index}
                 className="space-y-3 mb-6 p-4 border border-gray-600 rounded-lg bg-white bg-opacity-10"
               >
-                <h3 className="text-white font-semibold mb-2">Test Case #{index + 1}</h3>
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="text-white font-semibold">Test Case #{index + 1}</h3>
+                  <div className="flex items-center gap-2">
+                    <label className="text-xs text-gray-400 font-bold uppercase tracking-wider">Show to users</label>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setTestCases([
+                          ...testCases.slice(0, index),
+                          { ...testCase, isShow: !testCase.isShow },
+                          ...testCases.slice(index + 1),
+                        ])
+                      }
+                      className={`w-10 h-5 rounded-full transition-colors relative ${testCase.isShow ? 'bg-[var(--color-brand)]' : 'bg-gray-700'}`}
+                    >
+                      <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${testCase.isShow ? 'right-1' : 'left-1'}`} />
+                    </button>
+                  </div>
+                </div>
 
                 <div>
                   <textarea

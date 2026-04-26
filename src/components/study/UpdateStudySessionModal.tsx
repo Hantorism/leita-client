@@ -41,8 +41,8 @@ const UpdateStudySessionModal = ({ session, onClose, onUpdated }: UpdateStudySes
       await studySessionApi.updateStudySession(session.id, {
         title,
         description: description || null,
-        startDateTime,
-        endDateTime,
+        startDateTime: new Date(startDateTime).toISOString(),
+        endDateTime: new Date(endDateTime).toISOString(),
       });
       showAlert('success', '세션 정보가 수정되었습니다.');
       onUpdated();

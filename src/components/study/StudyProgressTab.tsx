@@ -499,7 +499,7 @@ interface StudyProgressTabProps {
 interface SessionProgress {
   id: number;
   startDateTime: string;
-  attendanceStatus: string;
+  attendanceStatus: string | null | undefined;
   assignmentCreated: boolean;
   attendanceRecords: Record<string, string>;
   problemIds: string[];
@@ -526,93 +526,67 @@ const StudyProgressTab = ({ study }: StudyProgressTabProps) => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await studySessionApi.getStudySessions(study.id, 0, 100);
-        const data = (res as unknown as PagedResponse<StudySession>).content;
-        const sortedData = [...data].sort((a, b) => a.id - b.id);
-        setSessions(sortedData);
+        // 1. Fetch sessions, all member attendances, and all member assignments in parallel
+        const [sessionsRes, attendancesRes, assignmentsRes] = await Promise.all([
+          studySessionApi.getStudySessions(study.id, 0, 100),
+          studyApi.getMemberAttendance(study.id),
+          studyApi.getMemberAssignment(study.id),
+        ]);
 
-        let myJudges: any[] = [];
-        if (currentUserEmail) {
-          try {
-            const myJudgesRes = await judgeApi.getJudges();
-            myJudges = (myJudgesRes as unknown as any[]) || [];
-          } catch (e) {
-            Logger.error('Failed to fetch user judges for grass calculation', e);
-          }
-        }
+        const sessionsData = (sessionsRes as unknown as PagedResponse<StudySession>).content;
+        const sortedSessions = [...sessionsData].sort((a, b) => a.id - b.id);
+        setSessions(sortedSessions);
 
-        const progressData: SessionProgress[] = await Promise.all(
-          data.map(async (sec: any) => {
-            const attendanceRecords: Record<string, string> = {};
-            if (sec.attendanceStatus === 'OPEN' || sec.attendanceStatus === 'CLOSED') {
-              try {
-                const attRes = await studySessionApi.getAttendance(sec.id);
-                const records = (attRes as any).records || [];
-                records.forEach((r: any) => {
-                  attendanceRecords[r.userEmail] = r.status;
-                });
-              } catch (e) {
-                Logger.error('Failed to fetch attendance for session', sec.id);
-              }
+        const memberAttendances = attendancesRes as unknown as any[];
+        const memberAssignments = assignmentsRes as unknown as any[];
+
+        // 2. Build progress data from the bulk responses
+        const progressData: SessionProgress[] = sortedSessions.map((sec) => {
+          const attendanceRecords: Record<string, string> = {};
+          
+          // Extract attendance for this session from all members' data
+          memberAttendances.forEach((memberRecord) => {
+            const sessionAtt = memberRecord.attendances?.find((a: any) => a.sessionId === sec.id);
+            if (sessionAtt) {
+              attendanceRecords[memberRecord.user.email] = sessionAtt.status;
             }
+          });
 
-            let problemIds: string[] = [];
-            const assignmentRecords: Record<
-              string,
-              { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
-            > = {};
-            if (sec.assignmentCreated) {
-              try {
-                const asgRes = await studySessionApi.getAssignment(sec.id);
-                const asgData = asgRes as any;
-                problemIds = asgData.problems?.map((p: any) => p.problemId) || asgData.problemIds || [];
+          const assignmentRecords: Record<
+            string,
+            { solvedCount: number; totalCount: number; status: string | null; isAttemptedAll: boolean }
+          > = {};
+          
+          let problemIds: string[] = [];
 
-                // Fetch assignment status for all members in this session
-                const asigStatusRes = await studyApi.getMemberAssignment(study.id, sec.id);
-                const asigStatusData = asigStatusRes as any;
-                asigStatusData.forEach((userRecord: any) => {
-                  const asgDetail = userRecord.assignments?.[0]; // getMemberAssignment for specific session should return 1 assignment detail
-                  if (asgDetail) {
-                    let isAttemptedAll = asgDetail.isAttemptedAll;
-                    const email = userRecord.user.email;
-
-                    // 현재 사용자인 경우, judgeApi의 실제 제출/실행 데이터를 바탕으로 미시도 여부 직접 계산
-                    if (email.toLowerCase().trim() === currentUserEmail && problemIds.length > 0) {
-                      const attemptedIds = new Set();
-                      problemIds.forEach((pid: string) => {
-                        if (myJudges.some((j: any) => j.problemId === pid)) {
-                          attemptedIds.add(pid);
-                        }
-                      });
-                      isAttemptedAll = attemptedIds.size === problemIds.length;
-                    }
-
-                    assignmentRecords[email] = {
-                      solvedCount: asgDetail.solvedCount,
-                      totalCount: asgDetail.totalCount,
-                      status: asgDetail.status,
-                      isAttemptedAll: isAttemptedAll,
-                    };
-                  }
-                });
-              } catch (e) {
-                Logger.error('Failed to fetch assignment for session', sec.id);
+          // Extract assignment for this session from all members' data
+          memberAssignments.forEach((memberRecord) => {
+            const sessionAsg = memberRecord.assignments?.find((a: any) => a.sessionId === sec.id);
+            if (sessionAsg) {
+              if (problemIds.length === 0 && sessionAsg.problems) {
+                problemIds = sessionAsg.problems.map((p: any) => p.problemId);
               }
+              
+              assignmentRecords[memberRecord.user.email] = {
+                solvedCount: sessionAsg.solvedCount,
+                totalCount: sessionAsg.totalCount,
+                status: sessionAsg.status,
+                isAttemptedAll: sessionAsg.problems?.every((p: any) => p.result !== null) || false,
+              };
             }
+          });
 
-            return {
-              id: sec.id,
-              startDateTime: sec.startDateTime,
-              attendanceStatus: sec.attendanceStatus,
-              assignmentCreated: sec.assignmentCreated,
-              attendanceRecords,
-              problemIds,
-              assignmentRecords,
-            };
-          }),
-        );
+          return {
+            id: sec.id,
+            startDateTime: sec.startDateTime,
+            attendanceStatus: sec.attendanceStatus,
+            assignmentCreated: !!sec.assignmentCreated,
+            attendanceRecords,
+            problemIds,
+            assignmentRecords,
+          };
+        });
 
-        progressData.sort((a, b) => a.id - b.id);
         setSessionsProgress(progressData);
       } catch (err) {
         Logger.error('Failed to fetch study progress', err);

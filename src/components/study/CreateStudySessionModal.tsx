@@ -39,8 +39,8 @@ const CreateStudySessionModal = ({ studyId, onClose, onCreated }: CreateStudySes
         studyId,
         title,
         description: description || null,
-        startDateTime,
-        endDateTime,
+        startDateTime: new Date(startDateTime).toISOString(),
+        endDateTime: new Date(endDateTime).toISOString(),
       });
       showAlert('success', '세션이 성공적으로 생성되었습니다.');
       onCreated();

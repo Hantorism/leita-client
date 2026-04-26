@@ -52,7 +52,7 @@ export const useAssignmentProgress = (problemIds: string[]): AssignmentProgress 
 
         // 2. 사용자의 풀이 현황 조회 및 상태 주입
         // 추후 getMemberAssignment api로 수정 예정
-        const judgeRes = await judgeApi.getJudges();
+        const judgeRes = await judgeApi.getJudges(undefined, true);
         const myJudges = (judgeRes as unknown as any[]) || [];
 
         let solvedCount = 0;

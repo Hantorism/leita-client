@@ -12,8 +12,8 @@ import { AxiosInstance, type PagedResponse } from '@utils';
 
 export const studyApi = {
   // GET /study
-  getStudies: async (page = 0, size = 10) => {
-    return AxiosInstance.get<PagedResponse<Study>>(`/study`, { params: { page, size } });
+  getStudies: async (page = 0, size = 10, search?: string) => {
+    return AxiosInstance.get<PagedResponse<Study>>(`/study`, { params: { page, size, search } });
   },
 
   // POST /study
