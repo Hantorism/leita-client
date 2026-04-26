@@ -1,4 +1,4 @@
-import type { JudgeResultType } from './Judge';
+import type { JudgeResult } from './Judge';
 
 export type StudyMemberRole = 'ADMIN' | 'MEMBER' | 'PENDING';
 export type AttendanceStatus = 'OPEN' | 'CLOSED';
@@ -159,7 +159,7 @@ export interface AssignmentResponse {
 export interface AssignmentProblemStatus {
   problemId: string;
   title: string;
-  result: JudgeResultType | null;
+  result: JudgeResult | null;
 }
 
 export interface AssignmentDetailResponse {

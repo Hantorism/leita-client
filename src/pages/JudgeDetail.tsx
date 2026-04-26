@@ -37,7 +37,7 @@ const JudgeDetailPage = () => {
   }, [fetchUserInfo]);
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: any;
 
     const fetchDetail = async () => {
       if (!judgeId) return;
