@@ -1,8 +1,9 @@
-import { Footer, Header } from '@components';
-import { useAlert } from '@contexts';
+import { Footer, Header, CommitModal } from '@components';
+import { useAlert, useAuth } from '@contexts';
 import { judgeApi } from '@apis';
 import type { JudgeData } from '@types';
 import { DecodeBase64, Logger, formatMemory, formatTime } from '@utils';
+import { Icon } from '@iconify/react';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import MonacoEditor from '@monaco-editor/react';
@@ -12,7 +13,9 @@ const JudgeDetailPage = () => {
   const [judge, setJudge] = useState<JudgeData | null>(null);
   const [code, setCode] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [isCommitModalOpen, setIsCommitModalOpen] = useState(false);
   const { showAlert } = useAlert();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -85,7 +88,17 @@ const JudgeDetailPage = () => {
               </button>
               <h1 className="text-3xl font-black">제출 상세 정보</h1>
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
+               {judge.result === 'CORRECT' && user?.isGithubLinked && (
+                 <button
+                   onClick={() => setIsCommitModalOpen(true)}
+                   className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:border-[#CAFE33]/50 hover:bg-[#CAFE33]/5 text-gray-300 hover:text-[#CAFE33] transition-all rounded-xl group"
+                   type="button"
+                 >
+                   <Icon icon="mdi:github" className="w-5 h-5" />
+                   <span className="text-sm font-bold">GitHub에 커밋</span>
+                 </button>
+               )}
                <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Result</span>
                   <span className={`text-xl font-black ${judge.result === 'CORRECT' ? 'text-[#CAFE33]' : 'text-red-500'}`}>
@@ -137,6 +150,14 @@ const JudgeDetailPage = () => {
         </div>
       </main>
       <Footer />
+
+      {judge && (
+        <CommitModal
+          isOpen={isCommitModalOpen}
+          onClose={() => setIsCommitModalOpen(false)}
+          judge={judge}
+        />
+      )}
     </div>
   );
 };
