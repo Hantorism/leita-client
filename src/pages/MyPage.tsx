@@ -2,7 +2,7 @@ import { authApi, fileApi, gitApi } from '@apis';
 import { Button, Footer, Header } from '@components';
 import { useAlert, useAuth } from '@contexts';
 import { useJudges } from '@hooks';
-import { Logger, formatMemory, formatTime, formatDateTime } from '@utils';
+import { Logger, formatMemory, formatTime, formatDateTime, compressImage } from '@utils';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -61,16 +61,15 @@ const MyPage = () => {
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      showAlert('error', '파일 크기는 5MB를 초과할 수 없습니다.');
-      return;
-    }
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     try {
       setIsUploading(true);
+
+      const oneMB = 1024 * 1024;
+      const file = rawFile.size > oneMB ? await compressImage(rawFile) : rawFile;
+
       const extension = file.name.split('.').pop();
       const objectName = `profiles/${user?.email}_${Date.now()}.${extension}`;
       

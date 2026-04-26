@@ -1,8 +1,7 @@
 import { Modal } from '@components';
 import { useAlert } from '@contexts';
 import { Icon } from '@iconify/react';
-import { Logger } from '@utils';
-import imageCompression from 'browser-image-compression';
+import { Logger, compressImage } from '@utils';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
 interface ImageModalProps {
@@ -28,14 +27,6 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
 
   if (!isOpen) return null;
 
-  const compressFile = async (file: File): Promise<File> => {
-    const options = {
-      maxSizeMB: 1,
-      useWebWorker: true,
-    };
-    return await imageCompression(file, options);
-  };
-
   const handleFileSelect = async (event: ChangeEvent<HTMLInputElement>) => {
     const rawFile = event.target.files?.[0];
     if (!rawFile) return;
@@ -49,7 +40,7 @@ const ImageModal = ({ isOpen, onClose, onInsert }: ImageModalProps) => {
     setIsCompressing(true);
     try {
       const oneMB = 1024 * 1024;
-      const file = rawFile.size > oneMB ? await compressFile(rawFile) : rawFile;
+      const file = rawFile.size > oneMB ? await compressImage(rawFile) : rawFile;
 
       setSelectedFile(file);
 

@@ -4,6 +4,7 @@ export * from './Base64';
 export * from './Date';
 export * from './Environment';
 export * from './Formatter';
+export * from './Image';
 export * from './Logger';
 export * from './Profile';
 export * from './Study';
