@@ -43,20 +43,24 @@ const StudyDetailPage = () => {
   const fetchStudy = useCallback(async () => {
     if (!id) return;
     try {
-      const result = await studyApi.getStudy(Number(id));
+      const [studyRes, roleRes] = await Promise.all([
+        studyApi.getStudy(Number(id)),
+        studyApi.getMyRole(Number(id))
+      ]);
+      
       if (!isMounted.current) return;
 
-      const studyData = result as unknown as Study;
+      const studyData = studyRes as unknown as Study;
       setStudy(studyData);
       document.title = `${studyData.title} | Leita`;
 
-      const userEmail = getCurrentUserEmail();
+      const role = roleRes as unknown as any;
+      setIsAdmin(role.role === 'ADMIN');
+      setIsMember(role.role === 'MEMBER');
 
+      const userEmail = getCurrentUserEmail();
       if (userEmail) {
         setCurrentUserEmail(userEmail);
-        const me = studyData.members?.find((m: StudyUser) => m.email.toLowerCase().trim() === userEmail);
-        setIsAdmin(me?.role === 'ADMIN');
-        setIsMember(me?.role === 'MEMBER');
       }
     } catch (err) {
       Logger.error('스터디 정보를 불러오는 데 실패했습니다:', err);
@@ -152,6 +156,7 @@ const StudyDetailPage = () => {
                 study={study}
                 isAdmin={isAdmin}
                 currentUserEmail={currentUserEmail}
+                onRequirementUpdated={fetchStudy}
               />
             )}
           </div>

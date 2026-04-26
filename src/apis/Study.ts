@@ -1,9 +1,11 @@
 import type {
   Study,
+  StudyCompletionResponse,
   StudyCreateRequest,
   StudyCreateResponse,
   StudyMemberAssignment,
   StudyMemberAttendance,
+  StudyMemberRole,
   StudyMemberStatus,
   StudyUpdateRequest,
   StudyUser,
@@ -80,5 +82,15 @@ export const studyApi = {
     return AxiosInstance.get<StudyMemberAssignment[]>(`/study/${id}/members/assignment`, {
       params: { studySessionId, memberId },
     });
+  },
+
+  // GET /study/{id}/my-role
+  getMyRole: async (id: number) => {
+    return AxiosInstance.get<StudyMemberRole>(`/study/${id}/my-role`);
+  },
+
+  // GET /study/{id}/completion
+  getCompletionStatus: async (id: number) => {
+    return AxiosInstance.get<StudyCompletionResponse>(`/study/${id}/completion`);
   },
 };

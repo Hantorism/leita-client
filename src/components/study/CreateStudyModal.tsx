@@ -18,7 +18,7 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
   const [endDate, setEndDate] = useState('');
 
   const handleSubmit = async () => {
-    if (!title.trim() || !description.trim() || !requirement.trim() || !startDate || !endDate) {
+    if (!title.trim() || !description.trim() || !startDate || !endDate) {
       showAlert('info', '모든 필드를 입력해주세요.');
       return;
     }
@@ -28,7 +28,7 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
       return;
     }
 
-    const payload = { title, description, requirement, startDate, endDate };
+    const payload = { title, description, requirement: requirement || null, startDate, endDate };
 
     try {
       await studyApi.createStudy(payload);
@@ -73,10 +73,10 @@ const CreateStudyModal = ({ onClose, onCreated }: CreateStudyModalProps) => {
         </div>
 
         <div>
-          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">모집 조건</label>
+          <label className="block text-sm font-bold text-gray-500 uppercase tracking-wider mb-2">수료 조건 (선택)</label>
           <input
             className="w-full px-4 py-2.5 bg-[var(--color-bg-surface)] border border-gray-700/50 rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-[var(--color-brand)]/50 transition"
-            placeholder="예: C언어 경험자"
+            placeholder="예: 출석 80%, 과제 80%"
             value={requirement}
             onChange={(e) => setRequirement(e.target.value)}
           />

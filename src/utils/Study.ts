@@ -44,11 +44,13 @@ export const getSessionAssignmentStatus = (solvedCount: number, totalCount: numb
 /**
  * 개별 문제의 상태(정답, 오답, 미시도)를 계산하여 UI 정보를 반환합니다.
  *
- * @param status 문제 상태 ('CORRECT', 'WRONG', 'UNATTEMPTED')
+ * @param status 문제 상태 (string | JudgeResult)
  * @returns { text: string, twColor: string, bgColor: string, borderColor: string }
  */
-export const getProblemStatusDetail = (status: 'CORRECT' | 'WRONG' | 'UNATTEMPTED') => {
-  if (status === 'CORRECT') {
+export const getProblemStatusDetail = (status: string | null | undefined) => {
+  const normalized = status?.toUpperCase();
+  
+  if (normalized === 'CORRECT') {
     return {
       text: '정답',
       twColor: 'text-[#cafe33]',
@@ -56,18 +58,20 @@ export const getProblemStatusDetail = (status: 'CORRECT' | 'WRONG' | 'UNATTEMPTE
       borderColor: 'border-[#cafe33]/30',
     };
   }
-  if (status === 'WRONG') {
+  if (!normalized || normalized === 'UNATTEMPTED' || normalized === 'NONE') {
     return {
-      text: '오답',
-      twColor: 'text-[#F87171]',
-      bgColor: 'bg-[#F87171]/10',
-      borderColor: 'border-[#F87171]/30',
+      text: '미시도',
+      twColor: 'text-gray-500',
+      bgColor: 'bg-white/5',
+      borderColor: 'border-white/5',
     };
   }
+  
+  // Anything else (WRONG, COMPILE_ERROR, etc.) is considered 'Wrong' in the context of study progress
   return {
-    text: '미시도',
-    twColor: 'text-gray-500',
-    bgColor: 'bg-white/5',
-    borderColor: 'border-white/5',
+    text: '오답',
+    twColor: 'text-[#F87171]',
+    bgColor: 'bg-[#F87171]/10',
+    borderColor: 'border-[#F87171]/30',
   };
 };

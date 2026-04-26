@@ -8,7 +8,7 @@ export type AssignmentStatusType = 'COMPLETED' | 'PARTIAL' | 'INCOMPLETE';
 export interface StudyCreateRequest {
   title: string;
   description: string;
-  requirement: string;
+  requirement: string | null;
   startDate: string;
   endDate: string;
 }
@@ -21,7 +21,7 @@ export interface StudyCreateResponse {
 export interface StudyUpdateRequest {
   title: string;
   description: string;
-  requirement: string;
+  requirement: string | null;
   startDate: string;
   endDate: string;
 }
@@ -73,6 +73,27 @@ export interface AssignmentUpdateRequest {
   problemIds: string[];
   startDateTime: string | null;
   endDateTime: string;
+}
+
+export interface StudyCompletionResponse {
+  hasRequirement: boolean;
+  requirement: string | null;
+  attendanceThreshold: number;
+  assignmentThreshold: number;
+  memberCompletions: MemberCompletionResponse[];
+}
+
+export interface MemberCompletionResponse {
+  userId: number;
+  name: string;
+  email: string;
+  attendanceCount: number;
+  totalSessions: number;
+  attendanceRate: number;
+  completedAssignments: number;
+  totalAssignments: number;
+  assignmentRate: number;
+  isCompleted: boolean;
 }
 
 export interface StudyUser {

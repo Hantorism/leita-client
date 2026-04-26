@@ -18,7 +18,14 @@ import type {
   StudySession,
   StudySessionDetail,
 } from '@types';
-import { formatDateTime, getCurrentUserEmail, Logger, type PagedResponse, extractErrorMessage } from '@utils';
+import {
+  formatDateTime,
+  getCurrentUserEmail,
+  Logger,
+  type PagedResponse,
+  extractErrorMessage,
+  getProblemStatusDetail,
+} from '@utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -49,11 +56,12 @@ const StudySessionDetailPage = () => {
     if (!id || !sessionId) return;
     setLoading(true);
     try {
-      const [studyRes, sessionRes, sessionsRes, assignmentsRes] = await Promise.all([
+      const [studyRes, sessionRes, sessionsRes, assignmentsRes, roleRes] = await Promise.all([
         studyApi.getStudy(Number(id)),
         studySessionApi.getStudySession(Number(sessionId)),
         studySessionApi.getStudySessions(Number(id)),
         studyApi.getMemberAssignment(Number(id), Number(sessionId)),
+        studyApi.getMyRole(Number(id))
       ]);
 
       if (!isMounted.current) return;
@@ -74,12 +82,13 @@ const StudySessionDetailPage = () => {
         setSessionNumber(index !== -1 ? index + 1 : null);
       }
 
+      const role = roleRes as unknown as any;
+      setIsAdmin(role.role === 'ADMIN');
+      setIsMember(role.role === 'MEMBER');
+
       const email = getCurrentUserEmail();
       if (email) {
         setCurrentUserEmail(email);
-        const memberInfo = studyData.members?.find((m) => m.email === email);
-        setIsAdmin(memberInfo?.role === 'ADMIN');
-        setIsMember(!!memberInfo);
       }
     } catch (err) {
       Logger.error('Failed to fetch session detail', err);
@@ -182,7 +191,7 @@ const StudySessionDetailPage = () => {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              {(isAdmin || isMember) && (
+              {isMember && (
                 <Button
                   size="lg"
                   onClick={handleAttend}
@@ -235,10 +244,10 @@ const StudySessionDetailPage = () => {
                   </div>
 
                   {/* Right: Personal Status / Countdown */}
-                  {timeLeft !== null ||
+                  {isMember && (timeLeft !== null ||
                   session.attendance.records.some(
                     (r: AttendanceRecord) => r.userEmail === currentUserEmail && r.attendedAt,
-                  ) ? (
+                  )) ? (
                     <div className="flex flex-col items-start w-full lg:w-auto shrink-0 font-Pretendard tabular-nums">
                       <span className="block text-sm text-gray-500 uppercase tracking-wider mb-1">
                         {session.attendance.records.some(
@@ -406,7 +415,8 @@ const StudySessionDetailPage = () => {
               <div className="bg-black/10 border border-dashed border-gray-700 rounded-xl p-12 text-center">
                 <p className="text-gray-500">등록된 과제가 없습니다.</p>
               </div>
-            ) : (
+            ) : isAdmin ? (
+              /* Admin View: Grid of all members */
               <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-cols-3 gap-5 border border-gray-800 rounded-xl p-6 bg-black/20">
                 {study?.members
                   .filter((member) => member.role !== 'ADMIN')
@@ -432,11 +442,6 @@ const StudySessionDetailPage = () => {
                             <div className="flex flex-col">
                               <div className="flex items-center gap-1.5">
                                 <span className="font-medium text-gray-200 leading-none">{member.name}</span>
-                                {member.role === 'ADMIN' && (
-                                  <span className="text-sm bg-[var(--color-brand)]/20 text-[var(--color-brand)] px-1.5 py-0.5 rounded leading-none">
-                                    Admin
-                                  </span>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -462,6 +467,50 @@ const StudySessionDetailPage = () => {
                       </div>
                     );
                   })}
+              </div>
+            ) : (
+              /* Member View: List of problems to solve */
+              <div className="flex flex-col gap-5 border border-gray-800 rounded-xl p-8 bg-black/20">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-semibold text-gray-300">포함된 문제 목록</h4>
+                  {session.assignment.status && (
+                    <div className="px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-bold">
+                      상태: <span className="text-[var(--color-brand)]">{
+                        session.assignment.status === 'COMPLETED' ? '완료' : 
+                        session.assignment.status === 'PARTIAL' ? '부분 완료' : '미완료'
+                      }</span>
+                    </div>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {session.assignment.problems.map((prob) => {
+                    const probStatus = getProblemStatusDetail(prob.result || 'UNATTEMPTED');
+                    return (
+                      <div
+                        key={prob.problemId}
+                        onClick={() => window.open(`/problems/${prob.problemId}`, '_blank')}
+                        className={`group cursor-pointer p-5 rounded-[1.5rem] border transition-all duration-300 active:scale-[0.98] flex items-center justify-between ${probStatus.bgColor} ${probStatus.borderColor} hover:border-white/30`}
+                      >
+                        <div className="flex flex-col gap-1 min-w-0">
+                          <span className="text-xs font-black text-gray-500 uppercase tracking-widest">Problem {prob.problemId}</span>
+                          <h5 className="text-lg font-black text-gray-200 group-hover:text-white transition-colors truncate">
+                            {prob.title}
+                          </h5>
+                        </div>
+                        <div className="flex items-center gap-3">
+                           <span className={`text-sm font-black uppercase tracking-tighter ${probStatus.twColor}`}>
+                            {probStatus.text}
+                          </span>
+                          <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#CAFE33] group-hover:text-black transition-all">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>
