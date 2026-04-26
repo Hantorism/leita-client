@@ -1,6 +1,7 @@
 import { Footer, Header, CommitModal } from '@components';
 import { useAlert, useAuth } from '@contexts';
-import { judgeApi } from '@apis';
+import { judgeApi, authApi } from '@apis';
+import { JudgeResult, JudgeResultMessages } from '@types';
 import type { JudgeData } from '@types';
 import { DecodeBase64, Logger, formatMemory, formatTime } from '@utils';
 import { Icon } from '@iconify/react';
@@ -14,37 +15,90 @@ const JudgeDetailPage = () => {
   const [code, setCode] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [isCommitModalOpen, setIsCommitModalOpen] = useState(false);
+  const [serverGithubLinked, setServerGithubLinked] = useState<boolean | null>(null);
   const { showAlert } = useAlert();
-  const { user } = useAuth();
+  const { user, fetchUserInfo } = useAuth();
   const navigate = useNavigate();
 
+  // 서버에 직접 유저 정보를 물어봐서 깃허브 연동 여부 확인
   useEffect(() => {
+    const checkGithubStatus = async () => {
+      try {
+        const res = await authApi.getAuthInfo();
+        setServerGithubLinked(res.isGithubLinked || !!res.githubUserName);
+        // 컨텍스트도 동기화 (다른 페이지를 위해)
+        fetchUserInfo();
+      } catch (err) {
+        Logger.error('Failed to fetch github status from server', err);
+        setServerGithubLinked(false);
+      }
+    };
+    checkGithubStatus();
+  }, [fetchUserInfo]);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
     const fetchDetail = async () => {
       if (!judgeId) return;
       try {
-        setLoading(true);
         const res = await judgeApi.getJudgeDetail(Number(judgeId));
-        const data = res as unknown as JudgeData;
-        setJudge(data);
+        // res is JudgeDetailResponse { id, result: { name, message }, ... }
+        const data = res as any;
+        
+        // 1. Result normalization: 
+        // If it's an object {name, message}, extract them.
+        // If it's a string, use it as name.
+        let resultName = '';
+        let resultMessage = '';
 
-        if (data.codeUrl) {
+        if (data.result) {
+          if (typeof data.result === 'object') {
+            resultName = data.result.name;
+            resultMessage = data.result.message;
+          } else {
+            resultName = String(data.result);
+          }
+        }
+
+        // Update state with normalized values
+        setJudge({
+          ...data,
+          result: resultName as JudgeResult,
+          resultMessage: resultMessage // Add this to local display
+        });
+
+        if (data.codeUrl && !code) {
           const codeRes = await fetch(data.codeUrl);
           const encodedCode = await codeRes.text();
           setCode(DecodeBase64(encodedCode));
+        }
+
+        // 결과가 PENDING이 아니거나 결과가 명확히 나오면 중단
+        if (resultName && resultName !== 'PENDING') {
+           clearInterval(interval);
+           setLoading(false);
         }
       } catch (err) {
         Logger.error('Failed to fetch judge detail:', err);
         showAlert('error', '제출 상세 정보를 불러오는 데 실패했습니다.');
         navigate('/judge');
-      } finally {
+        if (interval) clearInterval(interval);
         setLoading(false);
       }
     };
 
     if (judgeId) {
+      setLoading(true);
       fetchDetail();
+      interval = setInterval(fetchDetail, 2000);
     }
-  }, [judgeId, showAlert, navigate]);
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+    // Removed 'code' to prevent infinite loop
+  }, [judgeId, showAlert, navigate, user]);
 
   if (loading) {
     return (
@@ -89,7 +143,8 @@ const JudgeDetailPage = () => {
               <h1 className="text-3xl font-black">제출 상세 정보</h1>
             </div>
             <div className="flex gap-4 items-center">
-               {judge.result === 'CORRECT' && user?.isGithubLinked && (
+               {/* Use the normalized judge.result from state */}
+               {judge.result === JudgeResult.CORRECT && serverGithubLinked === true && (
                  <button
                    onClick={() => setIsCommitModalOpen(true)}
                    className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 hover:border-[#CAFE33]/50 hover:bg-[#CAFE33]/5 text-gray-300 hover:text-[#CAFE33] transition-all rounded-xl group"
@@ -101,8 +156,8 @@ const JudgeDetailPage = () => {
                )}
                <div className="flex flex-col items-end">
                   <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Result</span>
-                  <span className={`text-xl font-black ${judge.result === 'CORRECT' ? 'text-[#CAFE33]' : 'text-red-500'}`}>
-                    {judge.result}
+                  <span className={`text-xl font-black ${judge.result === JudgeResult.CORRECT ? 'text-[#CAFE33]' : 'text-red-500'}`}>
+                    {(judge as any).resultMessage || JudgeResultMessages[judge.result] || String(judge.result)}
                   </span>
                </div>
             </div>

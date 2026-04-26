@@ -121,6 +121,13 @@ const MyPage = () => {
       const res = await gitApi.getGitInstallationUrl();
       if (res && res.installationUrl) {
         window.open(res.installationUrl, '_blank');
+        
+        // Refresh user info when user focuses back to this window
+        const handleFocus = () => {
+          fetchUserInfo();
+          window.removeEventListener('focus', handleFocus);
+        };
+        window.addEventListener('focus', handleFocus);
       }
     } catch (error) {
       Logger.error('Failed to get github installation url', error);

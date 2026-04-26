@@ -1,14 +1,26 @@
 import type { ProblemTestCase } from './Problem';
 
+export enum JudgeResult {
+  CORRECT = 'CORRECT',
+  WRONG = 'WRONG',
+  COMPILE_ERROR = 'COMPILE_ERROR',
+  RUNTIME_ERROR = 'RUNTIME_ERROR',
+  TIME_OUT = 'TIME_OUT',
+  MEMORY_OUT = 'MEMORY_OUT',
+  UNKNOWN = 'UNKNOWN',
+}
+
+export const JudgeResultMessages: Record<JudgeResult, string> = {
+  [JudgeResult.CORRECT]: '맞았습니다',
+  [JudgeResult.WRONG]: '틀렸습니다',
+  [JudgeResult.COMPILE_ERROR]: '컴파일 에러',
+  [JudgeResult.RUNTIME_ERROR]: '런타임 에러',
+  [JudgeResult.TIME_OUT]: '시간 초과',
+  [JudgeResult.MEMORY_OUT]: '메모리 초과',
+  [JudgeResult.UNKNOWN]: '기타',
+};
+
 export type JudgeLanguage = 'C' | 'CPP' | 'JAVA' | 'PYTHON' | 'JAVASCRIPT' | 'GO' | 'KOTLIN' | 'SWIFT';
-export type JudgeResultType =
-  | 'CORRECT'
-  | 'WRONG'
-  | 'COMPILE_ERROR'
-  | 'RUNTIME_ERROR'
-  | 'TIME_OUT'
-  | 'MEMORY_OUT'
-  | 'UNKNOWN';
 
 export interface SubmitRequest {
   code: string;
@@ -16,7 +28,8 @@ export interface SubmitRequest {
 }
 
 export interface SubmitResponse {
-  result: JudgeResultType;
+  submitId: number;
+  result: JudgeResult;
   error: string;
 }
 
@@ -27,7 +40,7 @@ export interface RunRequest {
 }
 
 export interface RunResponse {
-  result: JudgeResultType;
+  result: JudgeResult;
   error: string;
   output: string;
 }
@@ -48,7 +61,7 @@ export interface JudgeData {
     email: string;
     profileImage?: string;
   };
-  result: JudgeResultType;
+  result: JudgeResult;
   used: {
     memory: number;
     time: number;

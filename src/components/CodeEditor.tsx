@@ -1,12 +1,14 @@
 import { judgeApi, problemApi } from '@apis';
-import { CustomDropdown } from '@components';
-import { useAlert } from '@contexts';
+import { CustomDropdown, CommitModal } from '@components';
+import { useAlert, useAuth } from '@contexts';
 import MonacoEditor, { type Monaco } from '@monaco-editor/react';
-import type { JudgeLanguage } from '@types';
+import { JudgeResult, JudgeResultMessages } from '@types';
+import type { JudgeLanguage, JudgeData } from '@types';
 import { AuthStorage, DecodeBase64, Logger } from '@utils';
 import type * as monacoEditor from 'monaco-editor';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 
 interface TestResult {
   actualOutput: string;
@@ -17,9 +19,10 @@ interface TestResult {
 interface ResultState {
   message?: string;
   isSubmit: boolean;
-  result?: string; // 제출 모드일 때의 단일 결과
-  error?: string | null; // 제출 모드일 때의 단일 에러
-  testCases?: TestResult[]; // 실행 모드일 때의 테스트 케이스 결과 배열
+  submitId?: number;
+  result?: JudgeResult; // Use Enum type strictly
+  error?: string | null;
+  testCases?: TestResult[];
 }
 
 interface CodeEditorProps {
@@ -31,9 +34,10 @@ interface CodeEditorProps {
 
 const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps) => {
   const { showAlert } = useAlert();
-  // const [language, setLanguage] = useState("undefined");
+  const { user } = useAuth();
   const [isRunningCode, setIsRunningCode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCommitModalOpen, setIsCommitModalOpen] = useState(false);
   const [autoComplete, setAutoComplete] = useState(true);
   const [result, setResult] = useState<ResultState | null>(null);
   const [cursorPosition, setCursorPosition] = useState<{ line: number; column: number }>({
@@ -197,29 +201,40 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     setResult(null);
 
     try {
-      const result = await judgeApi.submitCode(problemId, {
+      const response = await judgeApi.submitCode(problemId, {
         code: encodeBase64(code),
         language: language.toUpperCase() as JudgeLanguage,
       });
 
-      const resultData = result as any;
+      // 서버 응답이 문자열이든 객체이든 JudgeResult Enum 키값으로 변환
+      const resultKey = (typeof response.result === 'object' ? (response.result as any).name : String(response.result)) as JudgeResult;
+
       setResult({
-        message: resultData.message || '✅ 제출 성공!',
+        message: '✅ 제출 성공!',
         isSubmit: true,
-        result: resultData.result || '',
-        error: resultData.error || null,
+        submitId: response.submitId,
+        result: resultKey,
+        error: response.error || null,
       });
     } catch (error) {
       Logger.error('서버 요청 오류:', error);
       setResult({
         message: ' 서버 요청 중 오류 발생',
         isSubmit: false,
-        result: '',
         error: '서버 오류',
       });
     }
 
     setIsSubmitting(false);
+  };
+
+  const handleOpenCommitModal = () => {
+    if (!result?.submitId) {
+      showAlert('error', '제출 ID를 찾을 수 없습니다. 다시 제출해주세요.');
+      Logger.error('Missing submitId in result state:', result);
+      return;
+    }
+    setIsCommitModalOpen(true);
   };
 
   const handleRunCode = async () => {
@@ -544,10 +559,22 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           // ✅ Submit 모드일 때: 결과만 출력
           <>
             {result?.result && (
-              <div className="mt-2 p-2 bg-black rounded-md">
-                <h4 className="text-sm text-gray-400">Result</h4>
+              <div className="mt-2 p-2 bg-black rounded-md flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm text-gray-400">Result</h4>
+                  {result.result === JudgeResult.CORRECT && user?.isGithubLinked && (
+                    <button
+                      onClick={handleOpenCommitModal}
+                      className="flex items-center gap-2 px-3 py-1.5 bg-[#CAFE33]/10 border border-[#CAFE33]/20 hover:bg-[#CAFE33]/20 text-[#CAFE33] transition-all rounded-lg group text-xs font-bold"
+                      type="button"
+                    >
+                      <Icon icon="mdi:github" className="w-4 h-4" />
+                      <span>GitHub에 커밋</span>
+                    </button>
+                  )}
+                </div>
                 <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-JetBrain whitespace-pre-wrap">
-                  {result.result}
+                  {result.result ? (JudgeResultMessages[result.result] || result.result) : ''}
                 </pre>
               </div>
             )}
@@ -787,6 +814,29 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       {/*        </div>*/}
       {/*    </div>*/}
+
+      {isCommitModalOpen && result?.submitId && result.submitId > 0 && (
+        <CommitModal
+          isOpen={isCommitModalOpen}
+          onClose={() => setIsCommitModalOpen(false)}
+          judge={{
+            id: result.submitId,
+            problemId: problemId,
+            result: JudgeResult.CORRECT,
+            used: {
+              language: language,
+              memory: 0,
+              time: 0,
+            },
+            user: {
+              name: user?.name || '',
+              email: user?.email || '',
+            },
+            sizeOfCode: code.length,
+            type: 'SUBMIT',
+          }}
+        />
+      )}
     </div>
   );
 };
