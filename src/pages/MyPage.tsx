@@ -3,6 +3,7 @@ import { Button, Footer, Header } from '@components';
 import { useAlert, useAuth } from '@contexts';
 import { useJudges } from '@hooks';
 import { Logger, formatMemory, formatTime, formatDateTime, compressImage } from '@utils';
+import type { RepositoryResponse } from '@types';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +19,11 @@ const MyPage = () => {
   const [profileImage, setProfileImage] = useState(user?.profileImage || '');
   const [department, setDepartment] = useState(user?.department || '');
   const [mainLanguage, setMainLanguage] = useState(user?.mainLanguage || 'undefined');
+  const [githubRepository, setGithubRepository] = useState(user?.githubRepository || '');
+  const [repositories, setRepositories] = useState<RepositoryResponse[]>([]);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [loadingRepos, setLoadingRepos] = useState(false);
 
   // Fetch only current user's judges
   const { judges: userJudges, loading: historyLoading } = useJudges(true);
@@ -30,8 +34,26 @@ const MyPage = () => {
       setProfileImage(user.profileImage || '');
       setDepartment(user.department || '');
       setMainLanguage(user.mainLanguage || 'undefined');
+      setGithubRepository(user.githubRepository || '');
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user?.isGithubLinked) {
+      const fetchRepos = async () => {
+        try {
+          setLoadingRepos(true);
+          const res = await gitApi.getInstalledRepositories();
+          setRepositories(res as unknown as RepositoryResponse[] || []);
+        } catch (err) {
+          Logger.error('Failed to fetch repositories', err);
+        } finally {
+          setLoadingRepos(false);
+        }
+      };
+      fetchRepos();
+    }
+  }, [user?.isGithubLinked]);
 
   const handleSave = async () => {
     try {
@@ -41,6 +63,7 @@ const MyPage = () => {
         profileImage: profileImage || null,
         department: department || null,
         mainLanguage: mainLanguage === 'undefined' ? null : mainLanguage,
+        githubRepository: githubRepository || null,
       });
       await fetchUserInfo();
       
@@ -309,6 +332,31 @@ const MyPage = () => {
                           </div>
                         ) : '미연동 상태'}
                       </div>
+
+                      {user.isGithubLinked && (
+                        <div className="flex flex-col gap-2">
+                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">풀이 저장용 레포지토리</label>
+                          <div className="relative">
+                            <select
+                              value={githubRepository}
+                              onChange={(e) => setGithubRepository(e.target.value)}
+                              className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-[#CAFE33] transition-all font-semibold appearance-none cursor-pointer text-sm"
+                            >
+                              <option value="">선택 안 함</option>
+                              {repositories.map((repo) => (
+                                <option key={repo.repositoryName} value={repo.repositoryName}>
+                                  {repo.repositoryName}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                              ▼
+                            </div>
+                          </div>
+                          {loadingRepos && <p className="text-[10px] text-gray-500 animate-pulse">레포지토리 목록을 불러오는 중...</p>}
+                        </div>
+                      )}
+
                       <Button
                         variant="ghost"
                         onClick={handleLinkGithub}

@@ -9,6 +9,7 @@ export interface InfoResponse {
   department: string | null;
   isGithubLinked: boolean;
   githubUserName: string | null;
+  githubRepository: string | null;
 }
 
 export interface JwtResponse {
@@ -20,6 +21,7 @@ export interface UpdateInfoRequest {
   profileImage: string | null;
   mainLanguage: string | null;
   department: string | null;
+  githubRepository: string | null;
 }
 
 export interface OAuthRequest {

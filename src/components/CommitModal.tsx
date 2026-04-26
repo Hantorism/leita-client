@@ -1,5 +1,5 @@
 import { Button, Modal } from '@components';
-import { useAlert } from '@contexts';
+import { useAlert, useAuth } from '@contexts';
 import { gitApi, judgeApi } from '@apis';
 import type { RepositoryResponse, JudgeData } from '@types';
 import { Logger } from '@utils';
@@ -13,8 +13,9 @@ interface CommitModalProps {
 
 const CommitModal = ({ isOpen, onClose, judge }: CommitModalProps) => {
   const { showAlert } = useAlert();
+  const { user } = useAuth();
   const [repositories, setRepositories] = useState<RepositoryResponse[]>([]);
-  const [selectedRepo, setSelectedRepo] = useState<string>('');
+  const [selectedRepo, setSelectedRepo] = useState<string>(user?.githubRepository || '');
   const [commitMessage, setCommitMessage] = useState(`Solve: #${judge.problemId}`);
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +31,11 @@ const CommitModal = ({ isOpen, onClose, judge }: CommitModalProps) => {
         // RepositoryResponse is an array based on the API definition
         const repos = res as unknown as RepositoryResponse[];
         setRepositories(repos || []);
-        if (repos && repos.length > 0) {
+        
+        // If user has a default repo saved, use it. Otherwise, use first from list.
+        if (user?.githubRepository) {
+          setSelectedRepo(user.githubRepository);
+        } else if (repos && repos.length > 0) {
           setSelectedRepo(repos[0].repositoryName);
         }
       } catch (err) {
@@ -42,7 +47,7 @@ const CommitModal = ({ isOpen, onClose, judge }: CommitModalProps) => {
     };
     
     fetchRepos();
-  }, [isOpen, showAlert]);
+  }, [isOpen, showAlert, user?.githubRepository]);
 
   if (!isOpen) return null;
 
