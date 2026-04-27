@@ -15,5 +15,6 @@ export { default as Pagination } from './Pagination';
 export { default as PopularProblems } from './PopularProblems';
 export { default as PrivateRoute } from './PrivateRoute';
 export { default as ProblemDescriptionEditor } from './ProblemDescriptionEditor';
+export { default as ProblemTemplate } from './ProblemTemplate';
 
 export * from './study';

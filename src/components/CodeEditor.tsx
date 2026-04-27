@@ -829,6 +829,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
               time: 0,
             },
             user: {
+              id: 1,
               name: user?.name || '',
               email: user?.email || '',
             },

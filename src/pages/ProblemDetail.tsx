@@ -3,7 +3,7 @@ import { Logo } from '@assets/images';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
 import { DecodeBase64, Logger } from '@utils';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface TestCase {
   id?: number;
@@ -146,47 +146,14 @@ const ProblemDetailPage = () => {
       {/* Focused Mode Header */}
       <header className="h-14 flex-shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#1A1A1A] z-50">
         <div className="flex items-center gap-6">
-          <Link
-            to="/problems"
-            className="flex items-center gap-3 group"
-          >
-            <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </div>
-            <img
-              src={Logo}
-              alt="Logo"
-              className="h-5 opacity-80"
-            />
-          </Link>
-          <div className="h-4 w-px bg-white/10" />
+          <img
+            src={Logo}
+            alt="Logo"
+            className="h-5 opacity-80"
+          />
           <div className="flex items-center gap-3">
             <span className="text-gray-500 font-JetBrain text-sm font-bold">#{problem.problemId}</span>
             <h1 className="text-sm sm:text-base font-black truncate max-w-[200px] sm:max-w-md">{problem.title}</h1>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-4 text-[11px] font-black text-gray-500 uppercase tracking-widest">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#CAFE33]" />
-              Time: {problem.limit.time}ms
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#CAFE33]" />
-              Memory: {problem.limit.memory}KB
-            </div>
           </div>
         </div>
       </header>
@@ -214,28 +181,7 @@ const ProblemDetailPage = () => {
           style={{ width: window.innerWidth >= 1024 ? `${leftWidth}px` : '100%' }}
         >
           <div className="max-w-4xl mx-auto lg:mx-0">
-            <div className="flex flex-wrap gap-2 mb-8">
-              {problem.category?.map((cat, i) => (
-                <span
-                  key={i}
-                  className="px-3 py-1.5 text-xs font-black text-gray-400 bg-white/5 rounded-xl uppercase tracking-wider"
-                >
-                  {cat}
-                </span>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-6 mb-12 p-8 rounded-[2rem] bg-white/5 border border-white/5">
-              <div className="flex flex-col">
-                <span className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-2">정답률</span>
-                <span className="text-2xl font-black font-JetBrain">{problem.solved?.rate?.toFixed(1)}%</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[11px] font-black text-gray-600 uppercase tracking-widest mb-2">제출 수</span>
-                <span className="text-2xl font-black font-JetBrain">{problem.solved?.totalCount.toLocaleString()}</span>
-              </div>
-            </div>
-
+            <h1 className="text-3xl sm:text-4xl font-black mb-10">{problem.title}</h1>
             <div className="space-y-16">
               <section>
                 <h2 className="text-xl font-black mb-6 flex items-center gap-3">
@@ -331,6 +277,17 @@ const ProblemDetailPage = () => {
                   </div>
                 </div>
               </section>
+
+              <div className="flex flex-wrap gap-2">
+                {problem.category?.map((cat, i) => (
+                  <span
+                    key={i}
+                    className="px-3 py-1.5 text-xs font-black text-gray-400 bg-white/5 rounded-xl uppercase tracking-wider"
+                  >
+                    {cat}
+                  </span>
+                ))}
+              </div>
 
               <div className="pt-10 pb-20 text-xs font-bold text-gray-600 flex flex-col gap-2">
                 <p>출처: {problem.source}</p>
