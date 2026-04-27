@@ -126,7 +126,7 @@ export interface StudySession {
   startDateTime: string;
   endDateTime: string;
   attendanceStatus?: AttendanceStatus;
-  assignmentCreated?: boolean;
+  assignmentCreated: boolean;
 }
 
 export interface StudySessionDetail {
@@ -268,4 +268,29 @@ export interface StudyProgressDetail {
   members: StudyProgress[];
   completedMembers: UserBrief[];
   inProgressMembers: UserBrief[];
+}
+
+export interface StudyRoleResponse {
+  role: StudyMemberRole | null;
+}
+
+export interface MemberCompletionResponse {
+  userId: number;
+  name: string;
+  email: string;
+  attendanceCount: number;
+  totalSessions: number;
+  attendanceRate: number;
+  completedAssignments: number;
+  totalAssignments: number;
+  assignmentRate: number;
+  isCompleted: boolean;
+}
+
+export interface StudyCompletionResponse {
+  hasRequirement: boolean;
+  requirement: string | null;
+  attendanceThreshold: number;
+  assignmentThreshold: number;
+  memberCompletions: MemberCompletionResponse[];
 }

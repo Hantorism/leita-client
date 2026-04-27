@@ -5,8 +5,8 @@ import type {
   StudyCreateResponse,
   StudyMemberAssignment,
   StudyMemberAttendance,
-  StudyMemberRole,
   StudyMemberStatus,
+  StudyRoleResponse,
   StudyUpdateRequest,
   StudyUser,
 } from '@types';
@@ -86,7 +86,7 @@ export const studyApi = {
 
   // GET /study/{id}/my-role
   getMyRole: async (id: number) => {
-    return AxiosInstance.get<StudyMemberRole>(`/study/${id}/my-role`);
+    return AxiosInstance.get<StudyRoleResponse>(`/study/${id}/my-role`);
   },
 
   // GET /study/{id}/completion

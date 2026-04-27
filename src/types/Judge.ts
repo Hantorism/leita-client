@@ -57,6 +57,7 @@ export interface JudgeData {
   problemId: string;
   problemTitle?: string;
   user: {
+    id: number;
     name: string;
     email: string;
     profileImage?: string;

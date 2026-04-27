@@ -18,7 +18,6 @@ export const problemApi = {
 
   // POST /problem
   createProblem: async (data: CreateProblemRequest) => {
-
     return AxiosInstance.post<CreateProblemResponse>(`/problem`, data);
   },
 

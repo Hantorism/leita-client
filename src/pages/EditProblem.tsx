@@ -1,10 +1,13 @@
 import { problemApi } from '@apis';
 import { Footer, Header, ProblemDescriptionEditor } from '@components';
 import { useAlert } from '@contexts';
-import { EncodeBase64, Logger } from '@utils';
-import { type FormEvent, useState } from 'react';
+import { DecodeBase64, EncodeBase64, Logger } from '@utils';
+import { type FormEvent, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CreateProblemPage = () => {
+const EditProblemPage = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { showAlert } = useAlert();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState({
@@ -19,14 +22,51 @@ const CreateProblemPage = () => {
   const [testCases, setTestCases] = useState([{ input: '', output: '', isShow: true }]);
   const [source, setSource] = useState('');
   const [category, setCategory] = useState(['']);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProblem = async () => {
+      if (!id) return;
+      try {
+        const data = await problemApi.getProblem(id);
+        setTitle(data.title);
+        setDescription(data.description);
+        setLimit({
+          memory: String(data.limit.memory),
+          time: String(data.limit.time),
+        });
+        setSource(data.source || '');
+        setCategory(data.category || ['']);
+        
+        // Decode test cases
+          const decodedTestCases = data.testCases.map((tc) => ({
+          input: DecodeBase64(tc.input),
+          output: DecodeBase64(tc.output),
+          isShow: tc.isShow,
+          }));
+        setTestCases(decodedTestCases);
+      } catch (error) {
+        Logger.error('Error fetching problem', error);
+        showAlert('error', '문제 정보를 불러오는 데 실패했습니다.');
+        navigate('/problems');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProblem();
+  }, [id, navigate, showAlert]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!id) return;
+
     const encodedTestCases = testCases.map((tc) => ({
       input: EncodeBase64(tc.input),
       output: EncodeBase64(tc.output),
       isShow: tc.isShow,
     }));
+
     if (testCases.length < 5) {
       showAlert('info', '테스트 케이스는 최소 5개 이상이어야 합니다!');
       return;
@@ -50,7 +90,7 @@ const CreateProblemPage = () => {
     }
 
     try {
-      await problemApi.createProblem({
+      await problemApi.updateProblem(id, {
         title,
         description,
         limit: {
@@ -62,12 +102,21 @@ const CreateProblemPage = () => {
         category,
       });
 
-      showAlert('success', '문제가 성공적으로 생성되었습니다!');
+      showAlert('success', '문제가 성공적으로 수정되었습니다!');
+      navigate(`/problems/${id}`);
     } catch (error) {
-      Logger.error('Error creating problem', error);
-      showAlert('error', '문제 생성에 실패했습니다.');
+      Logger.error('Error updating problem', error);
+      showAlert('error', '문제 수정에 실패했습니다.');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] font-Pretendard pt-8 items-center justify-center text-white text-2xl">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-[var(--color-bg-main)] font-Pretendard pt-8">
@@ -75,7 +124,7 @@ const CreateProblemPage = () => {
         <Header />
       </header>
       <div className="create-problem-container max-w-5xl mx-auto p-6  rounded-lg ">
-        <h2 className="text-3xl  text-center mb-6 text-white">Create Problem 👾</h2>
+        <h2 className="text-3xl  text-center mb-6 text-white">Edit Problem 👾</h2>
         <form
           onSubmit={handleSubmit}
           className="space-y-6 "
@@ -294,7 +343,7 @@ const CreateProblemPage = () => {
             type="submit"
             className="font-Pretendard mt-[40px] px-[24px] py-[12px] text-[1.2rem] font-light text-[var(--color-bg-main)] bg-[var(--color-brand)] rounded-[80px] transition-all duration-300 ease-in-out hover:bg-gradient-to-r hover:from-[var(--color-brand)] hover:to-[#9D5CE9] hover:scale-[1.05] hover:text-white hover:shadow-[0px_4px_15px_rgba(202,_255,_51,_0.4)] text-left"
           >
-            Create Problem
+            Edit Problem
           </button>
         </form>
       </div>
@@ -305,4 +354,4 @@ const CreateProblemPage = () => {
   );
 };
 
-export default CreateProblemPage;
+export default EditProblemPage;

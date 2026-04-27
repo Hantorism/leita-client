@@ -14,6 +14,7 @@ export interface InfoResponse {
 
 export interface JwtResponse {
   accessToken: string;
+  refreshToken: string;
 }
 
 export interface UpdateInfoRequest {
