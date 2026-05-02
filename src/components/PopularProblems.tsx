@@ -2,6 +2,7 @@ import { problemApi } from '@apis';
 import type { PopularPeriod, ProblemDetail } from '@types';
 import { Logger } from '@utils';
 import { motion } from 'framer-motion';
+import { useAlert, useAuth } from '@contexts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SCROLL_DURATION = 200;
@@ -12,6 +13,8 @@ const PopularProblems = () => {
     const [loading, setLoading] = useState(true);
     const isMounted = useRef(true);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const { isAuthenticated } = useAuth();
+    const { showAlert } = useAlert();
 
     const scroll = useCallback((direction: 'left' | 'right') => {
         if (!scrollRef.current) return;
@@ -167,6 +170,10 @@ const PopularProblems = () => {
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ duration: 0.5, delay: index * 0.1 }}
                                         onClick={() => {
+                                            if (!isAuthenticated) {
+                                                showAlert('error', '로그인이 필요합니다.');
+                                                return;
+                                            }
                                             if (problem.problemId) {
                                                 window.open(`/problems/${problem.problemId}`, '_blank');
                                             }
