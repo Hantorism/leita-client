@@ -1,15 +1,26 @@
 import { Logo } from '@assets/images';
 import { Login } from '@components';
+import { useAlert, useAuth } from '@contexts';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const { showAlert } = useAlert();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const isHome = location.pathname === '/';
+  const handleProtectedClick = (e: React.MouseEvent<HTMLAnchorElement>, isMobile = false) => {
+    if (!isAuthenticated) {
+      e.preventDefault();
+      showAlert('error', '로그인이 필요합니다.');
+    }
+    if (isMobile) {
+      setIsMenuOpen(false);
+    }
+  };
 
   const navLinkStyle = ({ isActive }: { isActive: boolean }) =>
     `nav-link px-4 py-2 text-sm font-semibold transition-colors duration-200 ${
@@ -51,6 +62,7 @@ const Header = () => {
                 <NavLink
                   to="/judge"
                   className={navLinkStyle}
+                  onClick={(e) => handleProtectedClick(e)}
                 >
                   Solved
                 </NavLink>
@@ -59,6 +71,7 @@ const Header = () => {
                 <NavLink
                   to="/study"
                   className={navLinkStyle}
+                  onClick={(e) => handleProtectedClick(e)}
                 >
                   Study
                 </NavLink>
@@ -133,14 +146,14 @@ const Header = () => {
                 <NavLink
                   to="/judge"
                   className={mobileNavLinkStyle}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={(e) => handleProtectedClick(e, true)}
                 >
                   Solved
                 </NavLink>
                 <NavLink
                   to="/study"
                   className={mobileNavLinkStyle}
-                  onClick={() => setIsMenuOpen(false)}
+                  onClick={(e) => handleProtectedClick(e, true)}
                 >
                   Study
                 </NavLink>
