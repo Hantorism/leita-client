@@ -300,10 +300,22 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
   //     const [testCases, setTestCases] = useState([{ input: "", output: "" }]);
   //     const [selectedTestCase, setSelectedTestCase] = useState(0);
-  const [testCases, setTestCases] = useState(initialTestCases);
+  const [testCases, setTestCases] = useState(() =>
+    initialTestCases.map((tc) => ({
+      ...tc,
+      input: decodeText(tc.input),
+      output: decodeText(tc.output),
+    })),
+  );
 
   useEffect(() => {
-    setTestCases(initialTestCases);
+    setTestCases(
+      initialTestCases.map((tc) => ({
+        ...tc,
+        input: decodeText(tc.input),
+        output: decodeText(tc.output),
+      })),
+    );
   }, [initialTestCases]);
 
   // // 새로운 테스트 케이스 추가 함수
@@ -529,7 +541,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                       : 'bg-gray-600 hover:bg-gray-500 text-gray-300'
                   }`}
                 >
-                  TestCase {index + 1}
+                  TC {index + 1}
                   {index >= initialTestCases.length && (
                     <button
                       onClick={(e) => {
@@ -597,7 +609,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                       <>
                         <h4 className="text-sm text-gray-400">입력 {selectedTestCase + 1}</h4>
                         <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                          {decodeText(testCases[selectedTestCase].input)}
+                          {testCases[selectedTestCase].input}
                         </pre>
                       </>
                     )}
@@ -626,7 +638,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                 <h4 className="text-sm text-gray-400 mt-2">기대 출력 {selectedTestCase + 1}</h4>
                 {selectedTestCase < initialTestCases.length ? (
                   <pre className="font-JetBrain bg-[#1E1E1E] text-gray-300 p-2 rounded-md whitespace-pre-wrap">
-                    {decodeText(testCases[selectedTestCase].output)}
+                    {testCases[selectedTestCase].output}
                   </pre>
                 ) : (
                   <div>
@@ -640,39 +652,46 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                 )}
               </div>
             </div>
-            <div className="mt-2 p-2 bg-black rounded-md">
-              {result?.testCases && (
+            {result?.testCases && (
+              <div className="mt-2 p-2 bg-black rounded-md">
                 <div className="mb-2 text-sm text-gray-400 font-Pretendard font-semibold">
                   {result.testCases.length}개 테스트 케이스 중
                   <span className="font-bold mx-1 text-white">
-                    {result.testCases.filter((tc) => tc.actualOutput === '맞았습니다').length}개
+                    {result.testCases.filter((tc) => tc.isPassed).length}개
                   </span>
                   맞았습니다.
                 </div>
-              )}
 
-              {result?.testCases?.map((testCase, index) => (
-                <div key={index}>
-                  <div
-                    className={`mt-2 p-2 rounded-md ${testCase.actualOutput === '맞았습니다' ? 'bg-[var(--color-bg-surface)]' : 'bg-[var(--color-bg-surface)]'}`}
-                  >
-                    <h4 className="text-sm text-gray-400">Testcase {index + 1}</h4>
-                    <pre
-                      className={`font-JetBrain whitespace-pre-wrap ${testCase.actualOutput === '맞았습니다' ? 'text-[var(--color-brand)]' : 'text-white-400'}`}
+                {result.testCases.map((testCase, index) => (
+                  <div key={index}>
+                    <div
+                      className={`mt-2 p-2 rounded-md ${testCase.isPassed ? 'bg-[var(--color-bg-surface)]' : 'bg-[var(--color-bg-surface)]'}`}
                     >
-                      {testCase.actualOutput}
-                    </pre>
-                  </div>
-
-                  {testCase.error?.trim() && (
-                    <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                      <h4 className="text-sm text-red-400">❌ Error : Testcase {index + 1}</h4>
-                      <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{testCase.error}</pre>
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-sm text-gray-400">Testcase {index + 1}</h4>
+                        {testCase.isPassed ? (
+                          <span className="text-[var(--color-brand)]">✅</span>
+                        ) : (
+                          <span className="text-red-500">❌</span>
+                        )}
+                      </div>
+                      <pre
+                        className={`font-JetBrain whitespace-pre-wrap ${testCase.isPassed ? 'text-[var(--color-brand)]' : 'text-red-500'}`}
+                      >
+                        {decodeText(testCase.actualOutput)}
+                      </pre>
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
+
+                    {testCase.error?.trim() && (
+                      <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
+                        <h4 className="text-sm text-red-400">❌ Error : Testcase {index + 1}</h4>
+                        <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{testCase.error}</pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>
