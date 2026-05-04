@@ -291,7 +291,7 @@ const StudyPage = () => {
 }
 
           {/* 페이지네이션 */}
-          {!loading && totalPages > 1 && (
+          {!loading && (
             <Pagination
               currentPage={page}
               totalPages={totalPages}

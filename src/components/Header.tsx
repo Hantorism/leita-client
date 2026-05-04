@@ -64,7 +64,7 @@ const Header = () => {
                   className={navLinkStyle}
                   onClick={(e) => handleProtectedClick(e)}
                 >
-                  Solved
+                  Judge
                 </NavLink>
               </li>
               <li>
@@ -148,7 +148,7 @@ const Header = () => {
                   className={mobileNavLinkStyle}
                   onClick={(e) => handleProtectedClick(e, true)}
                 >
-                  Solved
+                  Judge
                 </NavLink>
                 <NavLink
                   to="/study"
