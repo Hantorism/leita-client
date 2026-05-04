@@ -121,9 +121,9 @@ const ProblemDetailPage = () => {
     document.removeEventListener('mouseup', stopResizing);
   };
 
-  const handleCopy = (input: string, id: number | string) => {
-    navigator.clipboard.writeText(input).then(() => {
-      setCopiedId(id);
+  const handleCopy = (text: string, key: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedId(key);
       setTimeout(() => setCopiedId(null), 2000);
     });
   };
@@ -240,10 +240,14 @@ const ProblemDetailPage = () => {
                               입력 {index + 1}
                             </span>
                             <button
-                              onClick={() => handleCopy(decodeText(testCase.input), testCase.id || index)}
-                              className="text-xs font-bold text-[#CAFE33] hover:underline"
+                              onClick={() => handleCopy(decodeText(testCase.input), `input-${testCase.id || index}`)}
+                              className={`px-3 py-1.5 text-xs font-bold transition-all rounded-lg border ${
+                                copiedId === `input-${testCase.id || index}`
+                                  ? 'bg-white/10 border-white/20 text-white cursor-default'
+                                  : 'bg-[#CAFE33]/10 border-[#CAFE33]/20 hover:bg-[#CAFE33]/20 text-[#CAFE33] active:scale-95'
+                              }`}
                             >
-                              {copiedId === (testCase.id || index) ? '복사됨!' : '복사하기'}
+                              {copiedId === `input-${testCase.id || index}` ? '복사됨!' : '복사하기'}
                             </button>
                           </div>
                           <pre className="font-JetBrain bg-black/40 p-6 rounded-2xl text-base text-gray-300 overflow-x-auto border border-white/5">
@@ -252,9 +256,21 @@ const ProblemDetailPage = () => {
                         </div>
                       )}
                       <div>
-                        <span className="text-xs font-black text-gray-600 uppercase tracking-widest block mb-3">
-                          출력 {index + 1}
-                        </span>
+                        <div className="flex justify-between items-center mb-3">
+                          <span className="text-xs font-black text-gray-600 uppercase tracking-widest">
+                            출력 {index + 1}
+                          </span>
+                          <button
+                            onClick={() => handleCopy(decodeText(testCase.output), `output-${testCase.id || index}`)}
+                            className={`px-3 py-1.5 text-xs font-bold transition-all rounded-lg border ${
+                              copiedId === `output-${testCase.id || index}`
+                                ? 'bg-white/10 border-white/20 text-white cursor-default'
+                                : 'bg-[#CAFE33]/10 border-[#CAFE33]/20 hover:bg-[#CAFE33]/20 text-[#CAFE33] active:scale-95'
+                            }`}
+                          >
+                            {copiedId === `output-${testCase.id || index}` ? '복사됨!' : '복사하기'}
+                          </button>
+                        </div>
                         <pre className="font-JetBrain bg-black/40 p-6 rounded-2xl text-base text-gray-300 overflow-x-auto border border-white/5">
                           {decodeText(testCase.output)}
                         </pre>
