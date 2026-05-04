@@ -386,21 +386,6 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
       <div className="flex justify-between items-center  rounded-lg">
         <div className="flex items-center space-x-4">
-          {/*<select*/}
-          {/*    value={language}*/}
-          {/*    onChange={handleLanguageChange}*/}
-          {/*    // className="custom-select"*/}
-          {/*    className="bg-[#3E3E3E] text-gray-300 p-2 rounded-md font-Pretendard text-[0.9rem]"*/}
-          {/*>*!/}
-					 {/*    <option value="python">Python</option>*/}
-          {/*    <option value="javascript">JavaScript</option>*/}
-          {/*    <option value="java">Java</option>*/}
-          {/*    <option value="cpp">C</option>*/}
-          {/*    <option value="cpp">C++</option>*/}
-          {/*    <option value="go">Go</option>*/}
-          {/*    <option value="kotlin">Kotlin</option>*/}
-          {/*    <option value="swift">Swift</option>*/}
-          {/*</select>*/}
           <CustomDropdown
             language={language}
             handleLanguageChange={handleLanguageChange}
@@ -410,11 +395,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           >
             <span className="text-[#CAFE33]">✅</span> 임시 저장됨
           </div>
+        </div>
 
-          {/*<div className="mt-4">*/}
-          {/*    <p>Selected Language: {language}</p>*/}
-          {/*</div>*/}
-
+        <div className="flex items-center space-x-4">
           <button
             type="button"
             onClick={handleRunCode}
@@ -443,10 +426,10 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                     d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                   ></path>
                 </svg>
-                RUNNING
+                Running
               </>
             ) : (
-              'RUN'
+              'Run'
             )}
           </button>
 
@@ -481,7 +464,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                 Submitting
               </>
             ) : (
-              'SUBMIT'
+              'Submit'
             )}
           </button>
         </div>
