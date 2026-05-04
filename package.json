@@ -1,36 +1,33 @@
 {
   "name": "leita",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "dependencies": {
+    "@iconify/react": "^6.0.2",
     "@monaco-editor/react": "^4.7.0",
-    "@react-oauth/google": "^0.12.1",
-    "axios": "^1.7.9",
-    "cra-template-typescript": "1.2.0",
-    "firebase": "^11.2.0",
-    "framer-motion": "^12.4.2",
-    "js-cookie": "^3.0.5",
-    "jwt-decode": "^4.0.0",
-    "monaco-editor": "^0.52.2",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "@react-oauth/google": "^0.12.2",
+    "@tiptap/extension-image": "^3.6.5",
+    "@tiptap/extension-mathematics": "^3.6.5",
+    "@tiptap/pm": "^3.6.5",
+    "@tiptap/react": "^3.6.5",
+    "@tiptap/starter-kit": "^3.6.5",
+    "axios": "^1.12.2",
+    "browser-image-compression": "^2.0.2",
+    "framer-motion": "^12.23.22",
+    "katex": "^0.16.23",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.1.4",
-    "react-scripts": "5.0.1",
-    "react-syntax-highlighter": "^15.6.1",
-    "tailwind-scrollbar-hide": "^2.0.0"
+    "react-router-dom": "^7.9.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "biome lint --write .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "reporter": "biome check --reporter=summary"
   },
   "browserslist": {
     "production": [
@@ -45,13 +42,19 @@
     ]
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.3",
-    "autoprefixer": "^10.4.20",
-    "babel-loader": "^10.0.0",
-    "html-webpack-plugin": "^5.6.3",
-    "postcss": "^8.5.1",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^4.9.5",
-    "webpack-dev-server": "^5.2.0"
+    "@biomejs/biome": "2.4.10",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/katex": "^0.16.8",
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.21",
+    "monaco-editor": "^0.55.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.7"
   }
 }
