@@ -14,7 +14,7 @@ import { useAlert } from '@contexts';
 import type { Study, StudyUser } from '@types';
 import { extractErrorMessage, getCurrentUserEmail, Logger } from '@utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
 type Tab = 'sessions' | 'members' | 'progress' | 'completion';
 
@@ -29,12 +29,21 @@ const StudyDetailPage = () => {
   const { id } = useParams();
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
+
   const [study, setStudy] = useState<Study | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMember, setIsMember] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<Tab>('sessions');
+
+  const [activeTab, setActiveTab] = useState<Tab>(() => {
+    if (tabParam && ['sessions', 'members', 'progress', 'completion'].includes(tabParam)) {
+      return tabParam as Tab;
+    }
+    return 'sessions';
+  });
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -47,6 +56,22 @@ const StudyDetailPage = () => {
       isMounted.current = false;
     };
   }, []);
+
+  // Sync activeTab with URL tab query parameter
+  useEffect(() => {
+    if (tabParam && ['sessions', 'members', 'progress', 'completion'].includes(tabParam)) {
+      setActiveTab(tabParam as Tab);
+    } else {
+      setActiveTab('sessions');
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tab: Tab) => {
+    setSearchParams((prev) => {
+      prev.set('tab', tab);
+      return prev;
+    }, { replace: true });
+  };
 
   const fetchStudy = useCallback(async () => {
     if (!id) return;
@@ -186,7 +211,7 @@ const StudyDetailPage = () => {
             {TAB_LABELS.map(({ key, label }) => (
               <button
                 key={key}
-                onClick={() => setActiveTab(key)}
+                onClick={() => handleTabChange(key)}
                 className={`px-6 py-2.5 text-xs font-black rounded-xl transition-all duration-300 ${
                   activeTab === key ? 'bg-white/10 text-[#CAFE33] shadow-lg' : 'text-gray-500 hover:text-white'
                 }`}
