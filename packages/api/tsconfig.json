@@ -1,12 +1,6 @@
 {
+  "extends": "@leita/tsconfig/base.json",
   "compilerOptions": {
-    "target": "es2020",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "declaration": true
   },
   "include": ["src"]

@@ -69,29 +69,29 @@ build/assets/KaTeX_AMS-Regular-DRggAlZN.ttf               63.63 kB
 build/assets/JetBrainMono-Dh36KTnx.ttf                   273.90 kB
 build/assets/tabs-D1rs4vF9.png                           786.50 kB
 build/assets/Pretendard-Bh9nN6Cq.ttf                   6,739.33 kB
-build/assets/index-DMEN1xmP.css                           92.41 kB │ gzip:  19.61 kB
-build/assets/CreateProblem-DvhbLRwD.js                     0.57 kB │ gzip:   0.41 kB
-build/assets/EditProblem-CZkHvwWW.js                       1.25 kB │ gzip:   0.79 kB
-build/assets/Source-OBA9LGNQ.js                            2.82 kB │ gzip:   1.23 kB
-build/assets/NoticeDetail-KA3rygOX.js                      3.03 kB │ gzip:   1.34 kB
-build/assets/Home-BTbXPycu.js                              3.22 kB │ gzip:   1.47 kB
-build/assets/NoticeList-dpzHixj8.js                        3.53 kB │ gzip:   1.35 kB
-build/assets/Privacy-940iguHH.js                           4.18 kB │ gzip:   1.45 kB
-build/assets/QnaWrite-DtC-DbIW.js                          4.38 kB │ gzip:   1.81 kB
-build/assets/QnaList-Drza7vmj.js                           4.43 kB │ gzip:   1.71 kB
-build/assets/Term-DaGg6ALK.js                              4.70 kB │ gzip:   1.50 kB
-build/assets/JudgeDetail-O2QW-4cS.js                       5.03 kB │ gzip:   1.91 kB
-build/assets/StudyDetail-ha4u7Z4f.js                       5.34 kB │ gzip:   2.15 kB
-build/assets/QnaDetail-DBB8JYBK.js                         5.41 kB │ gzip:   1.91 kB
-build/assets/Problems-CfY9blhO.js                          6.08 kB │ gzip:   2.23 kB
-build/assets/Judge-D9vKeaLy.js                             6.47 kB │ gzip:   2.27 kB
-build/assets/Study-BcLfgIwH.js                             7.80 kB │ gzip:   2.92 kB
-build/assets/ProblemDetail-Bxxohze9.js                     8.29 kB │ gzip:   2.44 kB
-build/assets/StudySessionDetail-B0iUktHd.js               13.89 kB │ gzip:   4.06 kB
-build/assets/MyPage-Bq216gGc.js                           18.56 kB │ gzip:   5.19 kB
-build/assets/index-Ce6QzN11.js                         1,273.33 kB │ gzip: 397.99 kB
+build/assets/index-DZKbGT2A.css                           94.30 kB │ gzip:  19.90 kB
+build/assets/CreateProblem-yb7h7RBy.js                     0.57 kB │ gzip:   0.41 kB
+build/assets/EditProblem-C4vP3vMa.js                       1.25 kB │ gzip:   0.79 kB
+build/assets/Source-DY6cR_aE.js                            2.82 kB │ gzip:   1.23 kB
+build/assets/NoticeDetail-Cnjd-Ces.js                      3.03 kB │ gzip:   1.33 kB
+build/assets/Home-C-5RSPHb.js                              3.22 kB │ gzip:   1.47 kB
+build/assets/NoticeList-BsHPOftD.js                        3.53 kB │ gzip:   1.35 kB
+build/assets/Privacy-DdhAlCdo.js                           4.18 kB │ gzip:   1.45 kB
+build/assets/QnaWrite-DnLsw3HR.js                          4.38 kB │ gzip:   1.81 kB
+build/assets/QnaList-fiO5j5_1.js                           4.43 kB │ gzip:   1.71 kB
+build/assets/Term-DidG7S2q.js                              4.70 kB │ gzip:   1.50 kB
+build/assets/JudgeDetail-BuSaBafb.js                       5.03 kB │ gzip:   1.91 kB
+build/assets/StudyDetail-B2CrRjbA.js                       5.34 kB │ gzip:   2.15 kB
+build/assets/QnaDetail-DNmLW6A0.js                         5.41 kB │ gzip:   1.91 kB
+build/assets/Problems-CP8mzXLf.js                          6.08 kB │ gzip:   2.23 kB
+build/assets/Judge-fB2g0OJX.js                             6.47 kB │ gzip:   2.27 kB
+build/assets/Study-DjxY1kug.js                             7.80 kB │ gzip:   2.92 kB
+build/assets/ProblemDetail-Ci5iJDD1.js                     8.29 kB │ gzip:   2.43 kB
+build/assets/StudySessionDetail-BwLN-er8.js               13.89 kB │ gzip:   4.06 kB
+build/assets/MyPage-CRzrHI4i.js                           18.56 kB │ gzip:   5.19 kB
+build/assets/index-C1mB1akL.js                         1,273.66 kB │ gzip: 398.06 kB
 
-✓ built in 665ms
+✓ built in 571ms
 [plugin builtin:vite-reporter] 
 (!) Some chunks are larger than 500 kB after minification. Consider:
 - Using dynamic import() to code-split the application

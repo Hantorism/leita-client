@@ -17,6 +17,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@leita/tsconfig": "workspace:*",
+    "@leita/tailwind-config": "workspace:*",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

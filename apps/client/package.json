@@ -29,6 +29,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@leita/tsconfig": "workspace:*",
+    "@leita/tailwind-config": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@types/katex": "^0.16.8",
     "@types/node": "^25.5.0",

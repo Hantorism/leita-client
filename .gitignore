@@ -26,3 +26,9 @@ yarn-error.log*
 .idea
 leita.iml
 GEMINI.md
+
+# turbo & workspace builds
+.turbo/
+**/build/
+**/node_modules/
+.env
