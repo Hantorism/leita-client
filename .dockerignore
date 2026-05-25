@@ -2,3 +2,9 @@ deploy
 .dockerignore
 .gitignore
 README.md
+node_modules
+**/node_modules
+**/build
+**/dist
+.pnpm-store
+.turbo

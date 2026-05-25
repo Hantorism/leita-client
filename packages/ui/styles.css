@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Colors */
+  --color-brand: #cafe33;
+  --color-brand-hover: #b9e82c;
+  --color-bg-main: #1a1a1a;
+  --color-bg-surface: #2a2a2a;
+  --color-bg-card: #1f1f1f;
+  --color-bg-overlay: rgba(0, 0, 0, 0.4);
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0a0;
+  --color-text-muted: #6b7280;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Typography */
+  --font-main: "Pretendard", sans-serif;
+  --font-title: "NanumSquare Neo", sans-serif;
+  --font-code: "JetBrain Mono", monospace;
+
+  /* Layout */
+  --max-width-content: 1024px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out both;
+}
+
+html,
+body {
+  overflow-x: auto;
+  overflow-y: auto;
+  font-family: var(--font-main);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-primary);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  font-family: inherit;
+  word-break: keep-all;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.font-JetBrain {
+  font-family: var(--font-code);
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.resizer {
+  width: 8px;
+  background: #555;
+  cursor: ew-resize;
+  transition: background 0.2s ease-in-out;
+  border-radius: 4px;
+}
+
+.resizer:hover {
+  background: #888;
+}

@@ -1,60 +1,18 @@
 {
-  "name": "leita",
+  "name": "leita-monorepo",
   "version": "1.1.0",
   "private": true,
-  "dependencies": {
-    "@iconify/react": "^6.0.2",
-    "@monaco-editor/react": "^4.7.0",
-    "@react-oauth/google": "^0.12.2",
-    "@tiptap/extension-image": "^3.6.5",
-    "@tiptap/extension-mathematics": "^3.6.5",
-    "@tiptap/pm": "^3.6.5",
-    "@tiptap/react": "^3.6.5",
-    "@tiptap/starter-kit": "^3.6.5",
-    "axios": "^1.12.2",
-    "browser-image-compression": "^2.0.2",
-    "framer-motion": "^12.23.22",
-    "katex": "^0.16.23",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-icons": "^5.5.0",
-    "react-router-dom": "^7.9.3"
-  },
+  "packageManager": "pnpm@10.30.1",
   "scripts": {
-    "start": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview",
-    "lint": "biome lint --write .",
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
     "format": "biome format --write .",
-    "check": "biome check --write .",
-    "reporter": "biome check --reporter=summary"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "check": "biome check --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.10",
-    "@tailwindcss/typography": "^0.5.19",
-    "@types/katex": "^0.16.8",
-    "@types/node": "^25.5.0",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@types/react-router-dom": "^5.3.3",
-    "@vitejs/plugin-react": "^6.0.1",
-    "autoprefixer": "^10.4.21",
-    "monaco-editor": "^0.55.1",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^3.4.19",
-    "typescript": "^5.9.3",
-    "vite": "^8.0.7"
+    "turbo": "^2.3.3",
+    "typescript": "^5.9.3"
   }
 }
