@@ -3,13 +3,19 @@
   "version": "1.1.0",
   "private": true,
   "dependencies": {
+    "@leita/api": "workspace:*",
+    "@leita/types": "workspace:*",
+    "@leita/ui": "workspace:*",
+    "@react-oauth/google": "^0.12.2",
+    "@tiptap/pm": "^3.23.6",
+    "@tiptap/react": "^3.23.6",
+    "@tiptap/starter-kit": "^3.23.6",
     "axios": "^1.12.2",
+    "easymde": "^2.21.0",
+    "marked": "^18.0.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.3",
-    "@leita/types": "workspace:*",
-    "@leita/api": "workspace:*",
-    "@leita/ui": "workspace:*"
+    "react-router-dom": "^7.9.3"
   },
   "scripts": {
     "dev": "vite",
@@ -17,8 +23,9 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@leita/tsconfig": "workspace:*",
     "@leita/tailwind-config": "workspace:*",
+    "@leita/tsconfig": "workspace:*",
+    "@types/marked": "^6.0.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

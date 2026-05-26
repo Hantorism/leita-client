@@ -4,35 +4,29 @@ import { qnaApi } from '@leita/api';
 import type { QnaResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useFetchItem } from '@hooks';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const QnaDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { showAlert } = useAlert();
-  const [qna, setQna] = useState<QnaResponse | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const fetchQna = async () => {
-    if (!id) return;
-    try {
-      setLoading(true);
-      const res = await qnaApi.getQna(Number(id));
-      setQna(res);
-    } catch (err) {
-      console.error('Failed to fetch Q&A', err);
-      showAlert('error', '문의 내용을 불러오는데 실패했습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const fetcher = useCallback(() => {
+    if (!id) return Promise.resolve(null);
+    return qnaApi.getQna(Number(id));
+  }, [id]);
+
+  const { item: qna, loading, error } = useFetchItem<QnaResponse | null>(fetcher, [id]);
 
   useEffect(() => {
-    fetchQna();
-  }, [id]);
+    if (error) {
+      showAlert('error', '문의 내용을 불러오는데 실패했습니다.');
+    }
+  }, [error, showAlert]);
 
   const handleDelete = async () => {
     if (!id || !qna) return;
@@ -51,7 +45,8 @@ const QnaDetail = () => {
     }
   };
 
-  const isAuthor = user && qna && user.email === qna.authorEmail;
+  // authLoading이 끝난 후에만 isAuthor를 판단해 타이밍 문제를 방지합니다.
+  const isAuthor = !authLoading && user && qna && user.email === qna.authorEmail;
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">

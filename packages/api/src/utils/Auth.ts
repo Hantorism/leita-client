@@ -6,38 +6,87 @@ export const AUTH_KEYS = {
   USER: 'user',
 } as const;
 
+// Helper functions for cookies
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]*)'));
+  return match ? decodeURIComponent(match[2]) : null;
+};
+
+const setCookie = (name: string, value: string, maxAgeSeconds: number = 604800) => {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
+};
+
+const deleteCookie = (name: string) => {
+  if (typeof document === 'undefined') return;
+  document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`;
+};
+
 export const AuthStorage = {
   getAccessToken: (): string | null => {
-    return localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
+    const cookieToken = getCookie(AUTH_KEYS.ACCESS_TOKEN);
+    if (cookieToken) return cookieToken;
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
+    }
+    return null;
   },
 
   setAccessToken: (token: string): void => {
-    localStorage.setItem(AUTH_KEYS.ACCESS_TOKEN, token);
-  },
+    setCookie(AUTH_KEYS.ACCESS_TOKEN, token);
 
-  getUser: (): InfoResponse | null => {
-    const storedUser = localStorage.getItem(AUTH_KEYS.USER);
-    if (!storedUser) return null;
-    try {
-      return JSON.parse(storedUser);
-    } catch (error) {
-      Logger.error('Failed to parse user from localStorage', error);
-      return null;
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(AUTH_KEYS.ACCESS_TOKEN, token);
     }
   },
 
+  getUser: (): InfoResponse | null => {
+    const cookieUser = getCookie(AUTH_KEYS.USER);
+    if (cookieUser) {
+      try {
+        return JSON.parse(cookieUser);
+      } catch (error) {
+        Logger.error('Failed to parse user from cookie', error);
+      }
+    }
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const storedUser = localStorage.getItem(AUTH_KEYS.USER);
+      if (!storedUser) return null;
+      try {
+        return JSON.parse(storedUser);
+      } catch (error) {
+        Logger.error('Failed to parse user from localStorage', error);
+        return null;
+      }
+    }
+    return null;
+  },
+
   setUser: (user: InfoResponse): void => {
-    localStorage.setItem(AUTH_KEYS.USER, JSON.stringify(user));
+    const userStr = JSON.stringify(user);
+    setCookie(AUTH_KEYS.USER, userStr);
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem(AUTH_KEYS.USER, userStr);
+    }
   },
 
   clear: (): void => {
-    localStorage.removeItem(AUTH_KEYS.ACCESS_TOKEN);
-    localStorage.removeItem(AUTH_KEYS.USER);
+    deleteCookie(AUTH_KEYS.ACCESS_TOKEN);
+    deleteCookie(AUTH_KEYS.USER);
+
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem(AUTH_KEYS.ACCESS_TOKEN);
+      localStorage.removeItem(AUTH_KEYS.USER);
+    }
   },
 
   // Check if we have basic auth info without validating token expiration
   hasAuthInfo: (): boolean => {
-    return !!localStorage.getItem(AUTH_KEYS.ACCESS_TOKEN);
+    return !!AuthStorage.getAccessToken();
   },
 };
 

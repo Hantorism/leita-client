@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@iconify/react": "^6.0.2",
+    "@leita/api": "workspace:*",
+    "@leita/types": "workspace:*",
+    "@leita/ui": "workspace:*",
     "@monaco-editor/react": "^4.7.0",
     "@react-oauth/google": "^0.12.2",
     "@tiptap/extension-image": "^3.6.5",
@@ -15,13 +18,11 @@
     "browser-image-compression": "^2.0.2",
     "framer-motion": "^12.23.22",
     "katex": "^0.16.23",
+    "marked": "^18.0.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.9.3",
-    "@leita/types": "workspace:*",
-    "@leita/api": "workspace:*",
-    "@leita/ui": "workspace:*"
+    "react-router-dom": "^7.9.3"
   },
   "scripts": {
     "dev": "vite",
@@ -29,10 +30,11 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@leita/tsconfig": "workspace:*",
     "@leita/tailwind-config": "workspace:*",
+    "@leita/tsconfig": "workspace:*",
     "@tailwindcss/typography": "^0.5.19",
     "@types/katex": "^0.16.8",
+    "@types/marked": "^6.0.0",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",

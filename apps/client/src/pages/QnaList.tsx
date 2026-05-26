@@ -4,35 +4,22 @@ import { qnaApi } from '@leita/api';
 import type { QnaResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { usePaginatedList } from '@hooks';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const QnaList = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showAlert } = useAlert();
-  const [qnas, setQnas] = useState<QnaResponse[]>([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const fetchQnas = async (page = 0) => {
-    try {
-      setLoading(true);
-      const res = await qnaApi.getAllQnas(page, 10);
-      setQnas(res.content || []);
-      setTotalPages(res.totalPages || 1);
-      setCurrentPage(page);
-    } catch (err) {
-      console.error('Failed to fetch QnAs', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchQnas(0);
-  }, []);
+  const fetcher = useCallback((page: number) => qnaApi.getAllQnas(page, 10), []);
+  const {
+    items: qnas,
+    currentPage,
+    totalPages,
+    loading,
+    goToPage,
+  } = usePaginatedList(fetcher);
 
   const handleWriteClick = () => {
     if (!user) {
@@ -123,7 +110,7 @@ const QnaList = () => {
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
-                      onPageChange={(page) => fetchQnas(page)}
+                      onPageChange={(page) => goToPage(page)}
                     />
                   </div>
                 )}

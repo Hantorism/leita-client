@@ -3,30 +3,35 @@ import { noticeApi } from '@leita/api';
 import type { NoticeResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useFetchItem } from '@hooks';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { marked } from 'marked';
 
 const NoticeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [notice, setNotice] = useState<NoticeResponse | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchNotice = async () => {
-      if (!id) return;
-      try {
-        setLoading(true);
-        const res = await noticeApi.getNotice(Number(id));
-        setNotice(res);
-      } catch (err) {
-        console.error('Failed to fetch notice', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchNotice();
+  const fetcher = useCallback(() => {
+    if (!id) return Promise.resolve(null);
+    return noticeApi.getNotice(Number(id));
   }, [id]);
+
+  const { item: notice, loading } = useFetchItem<NoticeResponse | null>(fetcher, [id]);
+
+  const htmlContent = useMemo(() => {
+    if (!notice?.content) return '';
+    // Check if the content is HTML (e.g. starts with <p, <h1, etc.)
+    const isHtml = /^\s*<[a-z0-9]+/i.test(notice.content);
+    if (isHtml) return notice.content;
+
+    try {
+      return marked.parse(notice.content) as string;
+    } catch (err) {
+      console.error('Failed to parse markdown', err);
+      return notice.content;
+    }
+  }, [notice?.content]);
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">
@@ -79,7 +84,7 @@ const NoticeDetail = () => {
 
               <div 
                 className="text-gray-300 font-medium leading-relaxed min-h-[250px] relative z-10 text-base break-words select-text outline-none prose prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: notice.content }}
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
               />
             </motion.div>
           ) : (

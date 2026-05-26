@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { qnaApi } from '@leita/api';
+import { usePaginatedList } from '@hooks';
 import type { QnaResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
 import { Button, Pagination } from '@leita/ui';
 
 const QnaManagement: React.FC = () => {
-  const [qnas, setQnas] = useState<QnaResponse[]>([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
   const [filterMode, setFilterMode] = useState<'ALL' | 'UNANSWERED'>('UNANSWERED');
 
   // Detail & Answer state
@@ -16,29 +13,26 @@ const QnaManagement: React.FC = () => {
   const [answerContent, setAnswerContent] = useState('');
   const [submittingAnswer, setSubmittingAnswer] = useState(false);
 
-  const fetchQnas = async (page = 0, currentFilter = filterMode) => {
-    try {
-      setLoading(true);
-      const res = await qnaApi.getAdminQnas(page, 10);
-      let contentList = res.content || [];
-      
-      if (currentFilter === 'UNANSWERED') {
-        contentList = contentList.filter(q => !q.answer);
-      }
-      
-      setQnas(contentList);
-      setTotalPages(res.totalPages || 1);
-      setCurrentPage(page);
-    } catch (err) {
-      console.error('Failed to fetch QnAs', err);
-    } finally {
-      setLoading(false);
+  const fetcher = useCallback(async (page: number) => {
+    const res = await qnaApi.getAdminQnas(page, 10);
+    let content = res.content || [];
+    if (filterMode === 'UNANSWERED') {
+      content = content.filter(q => !q.answer);
     }
-  };
-
-  useEffect(() => {
-    fetchQnas(0, filterMode);
+    return {
+      content,
+      totalPages: res.totalPages || 1,
+    };
   }, [filterMode]);
+
+  const {
+    items: qnas,
+    currentPage,
+    totalPages,
+    loading,
+    goToPage,
+    refresh,
+  } = usePaginatedList(fetcher, [filterMode]);
 
   const handleSelectQna = (qna: QnaResponse) => {
     setSelectedQna(qna);
@@ -63,7 +57,7 @@ const QnaManagement: React.FC = () => {
       await qnaApi.replyQna(selectedQna.id, { answer: answerContent });
       alert('답변이 성공적으로 등록되었습니다.');
       handleBackToList();
-      fetchQnas(currentPage);
+      refresh();
     } catch (err) {
       console.error('Failed to reply to Q&A', err);
       alert('답변 등록에 실패했습니다.');
@@ -246,7 +240,7 @@ const QnaManagement: React.FC = () => {
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  onPageChange={(page) => fetchQnas(page, filterMode)}
+                  onPageChange={(page) => goToPage(page)}
                 />
               </div>
             )}

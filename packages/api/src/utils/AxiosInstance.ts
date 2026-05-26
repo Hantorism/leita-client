@@ -53,12 +53,14 @@ AxiosInstance.interceptors.response.use(
     const rawData = res.data;
     const data = rawData.data ?? rawData;
 
-    if (data && typeof data === 'object' && ('content' in data || 'totalPages' in data)) {
+    // totalPages가 숫자로 명시적으로 존재할 때만 페이지 응답으로 처리합니다.
+    // 'content' 필드만으로는 판별하지 않습니다 — QnaResponse·NoticeResponse도 content(string) 필드를 가지기 때문입니다.
+    if (data && typeof data === 'object' && typeof data.totalPages === 'number') {
       return {
         content: data.content ?? (Array.isArray(data) ? data : []),
         totalPages: data.totalPages ?? 1,
         totalElements: data.totalElements,
-        currentPage: data.currentPage ?? data.number, // 서버 필드 명 대응 (number -> currentPage)
+        currentPage: data.currentPage ?? data.number,
         size: data.size,
       };
     }

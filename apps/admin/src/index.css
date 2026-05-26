@@ -1,1 +1,97 @@
 @import "@leita/ui/styles.css";
+
+/* EasyMDE Dark Mode Override - Notion Style */
+.editor-toolbar {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  padding: 8px 0px !important;
+}
+
+.editor-toolbar button {
+  color: #8a8a8a !important;
+  border-radius: 6px !important;
+  transition: all 0.2s !important;
+  margin: 0 2px !important;
+}
+
+.editor-toolbar button:hover, 
+.editor-toolbar button.active {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #CAFE33 !important;
+  border: none !important;
+}
+
+.editor-toolbar i.separator {
+  border-left-color: rgba(255, 255, 255, 0.05) !important;
+  border-right-color: rgba(255, 255, 255, 0.05) !important;
+  margin: 0 6px !important;
+}
+
+.CodeMirror {
+  background: transparent !important;
+  border: none !important;
+  color: #e5e5e5 !important;
+  font-family: inherit !important;
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+  padding: 16px 0px !important;
+}
+
+.CodeMirror-scroll {
+  min-height: 350px !important;
+}
+
+.CodeMirror-cursor {
+  border-left: 2px solid #CAFE33 !important;
+}
+
+.CodeMirror-selected {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.CodeMirror-focused .CodeMirror-selected {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Styles for preview inside EasyMDE */
+.editor-preview {
+  background: #121212 !important;
+  color: #e5e5e5 !important;
+  padding: 24px !important;
+  border: none !important;
+}
+
+/* Editor syntax styles to look like markdown headers inside editor */
+.cm-header-1 {
+  font-size: 1.8em !important;
+  line-height: 1.4 !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+}
+
+.cm-header-2 {
+  font-size: 1.4em !important;
+  line-height: 1.4 !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+}
+
+.cm-header-3 {
+  font-size: 1.2em !important;
+  line-height: 1.4 !important;
+  font-weight: 600 !important;
+  color: #ffffff !important;
+}
+
+.cm-comment {
+  font-family: monospace !important;
+  color: #a3a3a3 !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+}
+
+.cm-strong {
+  color: #CAFE33 !important;
+}

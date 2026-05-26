@@ -3,33 +3,20 @@ import { noticeApi } from '@leita/api';
 import type { NoticeResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { usePaginatedList } from '@hooks';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NoticeList = () => {
   const navigate = useNavigate();
-  const [notices, setNotices] = useState<NoticeResponse[]>([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
-
-  const fetchNotices = async (page = 0) => {
-    try {
-      setLoading(true);
-      const res = await noticeApi.getNotices(page, 10);
-      setNotices(res.content || []);
-      setTotalPages(res.totalPages || 1);
-      setCurrentPage(page);
-    } catch (err) {
-      console.error('Failed to fetch notices', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNotices(0);
-  }, []);
+  const fetcher = useCallback((page: number) => noticeApi.getNotices(page, 10), []);
+  const {
+    items: notices,
+    currentPage,
+    totalPages,
+    loading,
+    goToPage,
+  } = usePaginatedList(fetcher);
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">
@@ -91,7 +78,7 @@ const NoticeList = () => {
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
-                      onPageChange={(page) => fetchNotices(page)}
+                      onPageChange={(page) => goToPage(page)}
                     />
                   </div>
                 )}
