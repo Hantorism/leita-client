@@ -1,0 +1,23 @@
+FROM docker.io/library/node:22.13.1-alpine3.21 AS node
+FROM docker.io/library/nginx:1.26.3-alpine3.20 AS nginx
+
+# Base stage: pnpm 설치 및 캐싱용 설정
+FROM node AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+# Builder stage: 의존성 설치 및 client 앱 빌드
+FROM base AS builder
+WORKDIR /workspace
+COPY . .
+RUN pnpm install --frozen-lockfile
+RUN pnpm turbo run build --filter=client
+
+# Runner stage: Nginx 서빙
+FROM nginx AS runner
+COPY --from=builder /workspace/apps/client/build /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/templates/default.conf.template
+CMD /docker-entrypoint.d/20-envsubst-on-templates.sh && \
+    nginx -g 'daemon off;'
+EXPOSE 3000

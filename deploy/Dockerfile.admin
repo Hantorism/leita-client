@@ -7,16 +7,16 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-# Builder stage: 의존성 설치 및 client 앱 빌드
+# Builder stage: 의존성 설치 및 admin 앱 빌드
 FROM base AS builder
 WORKDIR /workspace
 COPY . .
 RUN pnpm install --frozen-lockfile
-RUN pnpm turbo run build --filter=client
+RUN pnpm turbo run build --filter=admin
 
 # Runner stage: Nginx 서빙
 FROM nginx AS runner
-COPY --from=builder /workspace/apps/client/build /usr/share/nginx/html
+COPY --from=builder /workspace/apps/admin/build /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/templates/default.conf.template
 CMD /docker-entrypoint.d/20-envsubst-on-templates.sh && \
     nginx -g 'daemon off;'
