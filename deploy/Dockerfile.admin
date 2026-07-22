@@ -20,4 +20,4 @@ COPY --from=builder /workspace/apps/admin/build /usr/share/nginx/html
 COPY nginx/nginx.conf /etc/nginx/templates/default.conf.template
 CMD /docker-entrypoint.d/20-envsubst-on-templates.sh && \
     nginx -g 'daemon off;'
-EXPOSE 3000
+EXPOSE 3001
