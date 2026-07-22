@@ -13,6 +13,7 @@ import {
   type PagedResponse,
 } from '@utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Icon } from '@iconify/react';
 
 // ── Searchable Dropdown Helper ──
 const SearchableDropdown = ({ options, value, onChange, placeholder }: any) => {
@@ -309,7 +310,7 @@ const StudyProgressDetail = ({
           </h3>
           {isNotSelected ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-              <span className="text-4xl mb-4 opacity-20">🖱️</span>
+              <Icon icon="mdi:mouse" className="text-4xl mb-4 opacity-20" />
               <p className="text-gray-500 text-sm leading-relaxed">
                 상단의 드롭다운이나 하단의 표에서
                 <br />
@@ -320,7 +321,7 @@ const StudyProgressDetail = ({
             <div className="text-gray-500 text-sm text-center py-10">데이터 로딩 중...</div>
           ) : !attendanceInfo ? (
             <div className="text-gray-500 text-sm py-10 text-center flex flex-col items-center justify-center h-full">
-              <span className="text-4xl mb-4 opacity-30">⏰</span>
+              <Icon icon="mdi:clock-outline" className="text-4xl mb-4 opacity-30" />
               출석이 시작되지 않았습니다.
             </div>
           ) : (
@@ -356,19 +357,21 @@ const StudyProgressDetail = ({
                             : 'bg-red-500/20 text-red-400 border-red-500/30'
                     }`}
                   >
-                    {userAttendanceStatus === 'PRESENT'
-                      ? '출석 ✅'
-                      : userAttendanceStatus === 'LATE'
-                        ? '지각 ⚠️'
-                        : userAttendanceStatus === '미진행'
-                          ? '진행 전 ⏳'
-                          : '결석 ❌'}
+                    {userAttendanceStatus === 'PRESENT' ? (
+                      <span className="flex items-center gap-1">출석 <Icon icon="mdi:check-circle" className="size-4" /></span>
+                    ) : userAttendanceStatus === 'LATE' ? (
+                      <span className="flex items-center gap-1">지각 <Icon icon="mdi:alert-circle" className="size-4" /></span>
+                    ) : userAttendanceStatus === '미진행' ? (
+                      <span className="flex items-center gap-1">진행 전 <Icon icon="mdi:clock-sand" className="size-4" /></span>
+                    ) : (
+                      <span className="flex items-center gap-1">결석 <Icon icon="mdi:close-circle" className="size-4" /></span>
+                    )}
                   </div>
                 </div>
               </div>
               {isAdmin && (
                 <div className="pt-4 border-t border-gray-700/50 mt-auto">
-                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3">🛠️ 출석 상태 변경</h4>
+                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3 flex items-center gap-1.5"><Icon icon="mdi:tools" className="size-4 text-[var(--color-brand)]" /> 출석 상태 변경</h4>
                   <div className="flex gap-2">
                     <Button
                       className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${userAttendanceStatus === 'PRESENT' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}
@@ -399,7 +402,7 @@ const StudyProgressDetail = ({
         <div className="flex-1 bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 flex flex-col overflow-y-auto custom-scrollbar">
           <div className="flex items-center justify-between mb-5">
             <h3 className="text-lg font-bold flex items-center gap-2 text-gray-200">
-              <span className="text-xl">📚</span> 과제 현황
+              <Icon icon="mdi:book-open-variant" className="text-xl text-[var(--color-brand)]" /> 과제 현황
             </h3>
             {assignmentStatus && (
               <span className={`text-sm font-bold ${assignmentStatus.twColor}`}>{assignmentStatus.text}</span>
@@ -407,7 +410,7 @@ const StudyProgressDetail = ({
           </div>
           {isNotSelected ? (
             <div className="flex-1 flex flex-col items-center justify-center text-center px-4">
-              <span className="text-4xl mb-4 opacity-20">📑</span>
+              <Icon icon="mdi:file-document-outline" className="text-4xl mb-4 opacity-20" />
               <p className="text-gray-500 text-sm leading-relaxed">
                 선택하신 회차의
                 <br />
@@ -418,7 +421,7 @@ const StudyProgressDetail = ({
             <div className="text-gray-500 text-sm text-center py-10">데이터 로딩 중...</div>
           ) : !assignment ? (
             <div className="text-gray-500 text-sm py-10 text-center flex flex-col items-center justify-center h-full">
-              <span className="text-4xl mb-4 opacity-30">📁</span>
+              <Icon icon="mdi:folder-outline" className="text-4xl mb-4 opacity-30" />
               등록된 과제가 없습니다.
             </div>
           ) : (
@@ -460,7 +463,7 @@ const StudyProgressDetail = ({
               </div>
               {isAdmin && (
                 <div className="pt-4 border-t border-gray-700/50 mt-auto shrink-0">
-                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3">🛠️ 과제 결과 부여</h4>
+                  <h4 className="text-sm font-semibold text-[var(--color-brand)] mb-3 flex items-center gap-1.5"><Icon icon="mdi:tools" className="size-4 text-[var(--color-brand)]" /> 과제 결과 부여</h4>
                   <div className="flex gap-2">
                     <Button
                       className={`flex-1 py-1.5 text-sm font-semibold rounded-lg transition-colors border ${assignment.status === 'COMPLETED' ? 'bg-green-500 text-black border-green-500' : 'bg-gray-800 text-gray-400 border-gray-700'}`}

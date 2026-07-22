@@ -7,6 +7,7 @@ import type { RepositoryResponse } from '@leita/types';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 
 const MyPage = () => {
   const { user, fetchUserInfo } = useAuth();
@@ -384,7 +385,7 @@ const MyPage = () => {
                       >
                         {user.isGithubLinked ? (
                           <div className="flex flex-col gap-0.5">
-                            <span>✅ GitHub 연동됨</span>
+                            <span className="flex items-center justify-center gap-1.5"><Icon icon="mdi:check-circle" className="size-4 text-[#CAFE33]" /> GitHub 연동됨</span>
                             <span className="text-[11px] opacity-70">(@{user.githubUserName})</span>
                           </div>
                         ) : '미연동 상태'}

@@ -1,6 +1,7 @@
 import type { ProblemTestCase } from './Problem';
 
 export enum JudgeResult {
+  PENDING = 'PENDING',
   CORRECT = 'CORRECT',
   WRONG = 'WRONG',
   COMPILE_ERROR = 'COMPILE_ERROR',
@@ -11,6 +12,7 @@ export enum JudgeResult {
 }
 
 export const JudgeResultMessages: Record<JudgeResult, string> = {
+  [JudgeResult.PENDING]: '채점 대기 중',
   [JudgeResult.CORRECT]: '맞았습니다',
   [JudgeResult.WRONG]: '틀렸습니다',
   [JudgeResult.COMPILE_ERROR]: '컴파일 에러',

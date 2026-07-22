@@ -1,4 +1,5 @@
 import type { Study, StudyCompletionResponse } from '@leita/types';
+import { Icon } from '@iconify/react';
 
 interface CompletionAdminProps {
   study: Study;
@@ -15,7 +16,9 @@ const CompletionAdmin = ({ study, completionData }: CompletionAdminProps) => {
     <div className="w-full flex flex-col gap-6 animate-fadeIn">
       <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 shadow-xl">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">👨‍🏫 멤버 수료 현황</h2>
+          <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">
+            <Icon icon="mdi:account-school" className="text-xl text-[var(--color-brand)]" /> 멤버 수료 현황
+          </h2>
           <div className="flex items-center gap-3">
             <span className="text-sm text-[var(--color-brand)] bg-[var(--color-brand)]/10 px-3 py-1 rounded-full border border-[var(--color-brand)]/20">
               총 멤버 {memberCompletions.length}명

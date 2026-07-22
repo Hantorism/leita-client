@@ -23,6 +23,8 @@ interface ResultState {
   result?: JudgeResult; // Use Enum type strictly
   error?: string | null;
   testCases?: TestResult[];
+  usedMemory?: number;
+  usedTime?: number;
 }
 
 interface CodeEditorProps {
@@ -64,6 +66,70 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
     return user?.mainLanguage?.toLowerCase() || 'undefined';
   });
   const [isSaved, setIsSaved] = useState(false);
+
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const pollingIntervalRef = useRef<any>(null);
+
+  useEffect(() => {
+    const handleWindowResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleWindowResize);
+    return () => {
+      window.removeEventListener('resize', handleWindowResize);
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, []);
+
+  const startPolling = (submitId: number) => {
+    let attempts = 0;
+    const maxAttempts = 40; // 40 * 1.5s = 60s
+
+    pollingIntervalRef.current = setInterval(async () => {
+      attempts++;
+      if (attempts > maxAttempts) {
+        if (pollingIntervalRef.current) {
+          clearInterval(pollingIntervalRef.current);
+          pollingIntervalRef.current = null;
+        }
+        setResult((prev) => {
+          if (!prev || prev.submitId !== submitId) return prev;
+          return {
+            ...prev,
+            result: JudgeResult.UNKNOWN,
+            error: '채점 서버 대기 시간이 초과되었습니다.',
+            message: '⏱ 채점 시간 초과',
+          };
+        });
+        return;
+      }
+
+      try {
+        const response = await judgeApi.getJudgeDetail(submitId);
+        const data = response as any;
+        if (data && data.result) {
+          const resultKey = (typeof data.result === 'object' ? data.result.name : String(data.result)) as JudgeResult;
+          if (resultKey !== JudgeResult.PENDING) {
+            if (pollingIntervalRef.current) {
+              clearInterval(pollingIntervalRef.current);
+              pollingIntervalRef.current = null;
+            }
+            setResult({
+              message: resultKey === JudgeResult.CORRECT ? '맞았습니다!' : '틀렸습니다!',
+              isSubmit: true,
+              submitId: submitId,
+              result: resultKey,
+              error: data.error || null,
+              usedMemory: data.used?.memory || 0,
+              usedTime: data.used?.time || 0,
+            });
+          }
+        }
+      } catch (error) {
+        Logger.error('채점 상태 조회 오류:', error);
+      }
+    }, 1500) as any;
+  };
 
   // 언어 변경 시 JavaScript 검증 설정 업데이트
   useEffect(() => {
@@ -196,6 +262,11 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       return;
     }
 
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+
     setIsSubmitting(true);
     setIsSubmitMode(true);
     setResult(null);
@@ -210,12 +281,16 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       const resultKey = (typeof response.result === 'object' ? (response.result as any).name : String(response.result)) as JudgeResult;
 
       setResult({
-        message: '✅ 제출 성공!',
+        message: '제출 성공!',
         isSubmit: true,
         submitId: response.submitId,
         result: resultKey,
         error: response.error || null,
       });
+
+      if (resultKey === JudgeResult.PENDING) {
+        startPolling(response.submitId);
+      }
     } catch (error) {
       Logger.error('서버 요청 오류:', error);
       setResult({
@@ -242,6 +317,12 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       showAlert('info', '언어를 선택해주세요!');
       return;
     }
+
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+
     setIsRunningCode(true);
     setIsSubmitMode(false);
     setResult(null);
@@ -259,7 +340,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       const resultData = result as any;
       setResult({
-        message: resultData.message || '🛠 실행 완료!',
+        message: resultData.message || '실행 완료!',
         isSubmit: false,
         testCases:
           resultData?.map((testResult: any) => ({
@@ -360,7 +441,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
       const resultData = result as any;
       setResult({
-        message: resultData.message || '🛠 실행 완료!',
+        message: resultData.message || '실행 완료!',
         isSubmit: false,
         testCases:
           resultData?.map((item: any) => ({
@@ -382,7 +463,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
   };
 
   return (
-    <div className="flex-1 min-w-[300px] min-h-[80px] h-screen overflow-y-hidden  shadow-lg m-4 flex flex-col">
+    <div className="flex-1 min-w-[300px] min-h-[80px] h-full overflow-y-hidden shadow-lg m-2 lg:m-4 mb-4 lg:mb-6 flex flex-col">
       {/* 상단 부분: 언어 선택, RUN, SUBMIT 버튼 */}
       <div className="flex justify-between items-center  rounded-lg">
         <div className="flex items-center space-x-4">
@@ -393,7 +474,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           <div
             className={`transition-opacity duration-500 text-xs text-gray-400 flex items-center gap-1 ${isSaved ? 'opacity-100' : 'opacity-0'}`}
           >
-            <span className="text-[#CAFE33]">✅</span> 임시 저장됨
+            <Icon icon="mdi:check-circle" className="text-[#CAFE33] size-4" /> 임시 저장됨
           </div>
         </div>
 
@@ -471,12 +552,12 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
       </div>
 
       {/* 에디터와 리사이즈 핸들러 컨테이너 */}
-      <div className="flex flex-col relative">
+      <div className="flex flex-col relative flex-grow min-h-0">
         {/* 에디터 */}
         <div
           ref={editorRef}
-          className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2 mb-4 min-h-[300px]"
-          style={{ height: `${editorHeight}px` }}
+          className="flex-grow bg-[#282C34] rounded-lg border-2 border-gray-500 overflow-hidden shadow-lg mt-2 mb-4 min-h-[150px]"
+          style={{ height: windowWidth >= 1024 ? `${editorHeight}px` : 'auto' }}
         >
           <MonacoEditor
             width="100%"
@@ -497,14 +578,16 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
         </div>
 
         {/* 리사이즈 핸들러 */}
-        <div
-          ref={resizeHandlerRef}
-          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[60px] h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize rounded-md flex items-center justify-center z-50 transition-all duration-150 ease-in-out"
-          onMouseDown={startResizing}
-        >
-          {/* 점 3개 추가 (드래그 가능 강조) */}
-          <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>
-        </div>
+        {windowWidth >= 1024 && (
+          <div
+            ref={resizeHandlerRef}
+            className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-[60px] h-[8px] bg-gray-400 hover:bg-gray-200 cursor-ns-resize rounded-md flex items-center justify-center z-50 transition-all duration-150 ease-in-out"
+            onMouseDown={startResizing}
+          >
+            {/* 점 3개 추가 (드래그 가능 강조) */}
+            <div className="w-[20px] h-[3px] bg-gray-600 rounded-full"></div>
+          </div>
+        )}
       </div>
 
       <div className="mt-2 bg-[var(--color-bg-surface)] text-white rounded-md min-h-[50px] min-w-0 max-h-[700px] overflow-y-auto space-y-2 p-6 pt-4 scrollbar-hide">
@@ -554,9 +637,24 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           // ✅ Submit 모드일 때: 결과만 출력
           <>
             {result?.result && (
-              <div className="mt-2 p-2 bg-black rounded-md flex flex-col gap-3">
+              <div className={`mt-2 p-4 rounded-xl flex flex-col gap-3 transition-all duration-300 ${
+                result.result === JudgeResult.PENDING
+                  ? 'bg-yellow-500/5 border border-yellow-500/20 animate-pulse'
+                  : result.result === JudgeResult.CORRECT
+                    ? 'bg-green-500/5 border border-green-500/20'
+                    : 'bg-red-500/5 border border-red-500/20'
+              }`}>
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm text-gray-400">Result</h4>
+                  <div className="flex items-center gap-2">
+                    {result.result === JudgeResult.PENDING ? (
+                      <div className="w-4 h-4 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin" />
+                    ) : result.result === JudgeResult.CORRECT ? (
+                      <Icon icon="solar:check-circle-bold" className="w-5 h-5 text-green-400" />
+                    ) : (
+                      <Icon icon="solar:close-circle-bold" className="w-5 h-5 text-red-500" />
+                    )}
+                    <span className="text-sm font-bold text-gray-300">제출 결과</span>
+                  </div>
                   {result.result === JudgeResult.CORRECT && user?.isGithubLinked && (
                     <button
                       onClick={handleOpenCommitModal}
@@ -568,15 +666,35 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                     </button>
                   )}
                 </div>
-                <pre className="bg-[#1E1E1E] text-gray-300 p-2 rounded-md font-JetBrain whitespace-pre-wrap">
-                  {result.result ? (JudgeResultMessages[result.result] || result.result) : ''}
-                </pre>
+                
+                <div className={`font-JetBrain whitespace-pre-wrap font-black text-lg ${
+                  result.result === JudgeResult.PENDING
+                    ? 'text-yellow-400 animate-pulse'
+                    : result.result === JudgeResult.CORRECT
+                      ? 'text-[#CAFE33]'
+                      : 'text-red-500'
+                }`}>
+                  {JudgeResultMessages[result.result] || result.result}
+                </div>
+
+                {result.result !== JudgeResult.PENDING && (result.usedMemory !== undefined || result.usedTime !== undefined) && (
+                  <div className="flex gap-4 text-xs text-gray-400 border-t border-white/5 pt-2">
+                    {result.usedMemory !== undefined && (
+                      <span>메모리: <strong className="text-gray-300">{result.usedMemory} KB</strong></span>
+                    )}
+                    {result.usedTime !== undefined && (
+                      <span>시간: <strong className="text-gray-300">{result.usedTime} MS</strong></span>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
             {result?.error?.trim() && (
               <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                <h4 className="text-sm text-red-400">❌ Error</h4>
+                <h4 className="text-sm text-red-400 flex items-center gap-1.5">
+                  <Icon icon="mdi:alert-circle" className="size-4 text-red-400" /> Error
+                </h4>
                 <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{result.error}</pre>
               </div>
             )}
@@ -653,9 +771,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
                       <div className="flex justify-between items-center">
                         <h4 className="text-sm text-gray-400">Testcase {index + 1}</h4>
                         {testCase.isPassed ? (
-                          <span className="text-[var(--color-brand)]">✅</span>
+                          <Icon icon="mdi:check-circle" className="text-[var(--color-brand)] size-4" />
                         ) : (
-                          <span className="text-red-500">❌</span>
+                          <Icon icon="mdi:close-circle" className="text-red-500 size-4" />
                         )}
                       </div>
                       <pre
@@ -667,7 +785,9 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
 
                     {testCase.error?.trim() && (
                       <div className="mt-2 p-2 bg-[#3A1A1A] rounded-md">
-                        <h4 className="text-sm text-red-400">❌ Error : Testcase {index + 1}</h4>
+                        <h4 className="text-sm text-red-400 flex items-center gap-1.5">
+                          <Icon icon="mdi:alert-circle" className="size-4 text-red-400" /> Error : Testcase {index + 1}
+                        </h4>
                         <pre className="text-red-300 font-JetBrain whitespace-pre-wrap">{testCase.error}</pre>
                       </div>
                     )}
@@ -827,8 +947,8 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
             result: JudgeResult.CORRECT,
             used: {
               language: language,
-              memory: 0,
-              time: 0,
+              memory: result?.usedMemory || 0,
+              time: result?.usedTime || 0,
             },
             user: {
               id: 1,

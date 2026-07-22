@@ -1,6 +1,7 @@
 {
   "extends": "@leita/tsconfig/base.json",
   "compilerOptions": {
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
       "@assets": ["src/assets"],

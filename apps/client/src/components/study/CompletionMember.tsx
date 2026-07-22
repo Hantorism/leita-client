@@ -1,4 +1,5 @@
 import type { Study, StudyCompletionResponse } from '@leita/types';
+import { Icon } from '@iconify/react';
 
 interface CompletionMemberProps {
   study: Study;
@@ -20,7 +21,9 @@ const CompletionMember = ({ study, currentUserEmail, completionData }: Completio
       <div className="bg-[var(--color-bg-card)] rounded-xl border border-gray-700/50 p-6 shadow-xl">
         <div className="flex items-center justify-between mb-8 border-b border-gray-800 pb-6">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">🎓 나의 수료 현황</h2>
+            <h2 className="text-xl font-bold text-gray-100 flex items-center gap-2">
+              <Icon icon="mdi:school" className="text-xl text-[var(--color-brand)]" /> 나의 수료 현황
+            </h2>
             {myData.isCompleted && (
               <span className="bg-[#CAFE33] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">Completed</span>
             )}

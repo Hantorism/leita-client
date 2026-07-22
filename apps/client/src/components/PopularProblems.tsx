@@ -4,6 +4,7 @@ import { Logger } from '@utils';
 import { motion } from 'framer-motion';
 import { useAlert, useAuth } from '@contexts';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Icon } from '@iconify/react';
 
 const SCROLL_DURATION = 200;
 
@@ -87,7 +88,7 @@ const PopularProblems = () => {
                     className="flex items-center gap-3"
                 >
                     <h2 className="text-3xl font-extrabold text-white tracking-tight font-Pretendard">인기 문제</h2>
-                    <span className="text-2xl">🔥</span>
+                    <Icon icon="solar:fire-bold" className="text-2xl text-amber-500" />
                 </motion.div>
 
                 {/* Period Selector */}

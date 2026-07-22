@@ -2,6 +2,7 @@ import { Tabs } from '@assets/images';
 import { Footer, Header, PopularProblems } from '@components';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ const HomePage = () => {
               >
                 START YOUR <br />
                 <span className="text-[#CAFE33]">CODING JOURNEY</span> <br />
-                WITH Leita! 🚀
+                WITH Leita! <Icon icon="mdi:rocket-launch" className="inline-block text-[#CAFE33] ml-2 size-8 sm:size-10 align-middle" />
               </motion.h1>
 
               <motion.p

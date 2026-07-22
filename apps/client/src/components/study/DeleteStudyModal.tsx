@@ -1,6 +1,7 @@
 import { Modal } from '@components';
 import type { Study } from '@leita/types';
 import { useState } from 'react';
+import { Icon } from '@iconify/react';
 
 interface DeleteStudyModalProps {
   study: Study;
@@ -28,7 +29,7 @@ const DeleteStudyModal = ({ study, isDeleting, onConfirm, onClose }: DeleteStudy
       ]}
     >
       <div className="text-center">
-        <div className="text-4xl mb-4">⚠️</div>
+        <div className="flex justify-center mb-4"><Icon icon="mdi:alert-circle" className="text-4xl text-amber-500" /></div>
         <p className="text-gray-300 mb-1 text-sm">삭제를 승인하려면 아래에 스터디 이름을 입력하세요:</p>
         <p className="text-white font-bold mb-4 bg-red-900 bg-opacity-20 py-1 rounded">{study.title}</p>
 

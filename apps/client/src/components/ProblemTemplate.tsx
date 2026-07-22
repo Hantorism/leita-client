@@ -90,7 +90,7 @@ const ProblemTemplate = ({ mode, onSubmit, previousData }: ProblemTemplateProps)
     }
   };
 
-  const headingText = mode === 'edit' ? 'Edit Problem 👾' : 'Create Problem 👾';
+  const headingText = mode === 'edit' ? 'Edit Problem' : 'Create Problem';
   const buttonText = mode === 'edit' ? 'Edit Problem' : 'Create Problem';
 
   return (

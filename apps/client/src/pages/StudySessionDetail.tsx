@@ -9,6 +9,7 @@ import {
   UpdateAttendanceModal,
 } from '@components';
 import { useAlert } from '@contexts';
+import { Icon } from '@iconify/react';
 import type {
   AttendanceCheck,
   AttendanceRecord,
@@ -316,7 +317,7 @@ const StudySessionDetailPage = () => {
                 {session.attendance.records.some((r: any) => r.attendedAt) && (
                   <div className="mt-10 pt-8 border-t border-gray-800/50">
                     <h4 className="text-sm font-semibold text-gray-400 mb-6 flex items-center gap-2">
-                      <span className="text-base">🎖️</span> 출석 순서
+                      <Icon icon="solar:medal-ribbon-bold" className="text-amber-400 text-lg" /> 출석 순서
                     </h4>
                     <div className="flex flex-nowrap overflow-x-auto custom-scrollbar gap-x-12 pb-6 px-1">
                       {[...(session.attendance.records || [])]
@@ -350,8 +351,17 @@ const StudySessionDetailPage = () => {
                                   {index + 1}
                                 </div>
                                 {index < 3 && (
-                                  <span className="absolute -top-1 -right-1 text-sm">
-                                    {index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉'}
+                                  <span className="absolute -top-1 -right-1">
+                                    <Icon
+                                      icon="solar:medal-star-bold"
+                                      className={
+                                        index === 0
+                                          ? 'text-yellow-400 size-4'
+                                          : index === 1
+                                            ? 'text-gray-300 size-4'
+                                            : 'text-amber-600 size-4'
+                                      }
+                                    />
                                   </span>
                                 )}
                               </div>

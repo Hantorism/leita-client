@@ -1,5 +1,6 @@
 import { Modal } from '@components';
 import { useState } from 'react';
+import { Icon } from '@iconify/react';
 
 interface DeleteStudySessionModalProps {
   sessionNumber: number;
@@ -28,7 +29,7 @@ const DeleteStudySessionModal = ({ sessionNumber, isDeleting, onConfirm, onClose
       ]}
     >
       <div className="text-center">
-        <div className="text-4xl mb-4">⚠️</div>
+        <div className="flex justify-center mb-4"><Icon icon="mdi:alert-circle" className="text-4xl text-amber-500" /></div>
         <p className="text-gray-400 mb-1 text-sm">삭제를 완료하려면 아래에 문구를 정확히 입력하세요:</p>
         <p className="text-white font-bold mb-4 bg-red-900 bg-opacity-20 py-2 rounded-lg border border-red-800/30">
           {targetText}

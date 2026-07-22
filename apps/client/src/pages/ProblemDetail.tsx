@@ -1,9 +1,9 @@
 import { problemApi } from '@leita/api';
-import { Logo } from '@assets/images';
 import { CodeEditor, ProblemDescriptionEditor } from '@components';
 import { DecodeBase64, Logger } from '@utils';
 import { type MouseEvent as ReactMouseEvent, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Icon } from '@iconify/react';
 
 interface TestCase {
   id?: number;
@@ -41,7 +41,14 @@ const ProblemDetailPage = () => {
   const isDragging = useRef<boolean>(false);
   const [code, setCode] = useState<string>('');
   const [copiedId, setCopiedId] = useState<number | string | null>(null);
-  const [activeTab, setActiveTab] = useState<'description' | 'code'>('description');
+  const [activeTab, setActiveTab] = useState<'description' | 'split' | 'code'>('description');
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleWindowResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleWindowResize);
+    return () => window.removeEventListener('resize', handleWindowResize);
+  }, []);
 
   const decodeText = (text: string): string => {
     try {
@@ -103,7 +110,7 @@ const ProblemDetailPage = () => {
   const handleResize = (e: MouseEvent) => {
     if (isDragging.current) {
       const newWidth = e.clientX;
-      setLeftWidth(Math.max(300, Math.min(newWidth, window.innerWidth * 0.7)));
+      setLeftWidth(Math.max(300, Math.min(newWidth, windowWidth * 0.7)));
     }
   };
 
@@ -130,34 +137,21 @@ const ProblemDetailPage = () => {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen text-gray-500 font-black">
-        👾 문제를 불러오는 중...
+      <div className="flex items-center justify-center gap-3 min-h-screen text-gray-500 font-black">
+        <Icon icon="line-md:loading-twotone-loop" className="size-6 text-[#CAFE33]" />
+        문제를 불러오는 중...
       </div>
     );
   if (!problem)
     return (
-      <div className="flex items-center justify-center min-h-screen text-gray-500 font-black">
-        👽 문제를 찾을 수 없습니다.
+      <div className="flex items-center justify-center gap-3 min-h-screen text-gray-500 font-black">
+        <Icon icon="mdi:alert-circle-outline" className="size-6 text-gray-400" />
+        문제를 찾을 수 없습니다.
       </div>
     );
 
   return (
     <div className="flex flex-col h-screen bg-[#1A1A1A] text-white font-Pretendard overflow-hidden">
-      {/* Focused Mode Header */}
-      <header className="h-14 flex-shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#1A1A1A] z-50">
-        <div className="flex items-center gap-6">
-          <img
-            src={Logo}
-            alt="Logo"
-            className="h-5 opacity-80"
-          />
-          <div className="flex items-center gap-3">
-            <span className="text-gray-500 font-JetBrain text-sm font-bold">#{problem.problemId}</span>
-            <h1 className="text-sm sm:text-base font-black truncate max-w-[200px] sm:max-w-md">{problem.title}</h1>
-          </div>
-        </div>
-      </header>
-
       {/* Mobile Tab Navigation */}
       <div className="lg:hidden flex border-b border-white/5 bg-[#1A1A1A] flex-shrink-0">
         <button
@@ -165,6 +159,12 @@ const ProblemDetailPage = () => {
           className={`flex-1 py-4 text-sm font-black transition-all ${activeTab === 'description' ? 'text-[#CAFE33] border-b-2 border-[#CAFE33]' : 'text-gray-500'}`}
         >
           문제 설명
+        </button>
+        <button
+          onClick={() => setActiveTab('split')}
+          className={`flex-1 py-4 text-sm font-black transition-all ${activeTab === 'split' ? 'text-[#CAFE33] border-b-2 border-[#CAFE33]' : 'text-gray-500'}`}
+        >
+          분할 화면
         </button>
         <button
           onClick={() => setActiveTab('code')}
@@ -177,11 +177,22 @@ const ProblemDetailPage = () => {
       <main className="flex-grow flex flex-col lg:flex-row overflow-hidden relative">
         {/* Left Column (Description) */}
         <div
-          className={`scrollbar-hide bg-[#1A1A1A] lg:bg-[#2A2A2A]/30 p-6 lg:p-10 overflow-y-auto w-full lg:max-w-[70vw] ${activeTab === 'description' ? 'block' : 'hidden lg:block'}`}
-          style={{ width: window.innerWidth >= 1024 ? `${leftWidth}px` : '100%' }}
+          className={`scrollbar-hide bg-[#1A1A1A] lg:bg-[#2A2A2A]/30 p-6 lg:p-10 overflow-y-auto w-full lg:max-w-[70vw] ${
+            activeTab === 'description'
+              ? 'block h-full'
+              : activeTab === 'split'
+                ? 'block h-[40vh] border-b border-white/10'
+                : 'hidden lg:block'
+          }`}
+          style={{ width: windowWidth >= 1024 ? `${leftWidth}px` : '100%' }}
         >
           <div className="max-w-4xl mx-auto lg:mx-0">
-            <h1 className="text-3xl sm:text-4xl font-black mb-10">{problem.title}</h1>
+            <div className="flex items-baseline gap-3 mb-10 flex-wrap">
+              <h1 className="text-3xl sm:text-4xl font-black">{problem.title}</h1>
+              <span className="text-gray-500 font-JetBrain text-xs sm:text-sm font-semibold">
+                #{problem.problemId}
+              </span>
+            </div>
             <div className="space-y-16">
               <section>
                 <h2 className="text-xl font-black mb-6 flex items-center gap-3">
@@ -323,7 +334,13 @@ const ProblemDetailPage = () => {
 
         {/* Right Column (Editor) */}
         <div
-          className={`flex-1 flex flex-col h-full overflow-hidden ${activeTab === 'code' ? 'block' : 'hidden lg:block'}`}
+          className={`flex-grow flex flex-col overflow-hidden pb-4 lg:pb-6 ${
+            activeTab === 'code'
+              ? 'block h-full'
+              : activeTab === 'split'
+                ? 'block h-[60vh] flex-1'
+                : 'hidden lg:block'
+          }`}
         >
           <CodeEditor
             code={code}
