@@ -8,6 +8,5 @@ const getEnvVar = (name: string): string => {
 
 export const Environment = {
   GOOGLE_AUTH_CLIENT_ID: getEnvVar('VITE_GOOGLE_AUTH_CLIENT_ID'),
-  API_URL: getEnvVar('VITE_API_URL'),
   PROFILE: getEnvVar('VITE_PROFILE'),
 };

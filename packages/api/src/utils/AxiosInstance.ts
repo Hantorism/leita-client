@@ -1,8 +1,7 @@
 import axios, { type AxiosError, type AxiosRequestConfig, type AxiosInstance as OriginalAxiosInstance } from 'axios';
 import { AuthStorage, notifyAuthChange } from './Auth';
-import { Environment } from './Environment';
 
-const API_URL = Environment.API_URL;
+const API_BASE_PATH = '/api';
 
 interface TypedAxiosInstance extends Omit<OriginalAxiosInstance, 'get' | 'post' | 'put' | 'patch' | 'delete'> {
   get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T>;
@@ -13,7 +12,7 @@ interface TypedAxiosInstance extends Omit<OriginalAxiosInstance, 'get' | 'post' 
 }
 
 export const AxiosInstance = axios.create({
-  baseURL: API_URL,
+  baseURL: API_BASE_PATH,
   headers: {
     'Content-Type': 'application/json',
   },
