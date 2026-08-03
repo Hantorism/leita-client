@@ -9,3 +9,4 @@ export * from './Notice';
 export * from './Qna';
 export * from './Affiliation';
 export * from './AdminUser';
+export * from './Language';
