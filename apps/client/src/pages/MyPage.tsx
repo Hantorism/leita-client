@@ -1,4 +1,4 @@
-import { authApi, fileApi, gitApi, qnaApi } from '@leita/api';
+import { authApi, fileApi, gitApi, languageApi, qnaApi } from '@leita/api';
 import { Button, Footer, Header, Pagination } from '@components';
 import { useAlert, useAuth } from '@contexts';
 import { useJudges } from '@hooks';
@@ -196,7 +196,7 @@ const MyPage = () => {
     );
   }
 
-  const languages = [
+  const [languages, setLanguages] = useState<{ value: string; label: string }[]>([
     { value: 'python', label: 'Python' },
     { value: 'javascript', label: 'JavaScript' },
     { value: 'typescript', label: 'TypeScript' },
@@ -208,7 +208,21 @@ const MyPage = () => {
     { value: 'kotlin', label: 'Kotlin' },
     { value: 'swift', label: 'Swift' },
     { value: 'rust', label: 'Rust' },
-  ];
+  ]);
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const res = await languageApi.getLanguages();
+        if (res && res.length > 0) {
+          setLanguages(res.map((item) => ({ value: item.code, label: item.name })));
+        }
+      } catch (err) {
+        console.error('마이페이지 동적 언어 목록 fetch 오류:', err);
+      }
+    };
+    fetchLanguages();
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen text-white bg-[#1A1A1A] font-Pretendard overflow-x-hidden">

@@ -164,6 +164,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapseChange, adminUser, onLogout
               {!isCollapsed && <span>소속 관리</span>}
             </NavLink>
 
+            <NavLink to="/languages" className={linkStyle}>
+              <svg className="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>
+              {!isCollapsed && <span>언어 관리</span>}
+            </NavLink>
+
             <NavLink to="/users" className={linkStyle}>
               <svg className="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />

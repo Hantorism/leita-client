@@ -7,3 +7,4 @@ export * from './Study';
 export * from './Notice';
 export * from './Qna';
 export * from './Affiliation';
+export * from './Language';
