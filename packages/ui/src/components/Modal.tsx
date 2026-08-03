@@ -5,20 +5,25 @@ import { type ReactNode, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 interface ModalProps {
+  isOpen?: boolean;
   title: string;
   children: ReactNode;
   onClose: () => void;
   buttons?: (Omit<ComponentProps<typeof Button>, 'children'> & { text: string })[];
 }
 
-const Modal = ({ title, children, onClose, buttons }: ModalProps) => {
+const Modal = ({ isOpen = true, title, children, onClose, buttons }: ModalProps) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
-    document.addEventListener('keydown', handleKeyDown);
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
 
   return createPortal(
     <div

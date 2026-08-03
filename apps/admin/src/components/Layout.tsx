@@ -72,11 +72,7 @@ const Layout: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#121212] flex items-center justify-center">
-        <Loader />
-      </div>
-    );
+    return <Loader fullScreen text="관리자 권한을 확인하고 있습니다..." />;
   }
 
   // Case 1: 로그인했지만 ADMIN 권한 없음
