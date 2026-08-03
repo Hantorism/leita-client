@@ -6,3 +6,4 @@ export * from './Problem';
 export * from './Study';
 export * from './Notice';
 export * from './Qna';
+export * from './Affiliation';
