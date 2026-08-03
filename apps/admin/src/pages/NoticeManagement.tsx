@@ -3,7 +3,7 @@ import { noticeApi } from '@leita/api';
 import { usePaginatedList } from '@hooks';
 import type { NoticeResponse } from '@leita/types';
 import { formatDateTime } from '@utils';
-import { Button, Pagination } from '@leita/ui';
+import { Button, Pagination, Loader } from '@leita/ui';
 import { marked } from 'marked';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -367,10 +367,7 @@ const NoticeManagement: React.FC = () => {
 
       <div className="bg-white/5 border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
         {loading ? (
-          <div className="py-32 flex flex-col items-center justify-center">
-            <div className="w-10 h-10 border-4 border-[#CAFE33]/20 border-t-[#CAFE33] rounded-full animate-spin mb-4" />
-            <p className="text-gray-500 font-bold">공지사항을 가져오고 있습니다...</p>
-          </div>
+          <Loader text="공지사항을 가져오고 있습니다..." />
         ) : notices.length > 0 ? (
           <div className="flex flex-col gap-4">
             <div className="overflow-x-auto">
