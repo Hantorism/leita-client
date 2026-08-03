@@ -7,3 +7,5 @@ export * from './Study';
 export * from './StudySession';
 export * from './Notice';
 export * from './Qna';
+export * from './Affiliation';
+export * from './AdminUser';

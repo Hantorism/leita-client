@@ -6,6 +6,8 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import NoticeManagement from './pages/NoticeManagement';
 import QnaManagement from './pages/QnaManagement';
+import AffiliationManagement from './pages/AffiliationManagement';
+import UserManagement from './pages/UserManagement';
 
 const clientId = Environment.GOOGLE_AUTH_CLIENT_ID;
 
@@ -16,6 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="affiliations" element={<AffiliationManagement />} />
+            <Route path="users" element={<UserManagement />} />
             <Route path="notices" element={<NoticeManagement />} />
             <Route path="qnas" element={<QnaManagement />} />
           </Route>

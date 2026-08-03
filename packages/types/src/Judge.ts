@@ -22,7 +22,7 @@ export const JudgeResultMessages: Record<JudgeResult, string> = {
   [JudgeResult.UNKNOWN]: '기타',
 };
 
-export type JudgeLanguage = 'C' | 'CPP' | 'JAVA' | 'PYTHON' | 'JAVASCRIPT' | 'GO' | 'KOTLIN' | 'SWIFT';
+export type JudgeLanguage = 'C' | 'CPP' | 'JAVA' | 'PYTHON' | 'JAVASCRIPT' | 'GO' | 'KOTLIN' | 'SWIFT' | 'CS' | 'TYPESCRIPT' | 'RUST';
 
 export interface SubmitRequest {
   code: string;

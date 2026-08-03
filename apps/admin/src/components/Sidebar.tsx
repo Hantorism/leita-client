@@ -157,6 +157,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onCollapseChange, adminUser, onLogout
               {!isCollapsed && <span>대시보드</span>}
             </NavLink>
 
+            <NavLink to="/affiliations" className={linkStyle}>
+              <svg className="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3" />
+              </svg>
+              {!isCollapsed && <span>소속 관리</span>}
+            </NavLink>
+
+            <NavLink to="/users" className={linkStyle}>
+              <svg className="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg>
+              {!isCollapsed && <span>유저 관리</span>}
+            </NavLink>
+
             <NavLink to="/notices" className={linkStyle}>
               <svg className="shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />

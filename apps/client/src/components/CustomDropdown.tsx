@@ -16,12 +16,15 @@ const CustomDropdown = ({ language, handleLanguageChange }: CustomDropdownProps)
   const languages: LanguageOption[] = [
     { value: 'python', label: 'Python' },
     { value: 'javascript', label: 'JavaScript' },
+    { value: 'typescript', label: 'TypeScript' },
     { value: 'java', label: 'Java' },
     { value: 'c', label: 'C' },
     { value: 'cpp', label: 'C++' },
+    { value: 'cs', label: 'C#' },
     { value: 'go', label: 'Go' },
     { value: 'kotlin', label: 'Kotlin' },
     { value: 'swift', label: 'Swift' },
+    { value: 'rust', label: 'Rust' },
   ];
 
   const toggleDropdown = (): void => setIsOpen(!isOpen);

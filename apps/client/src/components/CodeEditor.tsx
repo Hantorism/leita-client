@@ -34,6 +34,11 @@ interface CodeEditorProps {
   testCases: { input: string; output: string }[];
 }
 
+const getMonacoLanguage = (lang: string) => {
+  if (lang === 'cs') return 'csharp';
+  return lang;
+};
+
 const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps) => {
   const { showAlert } = useAlert();
   const { user } = useAuth();
@@ -562,7 +567,7 @@ const CodeEditor = ({ problemId, testCases: initialTestCases }: CodeEditorProps)
           <MonacoEditor
             width="100%"
             height="100%"
-            language={language}
+            language={getMonacoLanguage(language)}
             theme="vs-dark"
             value={code}
             onChange={(value) => setCode(value || '')}
