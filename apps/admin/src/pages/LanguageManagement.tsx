@@ -78,7 +78,7 @@ const LanguageManagement: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('정말 이 프로그래밍 언어를 삭제하시겠습니까?')) return;
+    if (!confirm('정말 이 언어를 삭제하시겠습니까?')) return;
     try {
       await languageApi.deleteLanguage(id);
       await fetchLanguages();
@@ -93,9 +93,9 @@ const LanguageManagement: React.FC = () => {
       {/* 헤더 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-white tracking-tight">프로그래밍 언어 관리</h1>
+          <h1 className="text-3xl font-black text-white tracking-tight">언어 관리</h1>
           <p className="text-gray-400 text-sm font-medium mt-1">
-            채점 및 클라이언트 문제 풀이에서 지원할 프로그래밍 언어를 관리합니다.
+            채점 및 클라이언트 문제 풀이에서 지원할 언어를 관리합니다.
           </p>
         </div>
         <Button
